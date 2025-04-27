@@ -28,12 +28,12 @@
       margin-bottom: 15px;
   }
 
-  ol { /* Removed as per user request */
+  ol {
     /* margin-bottom: 20px; */
     /* padding-left: 20px; */
   }
 
-  ol li { /* Removed as per user request */
+  ol li {
       /* margin-bottom: 5px; */
   }
 
@@ -48,7 +48,6 @@
     display: flex; /* Use Flexbox for the form container */
     flex-direction: column; /* Stack form sections vertically */
     gap: 20px; /* Add space between form sections */
-    /* Removed Grid properties */
   }
 
   /* Apply box-sizing for more predictable width */
@@ -66,7 +65,6 @@
 
   label {
     display: block; /* Labels are block elements */
-    /* margin-bottom: 0; /* Gap handles spacing */ /* Removed due to flex gap */
     font-weight: bold;
     color: #555;
   }
@@ -74,7 +72,6 @@
   input[type="file"],
   textarea {
     display: block; /* Ensure they take up their flex area */
-    /* margin-bottom: 0; /* Gap handles spacing */ /* Removed due to flex gap */
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -87,7 +84,6 @@
       min-height: 100px; /* Give textarea a minimum height */
   }
 
-  /* Remove vertical resize for file inputs */
    input[type="file"] {
        resize: none;
    }
@@ -97,7 +93,6 @@
         display: flex; /* Use Flexbox for side-by-side layout */
         gap: 20px; /* Space between the two file input groups */
         flex-wrap: wrap; /* Allow wrapping to a new line on smaller screens */
-        /* margin-top: 10px; /* Removed as parent gap handles spacing */
     }
 
     /* Style for each individual file input group (Flex items within file-inputs-container) */
@@ -109,7 +104,6 @@
         gap: 5px; /* Space between label and input within the group */
     }
 
-    /* Remove margin for labels within the file input group, using gap instead */
     .file-input-group label {
         margin-bottom: 0; /* Gap handles spacing */
     }
@@ -129,7 +123,6 @@
     width: auto; /* Let width be determined by content/padding initially */
     max-width: 300px; /* Limit maximum width on desktop */
     margin: 0 auto; /* Center the block button horizontally within its parent .form-section */
-    /* Removed margin-top here as parent section gap handles spacing */
   }
 
   input[type="submit"]:hover {
@@ -236,9 +229,6 @@
       font-size: 0.9em;
   }
 
-    /* Styles for the submission counter (now in footer) */
-
-
   /* Styles for the footer */
   footer {
       position: fixed; /* Fix footer to the bottom */
@@ -330,8 +320,7 @@
 <body>
 
 <h2>rizzooo-may!</h2>
-<p><b>Free <i>(beta): </i></b>Customize your resume for job applications.<br>3 simple steps:</p> {/* Added <br> */}
-{/* Removed <ol> block */}
+<p><b>Free <i>(beta): </i></b>Customize your resume for job applications.<br>3 simple steps:</p>
 
 
 <form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" method="POST">
@@ -341,24 +330,24 @@
   </div>
 
   <div class="form-section">
-    <p>Upload files (text file &lt; 1mb)</p> {/* Added this paragraph. Used &lt; for < */}
+    <p>Upload files (text file &lt; 1mb)</p>
 
     <div class="file-inputs-container">
       <div class="file-input-group">
-        <label for="file1">Add Resume:</label> {/* Changed label text */}
+        <label for="file1">Add Resume:</label>
         <input type="file" name="file1" id="file1" required>
       </div>
       <div class="file-input-group">
-        <label for="file2">Add Job Description:</label> {/* Changed label text */}
+        <label for="file2">Add Job Description:</label>
         <input type="file" name="file2" id="file2" required>
       </div>
     </div>
-  </div> {/* Closed file upload section */}
+  </div>
 
 
   <div class="form-section button-section">
     <input type="submit" value="Generate Resume">
-  </div> {/* Closed button section */}
+  </div>
 
 </form>
 
@@ -375,8 +364,6 @@
     <div id="responseArea">
       </div>
 </div>
-
-{/* Submission counter is now inside the footer */}
 
 
 <script>
