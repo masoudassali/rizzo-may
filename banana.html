@@ -37,7 +37,7 @@
       /* margin-bottom: 5px; */
   }
 
-  /* Styles for the form and its elements using CSS Grid for layout */
+  /* Styles for the form container using Flexbox */
   form {
     margin-bottom: 30px;
     padding: 20px;
@@ -45,9 +45,10 @@
     border-radius: 8px; /* More rounded corners */
     background-color: #fff; /* White form background */
     box-shadow: 0 2px 4px rgba(0 0 0 / 10%); /* Subtle shadow */
-    display: grid; /* Use Grid layout */
-    grid-template-columns: 1fr; /* Arrange items in a single column */
-    gap: 15px; /* Add space between grid items */
+    display: flex; /* Use Flexbox for the form container */
+    flex-direction: column; /* Stack form sections vertically */
+    gap: 20px; /* Add space between form sections */
+    /* Removed Grid properties */
   }
 
   /* Apply box-sizing for more predictable width */
@@ -55,23 +56,30 @@
     box-sizing: border-box;
   }
 
+  /* Style for each main section within the form (message, files, button) */
+  .form-section {
+      display: flex;
+      flex-direction: column; /* Stack elements within each section (label, input/textarea) */
+      gap: 8px; /* Space between label and input/textarea */
+  }
+
 
   label {
     display: block; /* Labels are block elements */
-    margin-bottom: 0; /* Remove margin bottom if using grid gap */
+    /* margin-bottom: 0; /* Gap handles spacing */ /* Removed due to flex gap */
     font-weight: bold;
     color: #555;
   }
 
   input[type="file"],
   textarea {
-    display: block; /* Ensure they take up their grid area */
-    margin-bottom: 0; /* Remove margin bottom if using grid gap */
+    display: block; /* Ensure they take up their flex area */
+    /* margin-bottom: 0; /* Gap handles spacing */ /* Removed due to flex gap */
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #f8f8f8;
-    width: 100%; /* Make them fill the grid column */
+    width: 100%; /* Make them fill the width of their parent flex item */
   }
 
   textarea {
@@ -89,23 +97,25 @@
         display: flex; /* Use Flexbox for side-by-side layout */
         gap: 20px; /* Space between the two file input groups */
         flex-wrap: wrap; /* Allow wrapping to a new line on smaller screens */
-        margin-top: 10px; /* Add some space above this section */
+        /* margin-top: 10px; /* Removed as parent gap handles spacing */
     }
 
-    /* Style for each individual file input group */
+    /* Style for each individual file input group (Flex items within file-inputs-container) */
     .file-input-group {
         flex: 1; /* Allow each group to grow and shrink equally */
         min-width: 250px; /* Minimum width before wrapping */
-        /* The label and input within this group will be block and take 100% width of this flex item */
+        display: flex; /* Use Flexbox for label and input within the group */
+        flex-direction: column; /* Stack label and input vertically within the group */
+        gap: 5px; /* Space between label and input within the group */
     }
 
-    /* Adjust margin for labels within the file input group */
+    /* Remove margin for labels within the file input group, using gap instead */
     .file-input-group label {
-        margin-bottom: 5px; /* Add a little space between the label and the file input */
+        margin-bottom: 0; /* Gap handles spacing */
     }
 
 
-  /* Revised CSS for input[type="submit"] - use max-width and margin: auto */
+  /* Revised CSS for input[type="submit"] - use max-width and margin: auto, placed in its own section */
   input[type="submit"] {
     padding: 10px 20px; /* More padding */
     background-color: #007bff; /* Primary blue color */
@@ -118,7 +128,8 @@
     display: block; /* Make it a block element to use margin: auto for centering */
     width: auto; /* Let width be determined by content/padding initially */
     max-width: 300px; /* Limit maximum width on desktop */
-    margin: 10px auto 0 auto; /* Center the block button and add top margin */
+    margin: 0 auto; /* Center the block button horizontally within its parent .form-section */
+    /* Removed margin-top here as parent section gap handles spacing */
   }
 
   input[type="submit"]:hover {
@@ -135,7 +146,7 @@
       width: 100%;
       background-color: #ddd;
       display: none; /* Initially hidden */
-      margin-top: 15px;
+      margin-top: 15px; /* Keep this margin */
       border-radius: 4px;
       overflow: hidden; /* Ensure the status bar stays within bounds */
   }
@@ -153,7 +164,7 @@
   }
 
    #uploadStatusText {
-      margin-top: 5px;
+      margin-top: 5px; /* Keep this margin */
       font-size: 0.9em;
       color: #555;
       display: none; /* Initially hidden */
@@ -163,7 +174,7 @@
 
   /* Styles for the response area */
   #responseContainer { /* Container for response header, button, and area */
-      margin-top: 20px;
+      margin-top: 20px; /* Keep this margin */
   }
 
   #responseHeader {
@@ -267,16 +278,23 @@
   @media (max-width: 600px) {
       body {
           margin: 10px;
+          padding-bottom: 100px; /* Increase padding for potentially taller footer on mobile */
       }
       form {
           padding: 15px;
       }
+      /* Button styles for mobile - full width, no centering */
       input[type="submit"] {
-          width: 100%; /* Full width button on small screens */
-          max-width: none; /* Remove max-width constraint on mobile */
-          margin: 10px 0 0 0; /* Remove auto margin on mobile */
-          text-align: center; /* Center text on mobile */
+          width: 100%;
+          max-width: none;
+          margin: 0; /* Remove auto margin */
+          text-align: center;
       }
+       /* Button section on mobile - remove centering as button is full width */
+      .button-section {
+          align-items: stretch; /* Allow button to stretch */
+      }
+
        /* Adjust file inputs to stack on mobile */
        .file-inputs-container {
            flex-direction: column; /* Stack items vertically on small screens */
@@ -285,6 +303,7 @@
        .file-input-group {
            min-width: auto; /* Remove min-width constraint on mobile */
            width: 100%; /* Ensure they take full width when stacked */
+           gap: 5px; /* Keep space between label and input */
        }
 
       #responseHeader {
@@ -298,7 +317,12 @@
         footer {
             font-size: 0.7em; /* Smaller font on small screens */
             padding: 8px 10px;
+            line-height: 1.4; /* Adjust line height for smaller font */
         }
+        footer p {
+            margin: 0; /* Ensure no extra margin */
+        }
+
   }
 
 </style>
@@ -311,24 +335,31 @@
 
 
 <form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" method="POST">
-  <label for="userMessage">Give me some points on what your resume should focus on, (e.g. clean it up, use x industry terms, etc.)</label>
-  <textarea name="userMessage" id="userMessage" rows="4" cols="50"></textarea>
+  <div class="form-section">
+    <label for="userMessage">Give me some points on what your resume should focus on, (e.g. clean it up, use x industry terms, etc.)</label>
+    <textarea name="userMessage" id="userMessage" rows="4" cols="50"></textarea>
+  </div>
 
-  <p>Upload files (text file &lt; 1mb)</p> {/* Added this paragraph. Used &lt; for < */}
+  <div class="form-section">
+    <p>Upload files (text file &lt; 1mb)</p> {/* Added this paragraph. Used &lt; for < */}
 
-  <div class="file-inputs-container"> {/* Added this div */}
-    <div class="file-input-group"> {/* Added this div */}
-      <label for="file1">Add Resume:</label> {/* Changed label text */}
-      <input type="file" name="file1" id="file1" required>
+    <div class="file-inputs-container">
+      <div class="file-input-group">
+        <label for="file1">Add Resume:</label> {/* Changed label text */}
+        <input type="file" name="file1" id="file1" required>
+      </div>
+      <div class="file-input-group">
+        <label for="file2">Add Job Description:</label> {/* Changed label text */}
+        <input type="file" name="file2" id="file2" required>
+      </div>
     </div>
-    <div class="file-input-group"> {/* Added this div */}
-      <label for="file2">Add Job Description:</label> {/* Changed label text */}
-      <input type="file" name="file2" id="file2" required>
-    </div>
-  </div> {/* Closed file-inputs-container */}
+  </div> {/* Closed file upload section */}
 
 
-  <input type="submit" value="Generate Resume">
+  <div class="form-section button-section">
+    <input type="submit" value="Generate Resume">
+  </div> {/* Closed button section */}
+
 </form>
 
 <div id="uploadStatusContainer">
