@@ -1,32 +1,193 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>File Upload to n8n</title>
+<title>rizzoooooo-may!</title>
 <style>
-  body { font-family: sans-serif; line-height: 1.6; margin: 20px; }
-  form { margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
-  input[type="file"] { display: block; margin-bottom: 10px; }
-  input[type="submit"] { padding: 10px 15px; background-color: #5cb85c; color: white; border: none; border-radius: 4px; cursor: pointer; }
-  input[type="submit"]:hover { background-color: #4cae4c; }
-  #responseArea { margin-top: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px; background-color: #f9f9f9; white-space: pre-wrap; word-wrap: break-word; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    line-height: 1.6;
+    margin: 20px;
+    background-color: #f4f7f6; /* Light background */
+    color: #333; /* Default text color */
+  }
+
+  h2 {
+    color: #333;
+    border-bottom: 2px solid #007bff; /* A little underline */
+    padding-bottom: 10px;
+  }
+
+  h3 {
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+
+  ol {
+    margin-bottom: 20px;
+    padding-left: 20px; /* Indent list */
+  }
+
+  ol li {
+      margin-bottom: 5px;
+  }
+
+
+  form {
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px; /* More rounded corners */
+    background-color: #fff; /* White form background */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
+
+  label {
+    display: block; /* Put labels on their own line */
+    margin-bottom: 8px; /* Space below labels */
+    font-weight: bold;
+    color: #555;
+  }
+
+  input[type="file"] {
+    display: block;
+    margin-bottom: 15px; /* More space below file inputs */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+  }
+
+  input[type="submit"] {
+    padding: 10px 20px; /* More padding */
+    background-color: #007bff; /* Primary blue color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+  }
+
+  input[type="submit"]:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+
+  #responseContainer { /* Container for response header, button, and area */
+      margin-top: 20px;
+  }
+
+  #responseHeader {
+      display: flex; /* Use flexbox to align header and button */
+      align-items: center; /* Vertically align */
+      gap: 15px; /* Space between header and button */
+      margin-bottom: 10px;
+  }
+
+  #copyButton {
+      padding: 5px 15px;
+      background-color: #6c757d; /* Grey color for button */
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+  }
+
+  #copyButton:hover {
+      background-color: #5a6268; /* Darker grey on hover */
+  }
+
+  #copyButton.copied { /* Style when text is copied */
+      background-color: #28a745; /* Green */
+      color: white;
+  }
+
+
+  #responseArea {
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #e9ecef; /* Light grey background for response */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    min-height: 50px; /* Give it a minimum height */
+    color: #333; /* Default text color */
+    overflow-x: auto; /* Add horizontal scroll if content is too wide */
+  }
+
+  #responseArea pre { /* Style for pre tag inside response area */
+      margin: 0; /* Remove default margin from pre */
+      padding: 0;
+  }
+
+
+  #responseArea p { /* Style for paragraph messages inside response area */
+      margin: 5px 0;
+      padding: 0;
+  }
+
+  #responseArea code { /* Style for code blocks inside response area */
+      background-color: #f8f9fa;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+      font-size: 0.9em;
+  }
+
+  /* Optional: Add some responsive adjustments */
+  @media (max-width: 600px) {
+      body {
+          margin: 10px;
+      }
+      form {
+          padding: 15px;
+      }
+      input[type="submit"] {
+          width: 100%; /* Full width button on small screens */
+          text-align: center;
+      }
+      #responseHeader {
+          flex-direction: column; /* Stack header and button on small screens */
+          align-items: flex-start;
+          gap: 5px;
+      }
+       #copyButton {
+           width: auto; /* Auto width on small screens */
+       }
+  }
+
 </style>
 </head>
 <body>
 
-<h2>Upload Files to n8n</h2>
+<h2>rizzoooooo-may!</h2>
+<p>customize your resume for each job application in 3 easy steps:</p>
+<ol>
+  <li>Upload your resume (text, word or pdf formats only)</li>
+  <li>Upload a copy job description (text, word or pdf formats only)</li>
+  <li>Submit, and get a customized resume text in seconds.</li>
+</ol>
 
-<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" method="POST">
-  <label for="file1">Select First File:</label>
+<form id="uploadForm" enctype="multipart/form-data" action="YOUR_N8N_WEBHOOK_URL" method="POST">
+  <label for="file1">Select First File (Resume):</label>
   <input type="file" name="file1" id="file1" required><br>
 
-  <label for="file2">Select Second File:</label>
+  <label for="file2">Select Second File (Job Description):</label>
   <input type="file" name="file2" id="file2" required><br>
 
   <input type="submit" value="Upload and Process">
 </form>
 
-<div id="responseArea">
-  </div>
+<div id="responseContainer" style="display: none;"> <div id="responseHeader">
+        <h3>Here's your customized resume. Edit as needed.</h3>
+        <button id="copyButton">Copy Text</button>
+    </div>
+    <div id="responseArea">
+      </div>
+</div>
+
 
 <script>
 document.getElementById('uploadForm').addEventListener('submit', function(event) {
@@ -34,10 +195,18 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
 
   const formData = new FormData(this); // Get form data including files
   const responseArea = document.getElementById('responseArea');
+  const responseContainer = document.getElementById('responseContainer');
+  const copyButton = document.getElementById('copyButton');
 
-  // Clear previous response and show loading indicator
+
+  // Show the response container and set initial processing message
+  responseContainer.style.display = 'block';
   responseArea.innerHTML = 'Processing...';
   responseArea.style.color = '#000'; // Reset text color
+  responseArea.style.backgroundColor = '#e9ecef'; // Reset background color
+  responseArea.style.borderColor = '#eee'; /* Reset border */
+  copyButton.style.display = 'none'; // Hide copy button during processing
+
 
   // IMPORTANT: Replace "YOUR_N8N_WEBHOOK_URL" with the actual URL from your n8n Webhook node
   fetch(this.action, { // Use the form's action URL (your n8n webhook)
@@ -47,27 +216,68 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
   .then(response => {
     // Check if the response is not OK (status code outside 200-299 range)
     if (!response.ok) {
-      // Read the response body as text to get potential error details from n8n
+      // Attempt to read response body as text for error details
       return response.text().then(text => {
         // Throw an error including the status and body text
         throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
       });
     }
     // If response is OK, parse it as JSON
-    return response.json(); // Assuming n8n responds with JSON
+    // Assuming n8n responds with JSON containing the customized resume text
+    // We expect the n8n webhook to return a JSON object like { "customizedResume": "..." }
+    return response.json();
   })
   .then(data => {
     // Display the response from n8n
-    responseArea.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+    // Assuming the customized resume text is in a key named "customizedResume"
+    const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); // Fallback to showing full JSON if key not found
+    responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Display text nicely formatted
     responseArea.style.color = '#333'; // Dark grey for success
+    responseArea.style.backgroundColor = '#d4edda'; // Light green for success background
+    responseArea.style.borderColor = '#c3e6cb'; /* Green border */
+    copyButton.style.display = 'inline-block'; // Show copy button on success
+    copyButton.textContent = 'Copy Text'; // Reset button text
+    copyButton.classList.remove('copied'); // Remove copied class
+
+
   })
   .catch(error => {
     console.error('Error:', error);
     // Display the error message
-    responseArea.innerHTML = '<p>Error uploading files:</p><p><code>' + error.message + '</code></p>';
-    responseArea.style.color = 'red'; // Red for error
+    responseArea.innerHTML = '<p>Error processing files:</p><p><code>' + error.message + '</code></p>';
+    responseArea.style.color = '#721c24'; // Dark red for error text
+    responseArea.style.backgroundColor = '#f8d7da'; // Light red for error background
+    responseArea.style.borderColor = '#f5c6cb'; /* Red border */
+    copyButton.style.display = 'none'; // Hide copy button on error
   });
 });
+
+// Add event listener for the copy button
+document.getElementById('copyButton').addEventListener('click', function() {
+    const responseArea = document.getElementById('responseArea');
+    // Select the text content within the <pre> tag inside responseArea
+    const textToCopy = responseArea.querySelector('pre') ? responseArea.querySelector('pre').innerText : responseArea.innerText;
+
+    navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+            // Optional: Provide user feedback
+            const button = document.getElementById('copyButton');
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+            setTimeout(() => {
+                button.textContent = 'Copy Text';
+                button.classList.remove('copied');
+            }, 2000); // Reset button text after 2 seconds
+        })
+        .catch(err => {
+            console.error('Failed to copy text: ', err);
+            // Optional: Provide user feedback on failure
+             const button = document.getElementById('copyButton');
+             button.textContent = 'Copy Failed!';
+             // You might add a temporary class for error styling
+        });
+});
+
 </script>
 
 </body>
