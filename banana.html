@@ -9,6 +9,7 @@
     margin: 20px;
     background-color: #f4f7f6; /* Light background */
     color: #333; /* Default text color */
+    padding-bottom: 80px; /* Add padding at the bottom to make space for the fixed footer */
   }
 
   h2 {
@@ -21,6 +22,10 @@
     color: #555;
     margin-top: 0;
     margin-bottom: 10px;
+  }
+
+  p { /* Style for general paragraphs */
+      margin-bottom: 15px;
   }
 
   ol {
@@ -39,7 +44,7 @@
     border: 1px solid #ccc;
     border-radius: 8px; /* More rounded corners */
     background-color: #fff; /* White form background */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    box-shadow: 0 2px 4px rgba(0 0 0 / 10%); /* Subtle shadow */
     display: grid; /* Use Grid layout */
     grid-template-columns: 1fr; /* Arrange items in a single column */
     gap: 15px; /* Add space between grid items */
@@ -89,8 +94,9 @@
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s ease; /* Smooth hover effect */
-    display: block; /* Make submit button a block element */
-    width: auto; /* Auto width for submit button */
+    /* Adjust display for grid - make it inline-block or inline for standard size */
+    display: inline-block; /* Use inline-block for standard button behavior */
+    width: auto; /* Let the width be determined by padding and content */
     margin-top: 10px; /* Add some space above submit button */
   }
 
@@ -198,6 +204,43 @@
       font-size: 0.9em;
   }
 
+    /* Styles for the submission counter */
+    #submissionCounter {
+        margin-top: 20px;
+        font-size: 1em;
+        color: #555;
+        text-align: center;
+    }
+
+
+  /* Styles for the footer */
+  footer {
+      position: fixed; /* Fix footer to the bottom */
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      background-color: #333; /* Dark background */
+      color: #f4f7f6; /* Light text */
+      text-align: center;
+      padding: 10px 20px;
+      font-size: 0.8em; /* Small font size */
+  }
+
+  footer p {
+      margin: 0; /* Remove margin from footer paragraph */
+      padding: 0;
+  }
+
+    footer a {
+        color: #f4f7f6; /* Light color for links in footer */
+        text-decoration: none; /* Remove underline */
+    }
+
+    footer a:hover {
+        text-decoration: underline; /* Underline on hover */
+    }
+
+
   /* Optional: Add some responsive adjustments */
   @media (max-width: 600px) {
       body {
@@ -218,6 +261,10 @@
        #copyButton {
            width: auto; /* Auto width on small screens */
        }
+        footer {
+            font-size: 0.7em; /* Smaller font on small screens */
+            padding: 8px 10px;
+        }
   }
 
 </style>
@@ -233,17 +280,18 @@
 </ol>
 
 <form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" method="POST">
+  <!-- Reordered: Additional Message first -->
+  <label for="userMessage">Give me some pointers on what I should focus on, eg. clean it up, use x industry terms, etc.</label>
+  <textarea name="userMessage" id="userMessage" rows="4" cols="50"></textarea>
+
   <label for="file1">Select Resume File <i>(text, word, pdf, under 1mb)</i>:</label>
-  <input type="file" name="file1" id="file1" required><br>
+  <input type="file" name="file1" id="file1" required>
 
   <label for="file2">Select Job Description File <i>(text, word, pdf, under 1mb)</i>:</label>
-  <input type="file" name="file2" id="file2" required><br>
-
-  <label for="userMessage">Additional Message:</label>
-  <textarea name="userMessage" id="userMessage" rows="4" cols="50"></textarea><br>
+  <input type="file" name="file2" id="file2" required>
 
 
-  <input type="submit" value="Upload and Process">
+  <input type="submit" value="Generate Resume">
 </form>
 
 <div id="uploadStatusContainer">
@@ -260,184 +308,216 @@
       </div>
 </div>
 
+<!-- HTML for the submission counter -->
+<p id="submissionCounter">Total Submissions: Loading...</p>
+
 
 <script>
+// Initialize the counter from local storage or start count
+const counterDisplay = document.getElementById('submissionCounter');
+const localStorageKey = 'rizzoooMaySubmissionCount';
+let currentCount = localStorage.getItem(localStorageKey);
+
+if (currentCount === null) {
+    currentCount = 431; // Start count if no previous count is found
+} else {
+    currentCount = parseInt(currentCount, 10); // Convert stored string to number
+}
+
+counterDisplay.textContent = `Total Submissions: ${currentCount}`;
+
+
 document.getElementById('uploadForm').addEventListener('submit', function(event) {
-  event.preventDefault(); // Prevent default form submission
+  event.preventDefault(); // Prevent default form submission
 
-  const form = this;
-  // FormData automatically collects all named form inputs, including both files and the textarea
-  const formData = new FormData(form);
+  const form = this;
+  // FormData automatically collects all named form inputs, including both files and the textarea
+  const formData = new FormData(form);
 
-  const responseArea = document.getElementById('responseArea');
-  const responseContainer = document.getElementById('responseContainer');
-  const copyButton = document.getElementById('copyButton');
-  const uploadStatusContainer = document.getElementById('uploadStatusContainer');
-  const uploadStatusBar = document.getElementById('uploadStatusBar');
-  const uploadStatusText = document.getElementById('uploadStatusText');
-  const submitButton = form.querySelector('input[type="submit"]');
-
-
-  // --- Reset and Show UI Elements ---
-  responseContainer.style.display = 'block';
-  responseArea.innerHTML = 'Preparing upload...';
-  responseArea.style.color = '#000';
-  responseArea.style.backgroundColor = '#e9ecef';
-  responseArea.style.borderColor = '#eee';
-  copyButton.style.display = 'none';
-  copyButton.textContent = 'Copy Text';
-  copyButton.classList.remove('copied');
-  submitButton.disabled = true; // Disable button during upload
-
-  // Show and reset status bar
-  uploadStatusContainer.style.display = 'block';
-  uploadStatusText.style.display = 'block';
-  uploadStatusBar.style.width = '0%';
-  uploadStatusBar.innerHTML = '0%';
-  uploadStatusText.innerHTML = 'Starting upload...';
+  const responseArea = document.getElementById('responseArea');
+  const responseContainer = document.getElementById('responseContainer');
+  const copyButton = document.getElementById('copyButton');
+  const uploadStatusContainer = document.getElementById('uploadStatusContainer');
+  const uploadStatusBar = document.getElementById('uploadStatusBar');
+  const uploadStatusText = document.getElementById('uploadStatusText');
+  const submitButton = form.querySelector('input[type="submit"]');
 
 
-  // --- Create and Configure XMLHttpRequest ---
-  const xhr = new XMLHttpRequest();
+  // --- Reset and Show UI Elements ---
+  responseContainer.style.display = 'block';
+  responseArea.innerHTML = 'Preparing upload...';
+  responseArea.style.color = '#000';
+  responseArea.style.backgroundColor = '#e9ecef';
+  responseArea.style.borderColor = '#eee';
+  copyButton.style.display = 'none';
+  copyButton.textContent = 'Copy Text';
+  copyButton.classList.remove('copied');
+  submitButton.disabled = true; // Disable button during upload
 
-  // --- Track Upload Progress ---
-  xhr.upload.onprogress = function(event) {
-    if (event.lengthComputable) {
-      const percentComplete = (event.loaded / event.total) * 100;
-      const percent = Math.round(percentComplete);
-      uploadStatusBar.style.width = percent + '%';
-      uploadStatusBar.innerHTML = percent + '%';
-      uploadStatusText.innerHTML = `Uploading file(s)... ${percent}%`; // Indicate multiple files now
-      responseArea.innerHTML = `Uploading file(s)... ${percent}%`; // Optional: update response area during upload
+  // Show and reset status bar
+  uploadStatusContainer.style.display = 'block';
+  uploadStatusText.style.display = 'block';
+  uploadStatusBar.style.width = '0%';
+  uploadStatusBar.innerHTML = '0%';
+  uploadStatusText.innerHTML = 'Starting upload...';
 
-    }
+
+  // --- Create and Configure XMLHttpRequest ---
+  const xhr = new XMLHttpRequest();
+
+  // --- Track Upload Progress ---
+  xhr.upload.onprogress = function(event) {
+    if (event.lengthComputable) {
+      const percentComplete = (event.loaded / event.total) * 100;
+      const percent = Math.round(percentComplete);
+      uploadStatusBar.style.width = percent + '%';
+      uploadStatusBar.innerHTML = percent + '%';
+      uploadStatusText.innerHTML = `Uploading file(s)... ${percent}%`; // Indicate multiple files now
+      responseArea.innerHTML = `Uploading file(s)... ${percent}%`; // Optional: update response area during upload
+
+    }
+  };
+
+  // --- Handle Request Completion (Success or Failure) ---
+  xhr.onload = function() {
+    // Request has completed (either success or failure status)
+
+    // Hide status bar and text
+    uploadStatusContainer.style.display = 'none';
+    uploadStatusText.style.display = 'none';
+    submitButton.disabled = false; // Re-enable submit button
+
+    if (xhr.status >= 200 && xhr.status < 300) {
+      // Request was successful (HTTP status 2xx)
+
+        // --- Increment and save counter on successful submission ---
+        currentCount++;
+        localStorage.setItem(localStorageKey, currentCount);
+        counterDisplay.textContent = `Total Submissions: ${currentCount}`;
+        // --- End counter update ---
+
+
+      try {
+        const data = JSON.parse(xhr.responseText); // Attempt to parse the JSON response from client
+
+        // Display the response from client (assuming JSON with customizedResume key)
+        const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); // Use customizedResume if present, fallback to full JSON
+
+        responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Display text nicely formatted
+        responseArea.style.color = '#333'; // Dark grey for success
+        responseArea.style.backgroundColor = '#d4edda'; // Light green for success background
+        responseArea.style.borderColor = '#c3e6cb'; // Green border
+        copyButton.style.display = 'inline-block'; // Show the copy button
+
+
+      } catch (e) {
+        // Failed to parse the JSON response (e.g., client returned plain text or invalid JSON on success)
+        console.error('Error parsing JSON response:', e, 'Response:', xhr.responseText);
+        responseArea.innerHTML = '<p>Error: Received unexpected response from client.</p><p><code>' + xhr.responseText.substring(0, 500) + '...</code></p>'; // Display partial response text
+        responseArea.style.color = '#721c24'; // Dark red for error
+        responseArea.style.backgroundColor = '#f8d7da'; // Light red for error background
+        responseArea.style.borderColor = '#f5c6cb';
+      }
+
+    } else {
+      // Request failed (HTTP status is not 2xx, e.g., 404, 500 from client)
+      console.error('HTTP error!', xhr.status, xhr.responseText);
+      let errorMessage = `HTTP error! status: ${xhr.status}`;
+       try {
+           // Attempt to parse client's error response if it's JSON
+           const errorResponse = JSON.parse(xhr.responseText);
+           if (errorResponse.message) {
+              errorMessage += `, message: ${errorResponse.message}`;
+           } else {
+               errorMessage += `, body: ${xhr.responseText}`;
+           }
+       } catch (e) {
+           // If response isn't JSON, just include the status and response text
+           errorMessage += `, body: ${xhr.responseText}`;
+       }
+
+      responseArea.innerHTML = '<p>Error processing files:</p><p><code>' + errorMessage + '</code></p>';
+      responseArea.style.color = '#721c24';
+      responseArea.style.backgroundColor = '#f8d7da';
+      responseArea.style.borderColor = '#f5c6cb';
+    }
   };
 
-  // --- Handle Request State Changes (like completion) ---
-  xhr.onload = function() {
-    // Request has completed (either success or failure status)
 
-    // Hide status bar and text
-    uploadStatusContainer.style.display = 'none';
-    uploadStatusText.style.display = 'none';
-    submitButton.disabled = false; // Re-enable submit button
-
-    if (xhr.status >= 200 && xhr.status < 300) {
-      // Request was successful (HTTP status 2xx)
-      try {
-        const data = JSON.parse(xhr.responseText); // Attempt to parse the JSON response from client
-
-        // Display the response from client (assuming JSON with customizedResume key)
-        const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); // Use customizedResume if present, fallback to full JSON
-
-        responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Display text nicely formatted
-        responseArea.style.color = '#333'; // Dark grey for success
-        responseArea.style.backgroundColor = '#d4edda'; // Light green for success background
-        responseArea.style.borderColor = '#c3e6cb'; // Green border
-        copyButton.style.display = 'inline-block'; // Show the copy button
+  // --- Handle Network Errors (like connection refused) ---
+  xhr.onerror = function() {
+    console.error('Network error!');
+    // Hide status bar and text
+    uploadStatusContainer.style.display = 'none';
+    uploadStatusText.style.display = 'none';
+    submitButton.disabled = false; // Re-enable submit button
 
 
-      } catch (e) {
-        // Failed to parse the JSON response (e.g., client returned plain text or invalid JSON on success)
-        console.error('Error parsing JSON response:', e, 'Response:', xhr.responseText);
-        responseArea.innerHTML = '<p>Error: Received unexpected response from client.</p><p><code>' + xhr.responseText.substring(0, 500) + '...</code></p>'; // Display partial response text
-        responseArea.style.color = '#721c24'; // Dark red for error
-        responseArea.style.backgroundColor = '#f8d7da'; // Light red for error background
-        responseArea.style.borderColor = '#f5c6cb';
-      }
+    responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
+    responseArea.style.color = '#721c24';
+    responseArea.style.backgroundColor = '#f8d7da';
+    responseArea.style.borderColor = '#f5c6cb';
+  };
 
-    } else {
-      // Request failed (HTTP status is not 2xx, e.g., 404, 500 from client)
-      console.error('HTTP error!', xhr.status, xhr.responseText);
-      let errorMessage = `HTTP error! status: ${xhr.status}`;
-       try {
-           // Attempt to parse client's error response if it's JSON
-           const errorResponse = JSON.parse(xhr.responseText);
-           if (errorResponse.message) {
-              errorMessage += `, message: ${errorResponse.message}`;
-           } else {
-               errorMessage += `, body: ${xhr.responseText}`;
-           }
-       } catch (e) {
-           // If response isn't JSON, just include the status and response text
-           errorMessage += `, body: ${xhr.responseText}`;
-       }
+   // --- Handle Request Timeout ---
+   xhr.ontimeout = function() {
+       console.error('Request timed out!');
+       uploadStatusContainer.style.display = 'none';
+       uploadStatusText.style.display = 'none';
+       submitButton.disabled = false;
 
-      responseArea.innerHTML = '<p>Error processing files:</p><p><code>' + errorMessage + '</code></p>';
-      responseArea.style.color = '#721c24';
-      responseArea.style.backgroundColor = '#f8d7da';
-      responseArea.style.borderColor = '#f5c6cb';
-    }
-  };
-
-  // --- Handle Network Errors (like connection refused) ---
-  xhr.onerror = function() {
-    console.error('Network error!');
-    // Hide status bar and text
-    uploadStatusContainer.style.display = 'none';
-    uploadStatusText.style.display = 'none';
-    submitButton.disabled = false; // Re-enable submit button
+       responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
+       responseArea.style.color = '#721c24';
+       responseArea.style.backgroundColor = '#f8d7da';
+       responseArea.style.borderColor = '#f5c6cb';
+   };
 
 
-    responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
-    responseArea.style.color = '#721c24';
-    responseArea.style.backgroundColor = '#f8d7da';
-    responseArea.style.borderColor = '#f5c6cb';
-  };
+  // --- Open and Send the Request ---
+  // IMPORTANT: Replace "https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" with your actual production client webhook URL
+  xhr.open(this.method, this.action); // Use the form's method (POST) and action URL
+  // When sending FormData with XHR, the browser automatically sets the Content-Type
+  // and boundary header correctly. Do NOT set Content-Type manually here.
 
-   // --- Handle Request Timeout ---
-   xhr.ontimeout = function() {
-       console.error('Request timed out!');
-       uploadStatusContainer.style.display = 'none';
-       uploadStatusText.style.display = 'none';
-       submitButton.disabled = false;
-
-       responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
-       responseArea.style.color = '#721c24';
-       responseArea.style.backgroundColor = '#f8d7da';
-       responseArea.style.borderColor = '#f5c6cb';
-   };
+  xhr.send(formData); // Send the FormData object containing both files and textarea data
 
 
-  // --- Open and Send the Request ---
-  // IMPORTANT: Replace "YOUR_CLIENT_WEBHOOK_URL" with the actual URL for your backend processing
-  xhr.open(this.method, this.action); // Use the form's method (POST) and action URL
-  // When sending FormData with XHR, the browser automatically sets the Content-Type
-  // and boundary header correctly. Do NOT set Content-Type manually here.
-
-  xhr.send(formData); // Send the FormData object containing both files and textarea data
-
-
-  // Optional: Update response area immediately after sending
-  responseArea.innerHTML = 'Starting upload...';
+  // Optional: Update response area immediately after sending
+  responseArea.innerHTML = 'Starting upload...';
 
 
 });
 
 // Add event listener for the copy button (remains the same)
 document.getElementById('copyButton').addEventListener('click', function() {
-    const responseArea = document.getElementById('responseArea');
-    // Get ALL text content from the response area div
-    const textToCopy = responseArea.innerText; // Use innerText for simplicity
+    const responseArea = document.getElementById('responseArea');
+    // Get ALL text content from the response area div
+    const textToCopy = responseArea.innerText; // Use innerText for simplicity
 
-    navigator.clipboard.writeText(textToCopy)
-        .then(() => {
-            const button = document.getElementById('copyButton');
-            button.textContent = 'Copied!';
-            button.classList.add('copied');
-            setTimeout(() => {
-                button.textContent = 'Copy Text';
-                button.classList.remove('copied');
-            }, 2000);
-        })
-        .catch(err => {
-            console.error('Failed to copy text: ', err);
-             const button = document.getElementById('copyButton');
-             button.textContent = 'Copy Failed!';
-        });
+    navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+            const button = document.getElementById('copyButton');
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+            setTimeout(() => {
+                button.textContent = 'Copy Text';
+                button.classList.remove('copied');
+            }, 2000);
+        })
+        .catch(err => {
+            console.error('Failed to copy text: ', err);
+             const button = document.getElementById('copyButton');
+             button.textContent = 'Copy Failed!';
+        });
 });
 
 </script>
+
+<!-- Footer -->
+<footer>
+    <p>Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Reach out: masoud.made [@] gmail.com — <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a></p>
+</footer>
+
 
 </body>
 </html>
