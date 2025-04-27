@@ -312,9 +312,9 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
     if (xhr.status >= 200 && xhr.status < 300) {
       // Request was successful (HTTP status 2xx)
       try {
-        const data = JSON.parse(xhr.responseText); // Attempt to parse the JSON response from n8n
+        const data = JSON.parse(xhr.responseText); // Attempt to parse the JSON response
 
-        // Display the response from n8n (assuming JSON with customizedResume key)
+        // Display the response (assuming JSON with customizedResume key)
         const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); // Use customizedResume if present, fallback to full JSON
 
         responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Display text nicely formatted
@@ -325,7 +325,7 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
 
 
       } catch (e) {
-        // Failed to parse the JSON response (e.g., n8n returned plain text or invalid JSON on success)
+        // Failed to parse the JSON response (e.g., client returned plain text or invalid JSON on success)
         console.error('Error parsing JSON response:', e, 'Response:', xhr.responseText);
         responseArea.innerHTML = '<p>Error: Received unexpected response from server.</p><p><code>' + xhr.responseText.substring(0, 500) + '...</code></p>'; // Display partial response text
         responseArea.style.color = '#721c24'; // Dark red for error
@@ -334,11 +334,11 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
       }
 
     } else {
-      // Request failed (HTTP status is not 2xx, e.g., 404, 500 from n8n)
+      // Request failed (HTTP status is not 2xx, e.g., 404, 500 from client)
       console.error('HTTP error!', xhr.status, xhr.responseText);
       let errorMessage = `HTTP error! status: ${xhr.status}`;
        try {
-           // Attempt to parse n8n's error response if it's JSON
+           // Attempt to parse client's error response if it's JSON
            const errorResponse = JSON.parse(xhr.responseText);
            if (errorResponse.message) {
               errorMessage += `, message: ${errorResponse.message}`;
@@ -387,7 +387,7 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
 
 
   // --- Open and Send the Request ---
-  // IMPORTANT: Replace "YOUR_N8N_WEBHOOK_URL" with the actual URL from your n8n Webhook node
+  // IMPORTANT: Replace "YOUR_client_WEBHOOK_URL" with the actual URL from your client Webhook node
   xhr.open(this.method, this.action); // Use the form's method (POST) and action URL
   // When sending FormData with XHR, the browser automatically sets the Content-Type
   // and boundary header correctly. Do NOT set Content-Type manually here.
