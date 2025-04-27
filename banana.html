@@ -330,7 +330,7 @@
   </div>
 
   <div class="form-section">
-    <p>Upload files (text file &lt; 1mb)</p>
+    <p><b>Upload files (text file &lt; 1mb)</b></p>
 
     <div class="file-inputs-container">
       <div class="file-input-group">
@@ -367,217 +367,238 @@
 
 
 <script>
-// Initialize the counter from local storage or start count
-// Target the span element within the footer
-const counterDisplaySpan = document.getElementById('submissionCountDisplay');
-const localStorageKey = 'rizzoooMaySubmissionCount';
-let currentCount = localStorage.getItem(localStorageKey);
+// Global variable for the counter span element
+let counterDisplaySpan = null;
 
-if (currentCount === null) {
-    currentCount = 431; // Start count if no previous count is found
-} else {
-    currentCount = parseInt(currentCount, 10); // Convert stored string to number
-}
+// Wait for the DOM to be fully loaded before initializing the counter
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the counter span element once the DOM is loaded
+    counterDisplaySpan = document.getElementById('submissionCountDisplay');
 
-// Update the text content of the span
-if (counterDisplaySpan) { // Check if the element exists before trying to update
+    // Check if the element was found
+    if (!counterDisplaySpan) {
+        console.error("Submission count display span not found in footer! Counter will not display.");
+        // Exit the function if the element is not found
+        return;
+    }
+
+    const localStorageKey = 'rizzoooMaySubmissionCount';
+    // Retrieve the current count from local storage
+    let currentCount = localStorage.getItem(localStorageKey);
+
+    // If no count is found in local storage, initialize it
+    if (currentCount === null || isNaN(parseInt(currentCount, 10))) { // Added check for NaN just in case
+        currentCount = 431; // Start count if no previous valid count is found
+    } else {
+        currentCount = parseInt(currentCount, 10); // Convert stored string to number
+    }
+
+    // Update the text content of the span with the current count
     counterDisplaySpan.textContent = currentCount;
-} else {
-    console.error("Submission count display span not found in footer!");
-}
+
+    // Attach the form submit listener
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const form = this;
+        const formData = new FormData(form);
+
+        const responseArea = document.getElementById('responseArea');
+        const responseContainer = document.getElementById('responseContainer');
+        const copyButton = document.getElementById('copyButton');
+        const uploadStatusContainer = document.getElementById('uploadStatusContainer');
+        const uploadStatusBar = document.getElementById('uploadStatusBar');
+        const uploadStatusText = document.getElementById('uploadStatusText');
+        const submitButton = form.querySelector('input[type="submit"]');
 
 
-document.getElementById('uploadForm').addEventListener('submit', function(event) {
-  event.preventDefault(); // Prevent default form submission
+        // --- Reset and Show UI Elements ---
+        responseContainer.style.display = 'block';
+        responseArea.innerHTML = 'Preparing upload...';
+        responseArea.style.color = '#000';
+        responseArea.style.backgroundColor = '#e9ecef';
+        responseArea.style.borderColor = '#eee';
+        copyButton.style.display = 'none';
+        copyButton.textContent = 'Copy Text';
+        copyButton.classList.remove('copied');
+        submitButton.disabled = true; // Disable button during upload
 
-  const form = this;
-  // FormData automatically collects all named form inputs, including both files and the textarea
-  const formData = new FormData(form);
-
-  const responseArea = document.getElementById('responseArea');
-  const responseContainer = document.getElementById('responseContainer');
-  const copyButton = document.getElementById('copyButton');
-  const uploadStatusContainer = document.getElementById('uploadStatusContainer');
-  const uploadStatusBar = document.getElementById('uploadStatusBar');
-  const uploadStatusText = document.getElementById('uploadStatusText');
-  const submitButton = form.querySelector('input[type="submit"]');
-
-
-  // --- Reset and Show UI Elements ---
-  responseContainer.style.display = 'block';
-  responseArea.innerHTML = 'Preparing upload...';
-  responseArea.style.color = '#000';
-  responseArea.style.backgroundColor = '#e9ecef';
-  responseArea.style.borderColor = '#eee';
-  copyButton.style.display = 'none';
-  copyButton.textContent = 'Copy Text';
-  copyButton.classList.remove('copied');
-  submitButton.disabled = true; // Disable button during upload
-
-  // Show and reset status bar
-  uploadStatusContainer.style.display = 'block';
-  uploadStatusText.style.display = 'block';
-  uploadStatusBar.style.width = '0%';
-  uploadStatusBar.innerHTML = '0%';
-  uploadStatusText.innerHTML = 'Starting upload...';
+        // Show and reset status bar
+        uploadStatusContainer.style.display = 'block';
+        uploadStatusText.style.display = 'block';
+        uploadStatusBar.style.width = '0%';
+        uploadStatusBar.innerHTML = '0%';
+        uploadStatusText.innerHTML = 'Starting upload...';
 
 
-  // --- Create and Configure XMLHttpRequest ---
-  const xhr = new XMLHttpRequest();
+        // --- Create and Configure XMLHttpRequest ---
+        const xhr = new XMLHttpRequest();
 
-  // --- Track Upload Progress ---
-  xhr.upload.onprogress = function(event) {
-    if (event.lengthComputable) {
-      const percentComplete = (event.loaded / event.total) * 100;
-      const percent = Math.round(percentComplete);
-      uploadStatusBar.style.width = percent + '%';
-      uploadStatusBar.innerHTML = percent + '%';
-      uploadStatusText.innerHTML = `Uploading file(s)... ${percent}%`; // Indicate multiple files now
-      responseArea.innerHTML = `Uploading file(s)... ${percent}%`; // Optional: update response area during upload
+        // --- Track Upload Progress ---
+        xhr.upload.onprogress = function(event) {
+            if (event.lengthComputable) {
+                const percentComplete = (event.loaded / event.total) * 100;
+                const percent = Math.round(percentComplete);
+                uploadStatusBar.style.width = percent + '%';
+                uploadStatusBar.innerHTML = percent + '%';
+                uploadStatusText.innerHTML = `Uploading file(s)... ${percent}%`; // Indicate multiple files now
+                responseArea.innerHTML = `Uploading file(s)... ${percent}%`; // Optional: update response area during upload
 
-    }
-  };
+            }
+        };
 
-  // --- Handle Request Completion (Success or Failure) ---
-  xhr.onload = function() {
-    // Request has completed (either success or failure status)
+        // --- Handle Request Completion (Success or Failure) ---
+        xhr.onload = function() {
+            // Request has completed (either success or failure status)
 
-    // Hide status bar and text
-    uploadStatusContainer.style.display = 'none';
-    uploadStatusText.style.display = 'none';
-    submitButton.disabled = false; // Re-enable submit button
+            // Hide status bar and text
+            uploadStatusContainer.style.display = 'none';
+            uploadStatusText.style.display = 'none';
+            submitButton.disabled = false; // Re-enable submit button
 
-    if (xhr.status >= 200 && xhr.status < 300) {
-      // Request was successful (HTTP status 2xx)
+            if (xhr.status >= 200 && xhr.status < 300) {
+                // Request was successful (HTTP status 2xx)
 
-        // --- Increment and save counter on successful submission ---
-        currentCount++;
-        localStorage.setItem(localStorageKey, currentCount);
-        // Update the text content of the span in the footer
-        if (counterDisplaySpan) { // Check if the element exists before trying to update
-           counterDisplaySpan.textContent = currentCount;
-        }
-        // --- End counter update ---
-
-
-      try {
-        const data = JSON.parse(xhr.responseText); // Attempt to parse the JSON response from client
-
-        // Display the response from client (assuming JSON with customizedResume key)
-        const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); // Use customizedResume if present, fallback to full JSON
-
-        responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Display text nicely formatted
-        responseArea.style.color = '#333'; // Dark grey for success
-        responseArea.style.backgroundColor = '#d4edda'; // Light green for success background
-        responseArea.style.borderColor = '#c3e6cb'; // Green border
-        copyButton.style.display = 'inline-block'; // Show the copy button
-
-
-      } catch (e) {
-        // Failed to parse the JSON response (e.g., client returned plain text or invalid JSON on success)
-        console.error('Error parsing JSON response:', e, 'Response:', xhr.responseText);
-        responseArea.innerHTML = '<p>Error: Received unexpected response from client.</p><p><code>' + xhr.responseText.substring(0, 500) + '...</code></p>'; // Display partial response text
-        responseArea.style.color = '#721c24'; // Dark red for error
-        responseArea.style.backgroundColor = '#f8d7da'; // Light red for error background
-        responseArea.style.borderColor = '#f5c6cb';
-      }
-
-    } else {
-      // Request failed (HTTP status is not 2xx, e.g., 404, 500 from client)
-      console.error('HTTP error!', xhr.status, xhr.responseText);
-      let errorMessage = `HTTP error! status: ${xhr.status}`;
-       try {
-           // Attempt to parse client's error response if it's JSON
-           const errorResponse = JSON.parse(xhr.responseText);
-           if (errorResponse.message) {
-              errorMessage += `, message: ${errorResponse.message}`;
-           } else {
-               errorMessage += `, body: ${xhr.responseText}`;
-           }
-       } catch (e) {
-           // If response isn't JSON, just include the status and response text
-           errorMessage += `, body: ${xhr.responseText}`;
-       }
-
-      responseArea.innerHTML = '<p>Error processing files:</p><p><code>' + errorMessage + '</code></p>';
-      responseArea.style.color = '#721c24';
-      responseArea.style.backgroundColor = '#f8d7da';
-      responseArea.style.borderColor = '#f5c6cb';
-    }
-  };
+                // --- Increment and save counter on successful submission ---
+                // Only increment if the counter span was found initially
+                if (counterDisplaySpan) {
+                    // Ensure currentCount is a number before incrementing
+                    if (typeof currentCount !== 'number' || isNaN(currentCount)) {
+                         // If for some reason currentCount isn't a number here,
+                         // re-read it from local storage or re-initialize
+                         currentCount = localStorage.getItem(localStorageKey);
+                         if (currentCount === null || isNaN(parseInt(currentCount, 10))) {
+                            currentCount = 431;
+                         } else {
+                             currentCount = parseInt(currentCount, 10);
+                         }
+                    }
+                    currentCount++;
+                    localStorage.setItem(localStorageKey, currentCount);
+                    // Update the text content of the span in the footer
+                    counterDisplaySpan.textContent = currentCount;
+                }
+                // --- End counter update ---
 
 
-  // --- Handle Network Errors (like connection refused) ---
-  xhr.onerror = function() {
-    console.error('Network error!');
-    // Hide status bar and text
-    uploadStatusContainer.style.display = 'none';
-    uploadStatusText.style.display = 'none';
-    submitButton.disabled = false; // Re-enable submit button
+                try {
+                    const data = JSON.parse(xhr.responseText); // Attempt to parse the JSON response from client
+
+                    // Display the response from client (assuming JSON with customizedResume key)
+                    const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); // Use customizedResume if present, fallback to full JSON
+
+                    responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Display text nicely formatted
+                    responseArea.style.color = '#333'; // Dark grey for success
+                    responseArea.style.backgroundColor = '#d4edda'; // Light green for success background
+                    responseArea.style.borderColor = '#c3e6cb'; // Green border
+                    copyButton.style.display = 'inline-block'; // Show the copy button
 
 
-    responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
-    responseArea.style.color = '#721c24';
-    responseArea.style.backgroundColor = '#f8d7da';
-    responseArea.style.borderColor = '#f5c6cb';
-  };
+                } catch (e) {
+                    // Failed to parse the JSON response (e.g., client returned plain text or invalid JSON on success)
+                    console.error('Error parsing JSON response:', e, 'Response:', xhr.responseText);
+                    responseArea.innerHTML = '<p>Error: Received unexpected response from client.</p><p><code>' + xhr.responseText.substring(0, 500) + '...</code></p>'; // Display partial response text
+                    responseArea.style.color = '#721c24'; // Dark red for error
+                    responseArea.style.backgroundColor = '#f8d7da'; // Light red for error background
+                    responseArea.style.borderColor = '#f5c6cb';
+                }
 
-   // --- Handle Request Timeout ---
-   xhr.ontimeout = function() {
-       console.error('Request timed out!');
-       uploadStatusContainer.style.display = 'none';
-       uploadStatusText.style.display = 'none';
-       submitButton.disabled = false;
+            } else {
+                // Request failed (HTTP status is not 2xx, e.g., 404, 500 from client)
+                console.error('HTTP error!', xhr.status, xhr.responseText);
+                let errorMessage = `HTTP error! status: ${xhr.status}`;
+                try {
+                    // Attempt to parse client's error response if it's JSON
+                    const errorResponse = JSON.parse(xhr.responseText);
+                    if (errorResponse.message) {
+                        errorMessage += `, message: ${errorResponse.message}`;
+                    } else {
+                        errorMessage += `, body: ${xhr.responseText}`;
+                    }
+                } catch (e) {
+                    // If response isn't JSON, just include the status and response text
+                    errorMessage += `, body: ${xhr.responseText}`;
+                }
 
-       responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
-       responseArea.style.color = '#721c24';
-       responseArea.style.backgroundColor = '#f8d7da';
-       responseArea.style.borderColor = '#f5c6cb';
-   };
+                responseArea.innerHTML = '<p>Error processing files:</p><p><code>' + errorMessage + '</code></p>';
+                responseArea.style.color = '#721c24';
+                responseArea.style.backgroundColor = '#f8d7da';
+                responseArea.style.borderColor = '#f5c6cb';
+            }
+        };
+
+        // --- Handle Network Errors (like connection refused) ---
+        xhr.onerror = function() {
+            console.error('Network error!');
+            // Hide status bar and text
+            uploadStatusContainer.style.display = 'none';
+            uploadStatusText.style.display = 'none';
+            submitButton.disabled = false; // Re-enable submit button
 
 
-  // --- Open and Send the Request ---
-  // IMPORTANT: Replace "https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" with your actual production client webhook URL
-  xhr.open(this.method, this.action); // Use the form's method (POST) and action URL
-  // When sending FormData with XHR, the browser automatically sets the Content-Type
-  // and boundary header correctly. Do NOT set Content-Type manually here.
+            responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
+            responseArea.style.color = '#721c24';
+            responseArea.style.backgroundColor = '#f8d7da';
+            responseArea.style.borderColor = '#f5c6cb';
+        };
 
-  xhr.send(formData); // Send the FormData object containing both files and textarea data
+        // --- Handle Request Timeout ---
+        xhr.ontimeout = function() {
+            console.error('Request timed out!');
+            uploadStatusContainer.style.display = 'none';
+            uploadStatusText.style.display = 'none';
+            submitButton.disabled = false;
+
+            responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
+            responseArea.style.color = '#721c24';
+            responseArea.style.backgroundColor = '#f8d7da';
+            responseArea.style.borderColor = '#f5c6cb';
+        };
 
 
-  // Optional: Update response area immediately after sending
-  responseArea.innerHTML = 'Starting upload...';
+        // --- Open and Send the Request ---
+        // IMPORTANT: Replace "https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" with your actual production client webhook URL
+        xhr.open(this.method, this.action); // Use the form's method (POST) and action URL
+        // When sending FormData with XHR, the browser automatically sets the Content-Type
+        // and boundary header correctly. Do NOT set Content-Type manually here.
+
+        xhr.send(formData); // Send the FormData object containing both files and textarea data
 
 
-});
+        // Optional: Update response area immediately after sending
+        responseArea.innerHTML = 'Starting upload...';
+
+
+    });
+}); // End DOMContentLoaded listener
 
 // Add event listener for the copy button (remains the same)
 document.getElementById('copyButton').addEventListener('click', function() {
-    const responseArea = document.getElementById('responseArea');
-    // Get ALL text content from the response area div
-    const textToCopy = responseArea.innerText; // Use innerText for simplicity
+    const responseArea = document.getElementById('responseArea');
+    // Get ALL text content from the response area div
+    const textToCopy = responseArea.innerText; // Use innerText for simplicity
 
-    navigator.clipboard.writeText(textToCopy)
-        .then(() => {
-            const button = document.getElementById('copyButton');
-            button.textContent = 'Copied!';
-            button.classList.add('copied');
-            setTimeout(() => {
-                button.textContent = 'Copy Text';
-                button.classList.remove('copied');
-            }, 2000);
-        })
-        .catch(err => {
-            console.error('Failed to copy text: ', err);
-             const button = document.getElementById('copyButton');
-             button.textContent = 'Copy Failed!';
-        });
+    navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+            const button = document.getElementById('copyButton');
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+            setTimeout(() => {
+                button.textContent = 'Copy Text';
+                button.classList.remove('copied');
+            }, 2000);
+        })
+        .catch(err => {
+            console.error('Failed to copy text: ', err);
+             const button = document.getElementById('copyButton');
+             button.textContent = 'Copy Failed!';
+        });
 });
 
 </script>
 
 <footer>
-    <p>Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Reach out: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Total Submissions: <span id="submissionCountDisplay">Loading...</span></p>
+    <p>Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Reach out: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Last submission count: <span id="submissionCountDisplay">Loading...</span></p>
 </footer>
 
 
