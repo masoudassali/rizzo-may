@@ -28,13 +28,13 @@
       margin-bottom: 15px;
   }
 
-  ol {
-    margin-bottom: 20px;
-    padding-left: 20px; /* Indent list */
+  ol { /* Removed as per user request */
+    /* margin-bottom: 20px; */
+    /* padding-left: 20px; */
   }
 
-  ol li {
-      margin-bottom: 5px;
+  ol li { /* Removed as per user request */
+      /* margin-bottom: 5px; */
   }
 
   /* Styles for the form and its elements using CSS Grid for layout */
@@ -83,6 +83,26 @@
    input[type="file"] {
        resize: none;
    }
+
+    /* Styles for the container holding side-by-side file inputs */
+    .file-inputs-container {
+        display: flex; /* Use Flexbox for side-by-side layout */
+        gap: 20px; /* Space between the two file input groups */
+        flex-wrap: wrap; /* Allow wrapping to a new line on smaller screens */
+        margin-top: 10px; /* Add some space above this section */
+    }
+
+    /* Style for each individual file input group */
+    .file-input-group {
+        flex: 1; /* Allow each group to grow and shrink equally */
+        min-width: 250px; /* Minimum width before wrapping */
+        /* The label and input within this group will be block and take 100% width of this flex item */
+    }
+
+    /* Adjust margin for labels within the file input group */
+    .file-input-group label {
+        margin-bottom: 5px; /* Add a little space between the label and the file input */
+    }
 
 
   /* Revised CSS for input[type="submit"] - use max-width and margin: auto */
@@ -257,6 +277,16 @@
           margin: 10px 0 0 0; /* Remove auto margin on mobile */
           text-align: center; /* Center text on mobile */
       }
+       /* Adjust file inputs to stack on mobile */
+       .file-inputs-container {
+           flex-direction: column; /* Stack items vertically on small screens */
+           gap: 15px; /* Adjust gap for vertical stacking */
+       }
+       .file-input-group {
+           min-width: auto; /* Remove min-width constraint on mobile */
+           width: 100%; /* Ensure they take full width when stacked */
+       }
+
       #responseHeader {
           flex-direction: column; /* Stack header and button on small screens */
           align-items: flex-start;
@@ -276,22 +306,26 @@
 <body>
 
 <h2>rizzooo-may!</h2>
-<p><b>Free <i>(beta): </i></b>Customize your resume for job applications. 3 simple steps:</p>
-<ol>
-  <li>Upload your resume</li>
-  <li>Upload a copy job description</li>
-  <li>Submit, and get a customized resume text in seconds.</li>
-</ol>
+<p><b>Free <i>(beta): </i></b>Customize your resume for job applications.<br>3 simple steps:</p> {/* Added <br> */}
+{/* Removed <ol> block */}
+
 
 <form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" method="POST">
-  <label for="userMessage">Give me some pointers on what I should focus on, eg. clean it up, use x industry terms, etc.</label>
+  <label for="userMessage">Give me some points on what your resume should focus on, (e.g. clean it up, use x industry terms, etc.)</label>
   <textarea name="userMessage" id="userMessage" rows="4" cols="50"></textarea>
 
-  <label for="file1">Select Resume File <i>(text, word, pdf, under 1mb)</i>:</label>
-  <input type="file" name="file1" id="file1" required>
+  <p>Upload files (text file &lt; 1mb)</p> {/* Added this paragraph. Used &lt; for < */}
 
-  <label for="file2">Select Job Description File <i>(text, word, pdf, under 1mb)</i>:</label>
-  <input type="file" name="file2" id="file2" required>
+  <div class="file-inputs-container"> {/* Added this div */}
+    <div class="file-input-group"> {/* Added this div */}
+      <label for="file1">Add Resume:</label> {/* Changed label text */}
+      <input type="file" name="file1" id="file1" required>
+    </div>
+    <div class="file-input-group"> {/* Added this div */}
+      <label for="file2">Add Job Description:</label> {/* Changed label text */}
+      <input type="file" name="file2" id="file2" required>
+    </div>
+  </div> {/* Closed file-inputs-container */}
 
 
   <input type="submit" value="Generate Resume">
@@ -310,6 +344,9 @@
     <div id="responseArea">
       </div>
 </div>
+
+{/* Submission counter is now inside the footer */}
+
 
 <script>
 // Initialize the counter from local storage or start count
@@ -522,7 +559,7 @@ document.getElementById('copyButton').addEventListener('click', function() {
 </script>
 
 <footer>
-    <p>Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Reach out: masoud.made [@] gmail.com — <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Total Submissions: <span id="submissionCountDisplay">Loading...</span></p>
+    <p>Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Reach out: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Total Submissions: <span id="submissionCountDisplay">Loading...</span></p>
 </footer>
 
 
