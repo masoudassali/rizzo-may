@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>File Upload to n8n</title>
+<style>
+  body { font-family: sans-serif; line-height: 1.6; margin: 20px; }
+  form { margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+  input[type="file"] { display: block; margin-bottom: 10px; }
+  input[type="submit"] { padding: 10px 15px; background-color: #5cb85c; color: white; border: none; border-radius: 4px; cursor: pointer; }
+  input[type="submit"]:hover { background-color: #4cae4c; }
+  #responseArea { margin-top: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px; background-color: #f9f9f9; white-space: pre-wrap; word-wrap: break-word; }
+</style>
+</head>
+<body>
+
+<h2>Upload Files to n8n</h2>
+
+<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" method="POST">
+  <label for="file1">Select First File:</label>
+  <input type="file" name="file1" id="file1" required><br>
+
+  <label for="file2">Select Second File:</label>
+  <input type="file" name="file2" id="file2" required><br>
+
+  <input type="submit" value="Upload and Process">
+</form>
+
+<div id="responseArea">
+  </div>
+
+<script>
+document.getElementById('uploadForm').addEventListener('submit', function(event) {
+  event.preventDefault(); // Prevent default form submission
+
+  const formData = new FormData(this); // Get form data including files
+  const responseArea = document.getElementById('responseArea');
+
+  // Clear previous response and show loading indicator
+  responseArea.innerHTML = 'Processing...';
+  responseArea.style.color = '#000'; // Reset text color
+
+  // IMPORTANT: Replace "YOUR_N8N_WEBHOOK_URL" with the actual URL from your n8n Webhook node
+  fetch(this.action, { // Use the form's action URL (your n8n webhook)
+    method: this.method, // Use the form's method (POST)
+    body: formData
+  })
+  .then(response => {
+    // Check if the response is not OK (status code outside 200-299 range)
+    if (!response.ok) {
+      // Read the response body as text to get potential error details from n8n
+      return response.text().then(text => {
+        // Throw an error including the status and body text
+        throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
+      });
+    }
+    // If response is OK, parse it as JSON
+    return response.json(); // Assuming n8n responds with JSON
+  })
+  .then(data => {
+    // Display the response from n8n
+    responseArea.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+    responseArea.style.color = '#333'; // Dark grey for success
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    // Display the error message
+    responseArea.innerHTML = '<p>Error uploading files:</p><p><code>' + error.message + '</code></p>';
+    responseArea.style.color = 'red'; // Red for error
+  });
+});
+</script>
+
+</body>
+</html>
