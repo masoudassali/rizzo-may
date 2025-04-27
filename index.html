@@ -73,6 +73,43 @@
     background-color: #0056b3; /* Darker blue on hover */
   }
 
+  input[type="submit"]:disabled { /* Style for disabled button */
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+
+  /* Styles for the upload status bar */
+  #uploadStatusContainer {
+      width: 100%;
+      background-color: #ddd;
+      display: none; /* Initially hidden */
+      margin-top: 15px;
+      border-radius: 4px;
+      overflow: hidden; /* Ensure the status bar stays within bounds */
+  }
+
+  #uploadStatusBar {
+      width: 0%;
+      height: 20px;
+      background-color: #4CAF50; /* Green color for the bar */
+      text-align: center;
+      line-height: 20px; /* Vertically center text */
+      color: white;
+      border-radius: 4px;
+      transition: width 0.3s ease; /* Smooth animation for the bar */
+      font-size: 0.8em; /* Smaller text */
+  }
+
+   #uploadStatusText {
+      margin-top: 5px;
+      font-size: 0.9em;
+      color: #555;
+      display: none; /* Initially hidden */
+      text-align: center;
+   }
+
+
+  /* Styles for the response area */
   #responseContainer { /* Container for response header, button, and area */
       margin-top: 20px;
   }
@@ -96,7 +133,7 @@
   }
 
   #copyButton:hover {
-      background-color: #5a6268; /* Darker grey on hover */
+    background-color: #5a6268; /* Darker grey on hover */
   }
 
   #copyButton.copied { /* Style when text is copied */
@@ -162,27 +199,33 @@
 </head>
 <body>
 
-<h2>rizzooooo-may!</h2>
-<p><b>Free (beta):</b> Customize your resume for each job application in 3 easy steps:</p>
+<h2>rizzoooooo-may!</h2>
+<p>Customize your resume for each job application in 3 easy steps:</p>
 <ol>
   <li>Upload your resume (text, word or pdf formats only)</li>
-  <li>Upload a copy job description (text, word or pdf formats only)</li>
+  <li>Upload a copy job description (text, word or pdf formats only)</li>
   <li>Submit, and get a customized resume text in seconds.</li>
 </ol>
 
-<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook/b1592350-e356-44e8-98b6-26b21b1c36b8" method="POST">
-  <label for="file1">Upload your resume here:</label>
+<form id="uploadForm" enctype="multipart/form-data" action="YOUR_N8N_WEBHOOK_URL" method="POST">
+  <label for="file1">Select Resume File:</label>
   <input type="file" name="file1" id="file1" required><br>
 
-  <!-- <label for="file2">Upload the job description here:</label>
-  <input type="file" name="file2" id="file2" required><br> -->
+  <label for="file2">Select Job Description File:</label>
+  <input type="file" name="file2" id="file2" required><br>
 
   <input type="submit" value="Upload and Process">
 </form>
 
-<div id="responseContainer" style="display: none;"> <div id="responseHeader">
-        <h3>Here's your customized resume. Edit as needed.</h3>
-        <button id="copyButton">Copy Text</button>
+<div id="uploadStatusContainer">
+  <div id="uploadStatusBar">0%</div>
+</div>
+<div id="uploadStatusText">Uploading...</div>
+
+
+<div id="responseContainer" style="display: none;">
+    <div id="responseHeader">
+        <h3>Processing Results:</h3> <button id="copyButton">Copy Text</button>
     </div>
     <div id="responseArea">
       </div>
@@ -193,88 +236,175 @@
 document.getElementById('uploadForm').addEventListener('submit', function(event) {
   event.preventDefault(); // Prevent default form submission
 
-  const formData = new FormData(this); // Get form data including files
+  const form = this;
+  // FormData automatically collects all named form inputs, including both files
+  const formData = new FormData(form);
+
   const responseArea = document.getElementById('responseArea');
   const responseContainer = document.getElementById('responseContainer');
   const copyButton = document.getElementById('copyButton');
+  const uploadStatusContainer = document.getElementById('uploadStatusContainer');
+  const uploadStatusBar = document.getElementById('uploadStatusBar');
+  const uploadStatusText = document.getElementById('uploadStatusText');
+  const submitButton = form.querySelector('input[type="submit"]');
 
 
-  // Show the response container and set initial processing message
+  // --- Reset and Show UI Elements ---
   responseContainer.style.display = 'block';
-  responseArea.innerHTML = 'Processing...';
-  responseArea.style.color = '#000'; // Reset text color
-  responseArea.style.backgroundColor = '#e9ecef'; // Reset background color
-  responseArea.style.borderColor = '#eee'; /* Reset border */
-  copyButton.style.display = 'none'; // Hide copy button during processing
+  responseArea.innerHTML = 'Preparing upload...';
+  responseArea.style.color = '#000';
+  responseArea.style.backgroundColor = '#e9ecef';
+  responseArea.style.borderColor = '#eee';
+  copyButton.style.display = 'none';
+  copyButton.textContent = 'Copy Text';
+  copyButton.classList.remove('copied');
+  submitButton.disabled = true; // Disable button during upload
+
+  // Show and reset status bar
+  uploadStatusContainer.style.display = 'block';
+  uploadStatusText.style.display = 'block';
+  uploadStatusBar.style.width = '0%';
+  uploadStatusBar.innerHTML = '0%';
+  uploadStatusText.innerHTML = 'Starting upload...';
 
 
-  // IMPORTANT: Replace "YOUR_N8N_WEBHOOK_URL" with the actual URL from your n8n Webhook node
-  fetch(this.action, { // Use the form's action URL (your n8n webhook)
-    method: this.method, // Use the form's method (POST)
-    body: formData
-  })
-  .then(response => {
-    // Check if the response is not OK (status code outside 200-299 range)
-    if (!response.ok) {
-      // Attempt to read response body as text for error details
-      return response.text().then(text => {
-        // Throw an error including the status and body text
-        throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
-      });
+  // --- Create and Configure XMLHttpRequest ---
+  const xhr = new XMLHttpRequest();
+
+  // --- Track Upload Progress ---
+  xhr.upload.onprogress = function(event) {
+    if (event.lengthComputable) {
+      const percentComplete = (event.loaded / event.total) * 100;
+      const percent = Math.round(percentComplete);
+      uploadStatusBar.style.width = percent + '%';
+      uploadStatusBar.innerHTML = percent + '%';
+      uploadStatusText.innerHTML = `Uploading file(s)... ${percent}%`; // Indicate multiple files now
+      responseArea.innerHTML = `Uploading file(s)... ${percent}%`; // Optional: update response area during upload
+
     }
-    // If response is OK, parse it as JSON
-    // Assuming n8n responds with JSON containing the customized resume text
-    // We expect the n8n webhook to return a JSON object like { "customizedResume": "..." }
-    return response.json();
-  })
-  .then(data => {
-    // Display the response from n8n
-    // Assuming the customized resume text is in a key named "customizedResume"
-    const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); // Fallback to showing full JSON if key not found
-    responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Display text nicely formatted
-    responseArea.style.color = '#333'; // Dark grey for success
-    responseArea.style.backgroundColor = '#d4edda'; // Light green for success background
-    responseArea.style.borderColor = '#c3e6cb'; /* Green border */
-    copyButton.style.display = 'inline-block'; // Show copy button on success
-    copyButton.textContent = 'Copy Text'; // Reset button text
-    copyButton.classList.remove('copied'); // Remove copied class
+  };
+
+  // --- Handle Request State Changes (like completion) ---
+  xhr.onload = function() {
+    // Request has completed (either success or failure status)
+
+    // Hide status bar and text
+    uploadStatusContainer.style.display = 'none';
+    uploadStatusText.style.display = 'none';
+    submitButton.disabled = false; // Re-enable submit button
+
+    if (xhr.status >= 200 && xhr.status < 300) {
+      // Request was successful (HTTP status 2xx)
+      try {
+        const data = JSON.parse(xhr.responseText); // Attempt to parse the JSON response from n8n
+
+        // Display the response from n8n (assuming JSON with customizedResume key)
+        const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); // Use customizedResume if present, fallback to full JSON
+
+        responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Display text nicely formatted
+        responseArea.style.color = '#333'; // Dark grey for success
+        responseArea.style.backgroundColor = '#d4edda'; // Light green for success background
+        responseArea.style.borderColor = '#c3e6cb'; // Green border
+        copyButton.style.display = 'inline-block'; // Show the copy button
 
 
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    // Display the error message
-    responseArea.innerHTML = '<p>Error processing files:</p><p><code>' + error.message + '</code></p>';
-    responseArea.style.color = '#721c24'; // Dark red for error text
-    responseArea.style.backgroundColor = '#f8d7da'; // Light red for error background
-    responseArea.style.borderColor = '#f5c6cb'; /* Red border */
-    copyButton.style.display = 'none'; // Hide copy button on error
-  });
+      } catch (e) {
+        // Failed to parse the JSON response (e.g., n8n returned plain text or invalid JSON on success)
+        console.error('Error parsing JSON response:', e, 'Response:', xhr.responseText);
+        responseArea.innerHTML = '<p>Error: Received unexpected response from server.</p><p><code>' + xhr.responseText.substring(0, 500) + '...</code></p>'; // Display partial response text
+        responseArea.style.color = '#721c24'; // Dark red for error
+        responseArea.style.backgroundColor = '#f8d7da'; // Light red for error background
+        responseArea.style.borderColor = '#f5c6cb';
+      }
+
+    } else {
+      // Request failed (HTTP status is not 2xx, e.g., 404, 500 from n8n)
+      console.error('HTTP error!', xhr.status, xhr.responseText);
+      let errorMessage = `HTTP error! status: ${xhr.status}`;
+       try {
+           // Attempt to parse n8n's error response if it's JSON
+           const errorResponse = JSON.parse(xhr.responseText);
+           if (errorResponse.message) {
+              errorMessage += `, message: ${errorResponse.message}`;
+           } else {
+               errorMessage += `, body: ${xhr.responseText}`;
+           }
+       } catch (e) {
+           // If response isn't JSON, just include the status and response text
+           errorMessage += `, body: ${xhr.responseText}`;
+       }
+
+      responseArea.innerHTML = '<p>Error processing files:</p><p><code>' + errorMessage + '</code></p>';
+      responseArea.style.color = '#721c24';
+      responseArea.style.backgroundColor = '#f8d7da';
+      responseArea.style.borderColor = '#f5c6cb';
+    }
+  };
+
+  // --- Handle Network Errors (like connection refused) ---
+  xhr.onerror = function() {
+    console.error('Network error!');
+    // Hide status bar and text
+    uploadStatusContainer.style.display = 'none';
+    uploadStatusText.style.display = 'none';
+    submitButton.disabled = false; // Re-enable submit button
+
+
+    responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
+    responseArea.style.color = '#721c24';
+    responseArea.style.backgroundColor = '#f8d7da';
+    responseArea.style.borderColor = '#f5c6cb';
+  };
+
+   // --- Handle Request Timeout ---
+   xhr.ontimeout = function() {
+       console.error('Request timed out!');
+       uploadStatusContainer.style.display = 'none';
+       uploadStatusText.style.display = 'none';
+       submitButton.disabled = false;
+
+       responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
+       responseArea.style.color = '#721c24';
+       responseArea.style.backgroundColor = '#f8d7da';
+       responseArea.style.borderColor = '#f5c6cb';
+   };
+
+
+  // --- Open and Send the Request ---
+  // IMPORTANT: Replace "YOUR_N8N_WEBHOOK_URL" with the actual URL from your n8n Webhook node
+  xhr.open(this.method, this.action); // Use the form's method (POST) and action URL
+  // When sending FormData with XHR, the browser automatically sets the Content-Type
+  // and boundary header correctly. Do NOT set Content-Type manually here.
+
+  xhr.send(formData); // Send the FormData object containing both files
+
+
+  // Optional: Update response area immediately after sending
+  responseArea.innerHTML = 'Starting upload...';
+
+
 });
 
-// Add event listener for the copy button
+// Add event listener for the copy button (remains the same)
 document.getElementById('copyButton').addEventListener('click', function() {
     const responseArea = document.getElementById('responseArea');
-    // Select the text content within the <pre> tag inside responseArea
-    const textToCopy = responseArea.querySelector('pre') ? responseArea.querySelector('pre').innerText : responseArea.innerText;
+    // Get ALL text content from the response area div
+    const textToCopy = responseArea.innerText; // Use innerText for simplicity
 
     navigator.clipboard.writeText(textToCopy)
         .then(() => {
-            // Optional: Provide user feedback
             const button = document.getElementById('copyButton');
             button.textContent = 'Copied!';
             button.classList.add('copied');
             setTimeout(() => {
                 button.textContent = 'Copy Text';
                 button.classList.remove('copied');
-            }, 2000); // Reset button text after 2 seconds
+            }, 2000);
         })
         .catch(err => {
             console.error('Failed to copy text: ', err);
-            // Optional: Provide user feedback on failure
              const button = document.getElementById('copyButton');
              button.textContent = 'Copy Failed!';
-             // You might add a temporary class for error styling
         });
 });
 
