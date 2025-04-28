@@ -7,138 +7,764 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     line-height: 1.6;
     margin: 20px;
-    background-color: #f4f7f6;
+    background-color: #f4f7f6; /* Light background */
+    color: #333; /* Default text color */
+    padding-bottom: 80px; /* Add padding at the bottom to make space for the fixed footer */
+  }
+
+
+  h2 {
     color: #333;
-    padding-bottom: 120px; /* more space for footer */
+    border-bottom: 2px solid #007bff; /* A little underline */
+    padding-bottom: 10px;
   }
 
-  /* Your original CSS (shortened here for this message) */
-  /* ... (you already have all the styles you pasted earlier) ... */
 
+  h3 {
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+
+
+  p { /* Style for general paragraphs */
+      margin-bottom: 15px;
+  }
+
+
+  ol {
+    /* margin-bottom: 20px; */
+    /* padding-left: 20px; */
+  }
+
+
+  ol li {
+      /* margin-bottom: 5px; */
+  }
+
+
+  /* Styles for the form container using Flexbox */
+  form {
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px; /* More rounded corners */
+    background-color: #fff; /* White form background */
+    box-shadow: 0 2px 4px rgba(0 0 0 / 10%); /* Subtle shadow */
+    display: flex; /* Use Flexbox for the form container */
+    flex-direction: column; /* Stack form sections vertically */
+    gap: 20px; /* Add space between form sections */
+  }
+
+
+  /* Apply box-sizing for more predictable width */
+  form *, form *:before, form *:after {
+    box-sizing: border-box;
+  }
+
+
+  /* Style for each main section within the form (message, files, button) */
+  .form-section {
+      display: flex;
+      flex-direction: column; /* Stack elements within each section (label, input/textarea) */
+      gap: 8px; /* Space between label and input/textarea */
+  }
+
+
+  /* --- Specific styles for the message section to accommodate dropdown suggestions --- */
+  .form-section.message-section {
+      /* Changed from row to column to stack textarea and dropdown */
+      flex-direction: column;
+      gap: 15px; /* Adjust gap for stacked items */
+      flex-wrap: wrap; /* Keep wrap for mobile, though stacking makes it less critical */
+      align-items: flex-start; /* Align items to the start */
+      position: relative; /* Needed for absolute positioning of dropdown panel */
+  }
+
+
+  .message-textarea-container {
+      /* Removed flex properties as it's now stacked vertically */
+      display: flex; /* Use flex to stack label and textarea inside */
+      flex-direction: column;
+      gap: 8px; /* Space between label and textarea */
+      min-width: 280px; /* Ensure minimum width */
+      width: 100%; /* Make it take full width when stacked */
+      flex: none; /* Ensure it doesn't try to flex */
+  }
+
+
+  /* Styles for the dropdown container */
+  .prompt-suggestions-dropdown {
+      /* Removed flex properties as it's now stacked vertically */
+      min-width: 200px; /* Keep minimum width */
+      position: relative; /* Container for the absolute panel */
+      align-self: flex-start; /* Align to the left under the textarea */
+      display: flex; /* Use flex to arrange trigger and panel */
+      flex-direction: column;
+      gap: 5px; /* Space between trigger and panel */
+      width: auto; /* Allow width to be determined by content/min-width */
+  }
+
+
+  /* Style for the dropdown trigger button */
+  .dropdown-trigger {
+      padding: 8px 15px;
+      background-color: #e9ecef;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+      text-align: left; /* Align text to the left */
+      width: auto; /* Allow button width to be determined by content/padding */
+      transition: background-color 0.2s ease;
+      display: flex; /* Use flex to align text and arrow */
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box; /* Include padding and border in width */
+      min-width: 200px; /* Match container min-width */
+  }
+
+
+  .dropdown-trigger:hover {
+      background-color: #d0d4d7;
+  }
+
+
+  .dropdown-trigger .arrow {
+      margin-left: 10px;
+  }
+
+
+
+
+  /* Style for the dropdown panel */
+  .dropdown-panel {
+      position: absolute; /* Keep absolute positioning */
+      top: auto; /* Position relative to the section, below the trigger */
+      bottom: auto; /* No constraint from bottom */
+      left: 0; /* Align left with the dropdown trigger */
+      right: auto; /* No constraint from right */
+      z-index: 100; /* Ensure it appears above other content */
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      display: none; /* Initially hidden */
+      min-width: 250px; /* Ensure readability */
+      max-height: 200px; /* Add scrolling if many items */
+      overflow-y: auto; /* Enable vertical scrolling */
+      flex-direction: column; /* Arrange contents vertically */
+      gap: 10px; /* Space between elements */
+  }
+
+
+  .dropdown-panel p {
+      font-weight: bold;
+      margin-bottom: 0;
+      font-size: 0.9em;
+      color: #555;
+  }
+
+
+  .dropdown-panel ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+  }
+
+
+  .dropdown-panel li {
+      margin-bottom: 8px; /* Space between checkboxes */
+      display: flex; /* Align checkbox and label */
+      align-items: center;
+  }
+
+
+  .dropdown-panel li:last-child {
+       margin-bottom: 0;
+  }
+
+
+  .dropdown-panel input[type="checkbox"] {
+      margin-right: 8px; /* Space between checkbox and label */
+      flex-shrink: 0; /* Prevent checkbox from shrinking */
+  }
+
+
+  .dropdown-panel label {
+      font-weight: normal; /* Labels for checkboxes don't need to be bold */
+      cursor: pointer; /* Indicate clickable */
+      flex: 1; /* Allow label to take space */
+      font-size: 0.9em;
+  }
+
+
+  .dropdown-panel #addSelectedPrompts {
+      display: block; /* Make button block */
+      width: 100%; /* Full width */
+      padding: 8px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+      margin-top: 10px; /* Space above button */
+      transition: background-color 0.2s ease;
+  }
+
+
+  .dropdown-panel #addSelectedPrompts:hover {
+      background-color: #0056b3;
+  }
+
+
+
+
+  /* --- End specific styles for message section --- */
+
+
+
+
+  label {
+    display: block; /* Labels are block elements */
+    font-weight: bold;
+    color: #555;
+  }
+
+
+  input[type="file"],
+  textarea {
+    display: block; /* Ensure they take up their flex area */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    width: 100%; /* Make them fill the width of their parent flex item */
+  }
+
+
+  textarea {
+      resize: vertical; /* Allow only vertical resizing */
+      min-height: 100px; /* Give textarea a minimum height */
+  }
+
+
+   input[type="file"] {
+       resize: none;
+   }
+
+
+    /* Styles for the container holding side-by-side file inputs */
+    .file-inputs-container {
+        display: flex; /* Use Flexbox for side-by-side layout */
+        gap: 20px; /* Space between the two file input groups */
+        flex-wrap: wrap; /* Allow wrapping to a new line on smaller screens */
+    }
+
+
+    /* Style for each individual file input group (Flex items within file-inputs-container) */
+    .file-input-group {
+        flex: 1; /* Allow each group to grow and shrink equally */
+        min-width: 250px; /* Minimum width before wrapping */
+        display: flex; /* Use Flexbox for label and input within the group */
+        flex-direction: column; /* Stack label and input vertically within the group */
+        gap: 5px; /* Space between label and input within the group */
+    }
+
+
+    .file-input-group label {
+        margin-bottom: 0; /* Gap handles spacing */
+    }
+
+
+
+
+  /* Revised CSS for input[type="submit"] - use max-width and margin: auto, placed in its own section */
+  input[type="submit"] {
+    padding: 10px 20px; /* More padding */
+    background-color: #007bff; /* Primary blue color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+    display: block; /* Make it a block element to use margin: auto for centering */
+    width: auto; /* Let width be determined by content/padding initially */
+    max-width: 300px; /* Limit maximum width on desktop */
+    margin: 0 auto; /* Center the block button horizontally within its parent .form-section */
+  }
+
+
+  input[type="submit"]:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+
+
+  input[type="submit"]:disabled { /* Style for disabled button */
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+
+
+  /* Styles for the upload status bar */
+  #uploadStatusContainer {
+      width: 100%;
+      background-color: #ddd;
+      display: none; /* Initially hidden */
+      margin-top: 15px; /* Keep this margin */
+      border-radius: 4px;
+      overflow: hidden; /* Ensure the status bar stays within bounds */
+  }
+
+
+  #uploadStatusBar {
+      width: 0%;
+      height: 20px;
+      background-color: #4CAF50; /* Green color for the bar */
+      text-align: center;
+      line-height: 20px; /* Vertically center text */
+      color: white;
+      border-radius: 4px;
+      transition: width 0.3s ease; /* Smooth animation for the bar */
+      font-size: 0.8em; /* Smaller text */
+  }
+
+
+   #uploadStatusText {
+      margin-top: 5px; /* Keep this margin */
+      font-size: 0.9em;
+      color: #555;
+      display: none; /* Initially hidden */
+      text-align: center;
+   }
+
+
+
+
+  /* Styles for the response area */
+  #responseContainer { /* Container for response header, button, and area */
+      margin-top: 20px; /* Keep this margin */
+  }
+
+
+  #responseHeader {
+      display: flex; /* Use flexbox to align header and button */
+      align-items: center; /* Vertically align */
+      gap: 15px; /* Space between header and button */
+      margin-bottom: 10px;
+  }
+
+
+  #copyButton {
+      padding: 5px 15px;
+      background-color: #6c757d; /* Grey color for button */
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+  }
+
+
+  #copyButton:hover {
+    background-color: #5a6268; /* Darker grey on hover */
+  }
+
+
+  #copyButton.copied { /* Style when text is copied */
+      background-color: #28a745; /* Green */
+      color: white;
+  }
+
+
+
+
+  #responseArea {
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #e9ecef; /* Light grey background for response */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    min-height: 50px; /* Give it a minimum height */
+    color: #333; /* Default text color */
+    overflow-x: auto; /* Add horizontal scroll if content is too wide */
+  }
+
+
+  #responseArea pre { /* Style for pre tag inside response area */
+      margin: 0; /* Remove default margin from pre */
+      padding: 0;
+  }
+
+
+
+
+  #responseArea p { /* Style for paragraph messages inside response area */
+      margin: 5px 0;
+      padding: 0;
+  }
+
+
+  #responseArea code { /* Style for code blocks inside response area */
+      background-color: #f8f9fa;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+      font-size: 0.9em;
+  }
+
+
+  /* Styles for the footer */
   footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #222;
-    color: #ccc;
-    font-size: 0.8em;
-    font-style: italic;
-    padding: 10px 20px;
-    text-align: center;
-    line-height: 1.4;
+      position: fixed; /* Fix footer to the bottom */
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      background-color: #333; /* Dark background */
+      color: #f4f7f6; /* Light text */
+      text-align: center;
+      padding: 10px 20px;
+      font-size: 0.8em; /* Small font size */
+      z-index: 10; /* Ensure footer is above other content if needed */
   }
 
-  footer a {
-    color: #ccc;
-    text-decoration: underline;
+
+  footer p {
+      margin: 0; /* Remove margin from footer paragraph */
+      padding: 0;
   }
+
+
+    footer a {
+        color: #f4f7f6; /* Light color for links in footer */
+        text-decoration: none; /* Remove underline */
+    }
+
+
+    footer a:hover {
+        text-decoration: underline; /* Underline on hover */
+    }
+
+
+    /* Style for the counter span inside the footer */
+    footer #submissionCountDisplay {
+        font-weight: bold; /* Make the count stand out */
+        margin-left: 5px; /* Add a little space after "Total Submissions:" */
+    }
+
+
+
+
+  /* Optional: Add some responsive adjustments */
+  @media (max-width: 768px) { /* Adjust breakpoint for message section stacking */
+      body {
+          margin: 10px;
+          padding-bottom: 100px; /* Increase padding for potentially taller footer on mobile */
+      }
+      form {
+          padding: 15px;
+      }
+      /* Stack message section vertically on smaller screens */
+      .form-section.message-section {
+          flex-direction: column; /* Already column, but keeps consistency */
+          gap: 15px; /* Adjust gap for vertical stacking */
+          align-items: stretch; /* Allow children to stretch */
+      }
+       .message-textarea-container,
+       .prompt-suggestions-dropdown { /* Also make dropdown container take full width */
+           flex: none;
+           width: 100%;
+           min-width: auto;
+       }
+       .prompt-suggestions-dropdown {
+           position: static; /* Remove absolute positioning on mobile */
+           padding-bottom: 0; /* Adjust padding */
+           gap: 5px;
+       }
+
+
+      .dropdown-panel {
+          position: static; /* Remove absolute positioning on mobile */
+          width: 100%; /* Take full width */
+          max-height: none;
+          overflow-y: visible;
+          border: none;
+          box-shadow: none;
+          padding: 0;
+          gap: 10px;
+      }
+       .dropdown-panel p {
+           margin-top: 10px;
+       }
+       .dropdown-panel ul {
+           padding-left: 20px;
+       }
+       .dropdown-panel li {
+           margin-bottom: 8px; /* Keep space between checkbox items */
+       }
+
+
+
+
+      /* Button styles for mobile - full width, no centering */
+      input[type="submit"] {
+          width: 100%;
+          max-width: none;
+          margin: 0; /* Remove auto margin */
+          text-align: center;
+      }
+       /* Button section on mobile - remove centering as button is full width */
+      .button-section {
+          align-items: stretch; /* Allow button to stretch */
+      }
+
+
+       /* Adjust file inputs to stack on mobile */
+       .file-inputs-container {
+           flex-direction: column; /* Stack items vertically on small screens */
+           gap: 15px; /* Adjust gap for vertical stacking */
+       }
+       .file-input-group {
+           min-width: auto; /* Remove min-width constraint on mobile */
+           width: 100%; /* Ensure they take full width when stacked */
+           gap: 5px; /* Keep space between label and input */
+       }
+
+
+      #responseHeader {
+          flex-direction: column; /* Stack header and button on small screens */
+          align-items: flex-start;
+          gap: 5px;
+      }
+       #copyButton {
+           width: auto; /* Auto width on small screens */
+       }
+        footer {
+            font-size: 0.7em; /* Smaller font on small screens */
+            padding: 8px 10px;
+            line-height: 1.4; /* Adjust line height for smaller font */
+        }
+        footer p {
+            margin: 0; /* Ensure no extra margin */
+        }
+
+
+  }
+
 
 </style>
 </head>
 <body>
 
+
 <h2>rizzooo-may!</h2>
 <p>Yes you may. Customize your resume to job applications.<br>
   <b>3 simple (free) steps:</b></p>
 
-<!-- Your form -->
+
 <form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook/56d59214-83ea-4bbf-bcca-b67ed32a1261" method="POST">
-  <!-- Form Sections Here -->
-  <!-- ... (message textarea, file inputs, submit button, etc.) ... -->
+  <div class="form-section message-section">
+    <div class="message-textarea-container">
+        <label for="userMessage">What should the focus be? <i>(Choose from the suggestions below or add your own.)</i></label>
+        <textarea name="userMessage" id="userMessage" rows="4" cols="50"></textarea>
+    </div>
+    <div class="prompt-suggestions-dropdown">
+        <button id="promptDropdownTrigger" class="dropdown-trigger">Add Suggestions <span class="arrow">▼</span></button>
+        <div id="promptDropdownPanel" class="dropdown-panel">
+            <p>Select suggestions to add:</p>
+            <ul>
+                <li><input type="checkbox" id="prompt-1" data-prompt="Clean up and proofread"><label for="prompt-1">Clean up and proofread</label></li>
+                <li><input type="checkbox" id="prompt-2" data-prompt="Use [Industry] terms"><label for="prompt-2">Use [Industry] terms</label></li>
+                <li><input type="checkbox" id="prompt-3" data-prompt="Emphasize [Skill] experience"><label for="prompt-3">Emphasize [Skill] experience</label></li>
+                <li><input type="checkbox" id="prompt-4" data-prompt="Incorporate ATS keywords"><label for="prompt-4">Incorporate ATS keywords</label></li>
+                <li><input type="checkbox" id="prompt-5" data-prompt="Strengthen action verbs and numbers"><label for="prompt-5">Strengthen action verbs and numbers</label></li>
+                <li><input type="checkbox" id="prompt-6" data-prompt="Condense to one page"><label for="prompt-6">Condense to one page</label></li>
+            </ul>
+            <button id="addSelectedPrompts">Add Selected</button>
+        </div>
+    </div>
+  </div>
+
+
+
+
+  <div class="form-section">
+    <p><b>Upload files </b><i>(.txt files < 1mb please. I'll add more formats soon.)</i></p>
+
+
+    <div class="file-inputs-container">
+      <div class="file-input-group">
+        <label for="file1">Add Resume:</label>
+        <input type="file" name="file1" id="file1" required>
+      </div>
+      <div class="file-input-group">
+        <label for="file2">Add Job Description:</label>
+        <input type="file" name="file2" id="file2" required>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div class="form-section button-section">
+    <input type="submit" value="Generate Resume">
+  </div>
+
+
 </form>
 
-<!-- Upload Status and Response Area -->
+
 <div id="uploadStatusContainer">
   <div id="uploadStatusBar">0%</div>
 </div>
 <div id="uploadStatusText">Uploading...</div>
 
+
+
+
 <div id="responseContainer" style="display: none;">
     <h3>Processing Results:</h3>
     <div id="responseAreaContainer">
-        <div id="responseArea"></div>
+        <div id="responseArea">
+          </div>
         <button id="copyButton" class="copy-code-button">Copy</button>
     </div>
 </div>
 
-<!-- Your FULL JavaScript starts here -->
+
+
+
 <script>
 // Global variable for the counter span element
 let counterDisplaySpan = null;
 const localStorageKey = 'rizzoooMaySubmissionCount';
-let currentCount = localStorage.getItem(localStorageKey);
+let currentCount = localStorage.getItem(localStorageKey); // Read initial count globally
+
+
+
 
 // Wait for the DOM to be fully loaded before initializing most script parts
 document.addEventListener('DOMContentLoaded', function() {
 
+
+    // --- Submission Counter Initialization ---
+    // Get the counter span element once the DOM is loaded
     counterDisplaySpan = document.getElementById('submissionCountDisplay');
 
+
+    // Check if the element was found
     if (!counterDisplaySpan) {
         console.error("Submission count display span not found in footer! Counter will not display.");
+        // No need to exit here, other parts of the script can still run
     } else {
-        if (currentCount === null || isNaN(parseInt(currentCount, 10))) {
-            currentCount = 431;
-            localStorage.setItem(localStorageKey, currentCount);
+         // Update the text content of the span with the current count on load
+        if (currentCount === null || isNaN(parseInt(currentCount, 10))) { // Also checks if initial read was NaN
+            currentCount = 431; // Start count if no previous valid count is found
+            localStorage.setItem(localStorageKey, currentCount); // Save initial count
         } else {
-            currentCount = parseInt(currentCount, 10);
+             currentCount = parseInt(currentCount, 10); // Ensure it's a number
         }
         counterDisplaySpan.textContent = currentCount;
     }
 
+
+    // --- Prompt Suggestions Dropdown Functionality ---
     const dropdownTrigger = document.getElementById('promptDropdownTrigger');
     const dropdownPanel = document.getElementById('promptDropdownPanel');
     const addSelectedButton = document.getElementById('addSelectedPrompts');
 
+
+    // Toggle dropdown visibility
     dropdownTrigger.addEventListener('click', function(event) {
-        event.stopPropagation();
-        const isVisible = dropdownPanel.style.display === 'flex';
-        dropdownPanel.style.display = isVisible ? 'none' : 'flex';
+        event.stopPropagation(); // Prevent click from bubbling up and closing immediately
+        const isVisible = dropdownPanel.style.display === 'flex'; // Check current display style
+        dropdownPanel.style.display = isVisible ? 'none' : 'flex'; // Toggle between none and flex
+        // Adjust arrow direction (optional)
         const arrow = this.querySelector('.arrow');
         if(arrow) {
             arrow.textContent = isVisible ? '▼' : '▲';
         }
     });
 
+
+    // Close dropdown when clicking outside
     document.addEventListener('click', function(event) {
+        // If the click is not inside the dropdown trigger AND not inside the dropdown panel
         if (!dropdownTrigger.contains(event.target) && !dropdownPanel.contains(event.target)) {
-            dropdownPanel.style.display = 'none';
-            const arrow = dropdownTrigger.querySelector('.arrow');
-            if(arrow) { arrow.textContent = '▼'; }
+            dropdownPanel.style.display = 'none'; // Hide the panel
+             // Reset arrow (optional)
+             const arrow = dropdownTrigger.querySelector('.arrow');
+             if(arrow) { arrow.textContent = '▼'; }
         }
     });
 
+
+    // Prevent dropdown from closing when clicking inside the panel (except on the Add button, handled below)
     dropdownPanel.addEventListener('click', function(event) {
-        event.stopPropagation();
+        event.stopPropagation(); // Stop the click from bubbling up to the document
     });
 
+
+
+
+    // Handle adding selected prompts to the textarea
     addSelectedButton.addEventListener('click', function() {
         const textarea = document.getElementById('userMessage');
         const checkboxes = dropdownPanel.querySelectorAll('input[type="checkbox"]:checked');
         let selectedPromptsText = '';
 
+
         checkboxes.forEach(checkbox => {
-            const promptText = checkbox.dataset.prompt || checkbox.nextElementSibling.textContent;
-            selectedPromptsText += promptText + '\n';
-            checkbox.checked = false;
+            // Get the prompt text from the data-prompt attribute
+            const promptText = checkbox.dataset.prompt || checkbox.nextElementSibling.textContent; // Use label text as fallback
+            selectedPromptsText += promptText + '\n'; // Append prompt text followed by a newline
+            checkbox.checked = false; // Uncheck the box after adding
         });
 
+
+        // Append the collected prompts to the textarea
         if (selectedPromptsText.length > 0) {
+             // Add a newline before the first added prompt if the textarea isn't empty and doesn't end with newline
              const prefix = textarea.value.length > 0 && !textarea.value.endsWith('\n') ? '\n' : '';
              textarea.value += prefix + selectedPromptsText;
+
+
+             // Optional: Scroll textarea to the bottom
              textarea.scrollTop = textarea.scrollHeight;
+
+
+             // Optional: Focus the textarea
              textarea.focus();
         }
 
+
+        // Hide the dropdown panel after adding
         dropdownPanel.style.display = 'none';
+         // Reset arrow (optional)
         const arrow = dropdownTrigger.querySelector('.arrow');
-        if(arrow) { arrow.textContent = '▼'; }
+        if(arrow) { an arrow.textContent = '▼'; }
+
+
     });
 
+
+
+
+    // --- Form Submission Handling ---
     document.getElementById('uploadForm').addEventListener('submit', function(event) {
-        event.preventDefault();
+        event.preventDefault(); // Prevent default form submission
+
 
         const form = this;
         const formData = new FormData(form);
+
+
         const responseArea = document.getElementById('responseArea');
         const responseContainer = document.getElementById('responseContainer');
         const copyButton = document.getElementById('copyButton');
@@ -147,118 +773,257 @@ document.addEventListener('DOMContentLoaded', function() {
         const uploadStatusText = document.getElementById('uploadStatusText');
         const submitButton = form.querySelector('input[type="submit"]');
 
+
+
+
+        // --- Reset and Show UI Elements ---
         responseContainer.style.display = 'block';
+        // Initial text for response area while generating
         responseArea.innerHTML = 'Generating... shouldn\'t take more than a couple of minutes.';
         responseArea.style.color = '#000';
         responseArea.style.backgroundColor = '#e9ecef';
         responseArea.style.borderColor = '#eee';
-        copyButton.style.display = 'none';
-        copyButton.textContent = 'Copy';
+        copyButton.style.display = 'none'; // Hide copy button initially
+        copyButton.textContent = 'Copy'; // Reset copy button text
         copyButton.classList.remove('copied');
-        submitButton.disabled = true;
+        submitButton.disabled = true; // Disable submit button during upload and processing
 
+
+        // Show and reset status bar
         uploadStatusContainer.style.display = 'block';
         uploadStatusText.style.display = 'block';
-        uploadStatusBar.style.width = '0%';
-        uploadStatusBar.innerHTML = '0%';
+        uploadStatusBar.style.width = '0%'; // Reset progress bar width
+        uploadStatusBar.innerHTML = '0%'; // Reset percentage text inside bar
+        // Status text below the bar
         uploadStatusText.innerHTML = "Starting upload...";
 
+
+
+
+        // --- Create and Configure XMLHttpRequest ---
         const xhr = new XMLHttpRequest();
 
+
+        // --- Track Upload Progress ---
         xhr.upload.onprogress = function(event) {
             if (event.lengthComputable) {
                 const percentComplete = (event.loaded / event.total) * 100;
-                const percent = Math.round(percentComplete);
+                const percent = Math.round(percentComplete); // Round for display
+                // Update progress bar width
                 uploadStatusBar.style.width = percent + '%';
+                // Update the text inside the status bar div (e.g., "0%", "50%", "100%")
                 uploadStatusBar.innerHTML = percent + '%';
-                uploadStatusText.innerHTML = `Uploading files (${percent}%)...`;
+                // Update text below the bar during upload
+                 uploadStatusText.innerHTML = `Uploading files (${percent}%)...`;
+
+
             }
         };
 
+
+        // --- Handle Upload Complete (before response starts) ---
         xhr.onloadstart = function() {
-            uploadStatusBar.style.width = '100%';
-            uploadStatusBar.innerHTML = '100%';
-            uploadStatusText.innerHTML = "Processing... shouldn't take more than a couple of minutes.";
+             // Upload is likely complete here, transition to processing
+             uploadStatusBar.style.width = '100%'; // Set bar to full
+             uploadStatusBar.innerHTML = '100%'; // Show 100% in bar
+             uploadStatusText.innerHTML = "Processing... shouldn't take more than a couple of minutes."; // Change text below bar
         };
 
+
+
+
+        // --- Handle Request Completion (Success or Failure) ---
         xhr.onload = function() {
+            // Request has completed (either success or failure status)
+
+
+            // *** REMOVED: submitButton.disabled = false; // Prevent re-enabling after first submit ***
+
+
+            // Set final status text inside the bar (will be hidden shortly)
+            if(uploadStatusBar) { // Check exists
+               uploadStatusBar.innerHTML = xhr.status >= 200 && xhr.status < 300 ? 'Complete!' : 'Error!'; // Show final status in bar
+            }
+
+
+
+
             if (xhr.status >= 200 && xhr.status < 300) {
+                // Request was successful (HTTP status 2xx)
+
+
+                // --- Increment and save counter on successful submission ---
+                // Only increment if the counter span was found initially
                 if (counterDisplaySpan) {
-                    if (typeof currentCount !== 'number' || isNaN(currentCount)) {
-                        currentCount = localStorage.getItem(localStorageKey);
-                        if (currentCount === null || isNaN(parseInt(currentCount, 10))) {
+                    // Ensure currentCount is a number before incrementing
+                     if (typeof currentCount !== 'number' || isNaN(currentCount)) {
+                         // If for some reason currentCount isn't a number here, re-read it
+                         currentCount = localStorage.getItem(localStorageKey);
+                         if (currentCount === null || isNaN(parseInt(currentCount, 10))) {
                             currentCount = 431;
-                        } else {
-                            currentCount = parseInt(currentCount, 10);
-                        }
-                    }
+                         } else {
+                             currentCount = parseInt(currentCount, 10);
+                         }
+                     }
                     currentCount++;
                     localStorage.setItem(localStorageKey, currentCount);
+                    // Update the text content of the span in the footer
                     counterDisplaySpan.textContent = currentCount;
                 }
+                // --- End counter update ---
+
+
+
 
                 try {
-                    const data = JSON.parse(xhr.responseText);
-                    const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2);
-                    responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>';
+                    const data = JSON.parse(xhr.responseText); // Attempt to parse the JSON response from client
+
+
+                    // Display the response from client (assuming JSON with customizedResume key)
+                    const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); // Use customizedResume if present, fallback to full JSON
+
+
+                    responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Display text nicely formatted
+
+
+                    // Update final status text below the bar on success
                     uploadStatusText.innerHTML = "Generated!";
-                    responseArea.style.color = '#333';
-                    responseArea.style.backgroundColor = '#d4edda';
-                    responseArea.style.borderColor = '#c3e6cb';
-                    copyButton.style.display = 'inline-block';
+
+
+                    responseArea.style.color = '#333'; // Dark grey for success
+                    responseArea.style.backgroundColor = '#d4edda'; // Light green for success background
+                    responseArea.style.borderColor = '#c3e6cb'; // Green border
+                    copyButton.style.display = 'inline-block'; // Show the copy button
+
+
+
+
                 } catch (e) {
-                    console.error('Error parsing JSON response:', e, xhr.responseText);
-                    responseArea.innerHTML = '<p>Error: Unexpected server response.</p>';
+                    // Failed to parse the JSON response (e.g., client returned plain text or invalid JSON on success)
+                    console.error('Error parsing JSON response:', e, 'Response:', xhr.responseText);
+                    responseArea.innerHTML = '<p>Error: Received unexpected response from client.</p><p><code>' + xhr.responseText.substring(0, 500) + '...</code></p>'; // Display partial response text
+
+
+                    // Update final status text below the bar on parse error
                     uploadStatusText.innerHTML = "Generation failed (Parse Error).";
-                    responseArea.style.color = '#721c24';
-                    responseArea.style.backgroundColor = '#f8d7da';
+
+
+                    responseArea.style.color = '#721c24'; // Dark red for error
+                    responseArea.style.backgroundColor = '#f8d7da'; // Light red for error background
                     responseArea.style.borderColor = '#f5c6cb';
                 }
+
+
             } else {
+                // Request failed (HTTP status is not 2xx)
                 console.error('HTTP error!', xhr.status, xhr.responseText);
-                responseArea.innerHTML = '<p>Error processing files: HTTP ' + xhr.status + '</p>';
+                let errorMessage = `HTTP error! status: ${xhr.status}`;
+                try {
+                    // Attempt to parse client's error response if it's JSON
+                    const errorResponse = JSON.parse(xhr.responseText);
+                    if (errorResponse.message) {
+                        errorMessage += `, message: ${errorResponse.message}`;
+                    } else {
+                        errorMessage += `, body: ${xhr.responseText}`;
+                    }
+                } catch (e) {
+                    // If response isn't JSON, just include the status and response text
+                    errorMessage += `, body: ${xhr.responseText}`;
+                }
+
+
+                responseArea.innerHTML = '<p>Error processing files:</p><p><code>' + errorMessage + '</code></p>';
+                 // Update final status text below the bar on HTTP error
                 uploadStatusText.innerHTML = `Error: ${xhr.status}`;
+
+
+
+
                 responseArea.style.color = '#721c24';
                 responseArea.style.backgroundColor = '#f8d7da';
                 responseArea.style.borderColor = '#f5c6cb';
             }
+             // Update status text inside the bar to indicate completion or error
+            if(uploadStatusBar) { // Check exists
+                 // This was already set above, keep it consistent
+                 // uploadStatusBar.innerHTML = uploadStatusText.innerHTML;
+            }
 
+
+            // Hide status bar container (the bar itself)
             uploadStatusContainer.style.display = 'none';
-            submitButton.disabled = false;
-        };
+            // Keep uploadStatusText visible with the final message
 
+
+            // Re-enable submit button after processing is complete (success or failure)
+            submitButton.disabled = false;
+
+
+        }; // End xhr.onload
+
+
+        // --- Handle Network Errors (like connection refused) ---
         xhr.onerror = function() {
             console.error('Network error!');
+            // Hide status bar container
             uploadStatusContainer.style.display = 'none';
-            responseArea.innerHTML = '<p>Network error. Please try again.</p>';
+            // uploadStatusText.style.display = 'none'; // Keep status text visible
+            // *** REMOVED: submitButton.disabled = false; // Prevent re-enabling after first submit ***
+
+
+            responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
             responseArea.style.color = '#721c24';
             responseArea.style.backgroundColor = '#f8d7da';
             responseArea.style.borderColor = '#f5c6cb';
+            // Update final status text below the bar on network error
             uploadStatusText.innerHTML = "Network error.";
-            submitButton.disabled = false;
+             // Update status text inside the bar
+            if(uploadStatusBar) { uploadStatusBar.innerHTML = "Error!"; }
         };
 
+
+        // --- Handle Request Timeout ---
         xhr.ontimeout = function() {
             console.error('Request timed out!');
             uploadStatusContainer.style.display = 'none';
-            responseArea.innerHTML = '<p>Request timed out. Please try again later.</p>';
+            // uploadStatusText.style.display = 'none'; // Keep status text visible
+            // *** REMOVED: submitButton.disabled = false; // Prevent re-enabling after first submit ***
+
+
+            responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
             responseArea.style.color = '#721c24';
             responseArea.style.backgroundColor = '#f8d7da';
             responseArea.style.borderColor = '#f5c6cb';
+             // Update final status text below the bar on timeout error
             uploadStatusText.innerHTML = "Request timed out.";
-            submitButton.disabled = false;
+            // Update status text inside the bar
+             if(uploadStatusBar) { uploadStatusBar.innerHTML = "Timeout!"; }
         };
 
-        xhr.open(this.method, this.action);
-        xhr.send(formData);
-    });
-});
 
-// Copy Button functionality
-document.getElementById('copyButton').addEventListener('click', function(event) {
-    event.stopPropagation();
+        // --- Open and Send the Request ---
+        // IMPORTANT: Make sure the action URL below is your CORRECT n8n Production Webhook URL
+        xhr.open(this.method, this.action); // Use the form's method (POST) and action URL
+        // When sending FormData with XHR, the browser automatically sets the Content-Type
+        // and boundary header correctly. Do NOT set Content-Type manually here.
+
+
+        xhr.send(formData); // Send the FormData object containing both files and textarea data
+
+
+    });
+}); // End DOMContentLoaded listener
+
+
+// Add event listener for the copy button
+// This is outside DOMContentLoaded as it relies on the copy button existing,
+// which it does when the page is parsed. It doesn't need to wait for the full DOM.
+document.getElementById('copyButton').addEventListener('click', function(event) { // Added event parameter
+    event.stopPropagation(); // Add this line to stop the click from bubbling
     const responseArea = document.getElementById('responseArea');
-    const textToCopy = responseArea.innerText;
+    // Get ALL text content from the response area div
+    const textToCopy = responseArea.innerText; // Use innerText for simplicity
+
 
     navigator.clipboard.writeText(textToCopy)
         .then(() => {
@@ -266,26 +1031,25 @@ document.getElementById('copyButton').addEventListener('click', function(event) 
             button.textContent = 'Copied!';
             button.classList.add('copied');
             setTimeout(() => {
-                button.textContent = 'Copy';
+                button.textContent = 'Copy'; // Revert to 'Copy', not 'Copy Text'
                 button.classList.remove('copied');
             }, 2000);
         })
         .catch(err => {
             console.error('Failed to copy text: ', err);
-            const button = document.getElementById('copyButton');
-            button.textContent = 'Copy Failed!';
+             const button = document.getElementById('copyButton');
+             button.textContent = 'Copy Failed!';
         });
 });
-</script>
-<!-- End of your FULL JS -->
 
-<!-- Your new Footer -->
+
+</script>
+
+
 <footer>
-  [v0.4] Made with ♥ in Sunnyvale, CA — Rights reserved © 2025 — 
-  For feedback or connecting: 
-  <a href="https://linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — 
-  <span>Resume generation count: <span id="submissionCountDisplay">0</span></span>
+    <p>[v0.4] Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — For feedback or connecting:&nbsp;<a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a>&nbsp;— Resume generation count: <span id="submissionCountDisplay">Loading...</span></p>
 </footer>
+
 
 </body>
 </html>
