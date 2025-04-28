@@ -32,18 +32,15 @@
   }
 
 
-  /* Commented out, remove if not needed */
-  /*
   ol {
-    margin-bottom: 20px;
-    padding-left: 20px;
+    /* margin-bottom: 20px; */
+    /* padding-left: 20px; */
   }
 
 
   ol li {
-      margin-bottom: 5px;
+      /* margin-bottom: 5px; */
   }
-  */
 
 
   /* Styles for the form container using Flexbox */
@@ -422,7 +419,7 @@
   }
 
 
-  /* Styles for the footer - Copied from banana.html */
+  /* Styles for the footer */
   footer {
       position: fixed; /* Fix footer to the bottom */
       left: 0;
@@ -566,14 +563,12 @@
 
 
 <h2>rizzooo-may!</h2>
-<p>Yes you may. Customize your resume to job applications.<br>
-  <b>3 simple (free) steps:</b></p>
+<p>Sure. Customize your resume to job applications.<br><b>3 simple steps <i>(it's free):</i></b></p>
 
-
-<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook/56d59214-83ea-4bbf-bcca-b67ed32a1261" method="POST">
+<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/56d59214-83ea-4bbf-bcca-b67ed32a1261" method="POST">
   <div class="form-section message-section">
     <div class="message-textarea-container">
-        <label for="userMessage">What should the focus be? <i>(Choose from the suggestions below or add your own.)</i></label>
+        <label for="userMessage">Give me some points on what your resume should focus on (choose from the suggestions below or add your own.)</label>
         <textarea name="userMessage" id="userMessage" rows="4" cols="50"></textarea>
     </div>
     <div class="prompt-suggestions-dropdown">
@@ -597,7 +592,7 @@
 
 
   <div class="form-section">
-    <p><b>Upload files </b><i>(.txt files < 1mb please. I'll add more formats soon.)</i></p>
+    <p><b>Upload files </b><i>(.txt files < 1mb please. I'll add more formats soon.)<i></p>
 
 
     <div class="file-inputs-container">
@@ -632,12 +627,11 @@
 
 
 <div id="responseContainer" style="display: none;">
-    <h3>Processing Results:</h3>
-    <div id="responseAreaContainer">
-        <div id="responseArea">
-          </div>
-        <button id="copyButton" class="copy-code-button">Copy</button>
+    <div id="responseHeader">
+        <h3>Processing Results:</h3> <button id="copyButton">Copy Text</button>
     </div>
+    <div id="responseArea">
+      </div>
 </div>
 
 
@@ -751,7 +745,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dropdownPanel.style.display = 'none';
          // Reset arrow (optional)
         const arrow = dropdownTrigger.querySelector('.arrow');
-        if(arrow) { an arrow.textContent = '▼'; }
+        if(arrow) { arrow.textContent = '▼'; }
 
 
     });
@@ -786,10 +780,10 @@ document.addEventListener('DOMContentLoaded', function() {
         responseArea.style.color = '#000';
         responseArea.style.backgroundColor = '#e9ecef';
         responseArea.style.borderColor = '#eee';
-        copyButton.style.display = 'none'; // Hide copy button initially
-        copyButton.textContent = 'Copy'; // Reset copy button text
+        copyButton.style.display = 'none';
+        copyButton.textContent = 'Copy Text';
         copyButton.classList.remove('copied');
-        submitButton.disabled = true; // Disable submit button during upload and processing
+        submitButton.disabled = true; // Disable button during upload
 
 
         // Show and reset status bar
@@ -840,7 +834,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Request has completed (either success or failure status)
 
 
-            // *** REMOVED: submitButton.disabled = false; // Prevent re-enabling after first submit ***
+            submitButton.disabled = false; // Re-enable submit button
 
 
             // Set final status text inside the bar (will be hidden shortly)
@@ -891,6 +885,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Update final status text below the bar on success
                     uploadStatusText.innerHTML = "Generated!";
+
+
 
 
                     responseArea.style.color = '#333'; // Dark grey for success
@@ -958,33 +954,28 @@ document.addEventListener('DOMContentLoaded', function() {
             // Keep uploadStatusText visible with the final message
 
 
-            // Re-enable submit button after processing is complete (success or failure)
-            submitButton.disabled = false;
-
-
         }; // End xhr.onload
 
 
         // --- Handle Network Errors (like connection refused) ---
         xhr.onerror = function() {
             console.error('Network error!');
+            // Hide status bar container
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
-            // *** REMOVED: submitButton.disabled = false; // Prevent re-enabling after first submit ***
+            submitButton.disabled = false; // Re-enable button
+
+
 
 
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
             responseArea.style.color = '#721c24';
             responseArea.style.backgroundColor = '#f8d7da';
             responseArea.style.borderColor = '#f5c6cb';
-             // Update final status text below the bar on network error
+            // Update final status text below the bar on network error
             uploadStatusText.innerHTML = "Network error.";
-            // Update status text inside the bar
-             if(uploadStatusBar) { uploadStatusBar.innerHTML = "Error!"; }
-
-
-             // Re-enable submit button on network error
-             submitButton.disabled = false;
+             // Update status text inside the bar
+            if(uploadStatusBar) { uploadStatusBar.innerHTML = "Error!"; }
         };
 
 
@@ -993,7 +984,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Request timed out!');
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
-            // *** REMOVED: submitButton.disabled = false; // Prevent re-enabling after first submit ***
+            submitButton.disabled = false;
 
 
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
@@ -1004,15 +995,13 @@ document.addEventListener('DOMContentLoaded', function() {
             uploadStatusText.innerHTML = "Request timed out.";
             // Update status text inside the bar
              if(uploadStatusBar) { uploadStatusBar.innerHTML = "Timeout!"; }
-
-
-            // Re-enable submit button on timeout
-            submitButton.disabled = false;
         };
 
 
+
+
         // --- Open and Send the Request ---
-        // IMPORTANT: Make sure the action URL below is your CORRECT n8n Production Webhook URL
+        // IMPORTANT: Replace "https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" with your actual production client webhook URL
         xhr.open(this.method, this.action); // Use the form's method (POST) and action URL
         // When sending FormData with XHR, the browser automatically sets the Content-Type
         // and boundary header correctly. Do NOT set Content-Type manually here.
@@ -1025,11 +1014,10 @@ document.addEventListener('DOMContentLoaded', function() {
 }); // End DOMContentLoaded listener
 
 
-// Add event listener for the copy button
+// Add event listener for the copy button (remains the same)
 // This is outside DOMContentLoaded as it relies on the copy button existing,
 // which it does when the page is parsed. It doesn't need to wait for the full DOM.
-document.getElementById('copyButton').addEventListener('click', function(event) { // Added event parameter
-    event.stopPropagation(); // Add this line to stop the click from bubbling
+document.getElementById('copyButton').addEventListener('click', function() {
     const responseArea = document.getElementById('responseArea');
     // Get ALL text content from the response area div
     const textToCopy = responseArea.innerText; // Use innerText for simplicity
@@ -1041,7 +1029,7 @@ document.getElementById('copyButton').addEventListener('click', function(event) 
             button.textContent = 'Copied!';
             button.classList.add('copied');
             setTimeout(() => {
-                button.textContent = 'Copy'; // Revert to 'Copy', not 'Copy Text'
+                button.textContent = 'Copy Text';
                 button.classList.remove('copied');
             }, 2000);
         })
@@ -1057,8 +1045,10 @@ document.getElementById('copyButton').addEventListener('click', function(event) 
 
 
 <footer>
-    <p>[v0.4] Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — For feedback or connecting:&nbsp;<a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a>&nbsp;— Resume generation count: <span id="submissionCountDisplay">Loading...</span></p>
+    <p>[v0.4] Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — Feedback / connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Last submission count: <span id="submissionCountDisplay">Loading...</span></p>
 </footer>
+
+
 
 
 </body>
