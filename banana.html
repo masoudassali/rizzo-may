@@ -325,12 +325,12 @@
 
 <form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" method="POST">
   <div class="form-section">
-    <label for="userMessage">Give me some pointers on what your resume should focus on, (e.g. clean it up, use x industry terms, etc.)</label>
+    <label for="userMessage">Give me some points on what your resume should focus on, (e.g. clean it up, use x industry terms, etc.)</label>
     <textarea name="userMessage" id="userMessage" rows="4" cols="50"></textarea>
   </div>
 
   <div class="form-section">
-    <p><b>Upload files </b><i>(.txt files < 1mb for now. I'll add more later.)<i></p>
+    <p>Upload files (text file &lt; 1mb)</p>
 
     <div class="file-inputs-container">
       <div class="file-input-group">
@@ -369,8 +369,10 @@
 <script>
 // Global variable for the counter span element
 let counterDisplaySpan = null;
+const localStorageKey = 'rizzoooMaySubmissionCount';
+let currentCount = localStorage.getItem(localStorageKey); // Read initial count globally
 
-// Wait for the DOM to be fully loaded before initializing the counter
+// Wait for the DOM to be fully loaded before initializing the counter display
 document.addEventListener('DOMContentLoaded', function() {
     // Get the counter span element once the DOM is loaded
     counterDisplaySpan = document.getElementById('submissionCountDisplay');
@@ -378,23 +380,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check if the element was found
     if (!counterDisplaySpan) {
         console.error("Submission count display span not found in footer! Counter will not display.");
-        // Exit the function if the element is not found
-        return;
-    }
-
-    const localStorageKey = 'rizzoooMaySubmissionCount';
-    // Retrieve the current count from local storage
-    let currentCount = localStorage.getItem(localStorageKey);
-
-    // If no count is found in local storage, initialize it
-    if (currentCount === null || isNaN(parseInt(currentCount, 10))) { // Added check for NaN just in case
-        currentCount = 431; // Start count if no previous valid count is found
+        // No need to exit here, other parts of the script can still run
     } else {
-        currentCount = parseInt(currentCount, 10); // Convert stored string to number
+         // Update the text content of the span with the current count on load
+        if (currentCount === null || isNaN(parseInt(currentCount, 10))) {
+            currentCount = 431; // Start count if no previous valid count is found
+            localStorage.setItem(localStorageKey, currentCount); // Save initial count
+        } else {
+             currentCount = parseInt(currentCount, 10); // Ensure it's a number
+        }
+        counterDisplaySpan.textContent = currentCount;
     }
 
-    // Update the text content of the span with the current count
-    counterDisplaySpan.textContent = currentCount;
 
     // Attach the form submit listener
     document.getElementById('uploadForm').addEventListener('submit', function(event) {
@@ -414,7 +411,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // --- Reset and Show UI Elements ---
         responseContainer.style.display = 'block';
-        responseArea.innerHTML = 'Preparing upload...';
+        // Initial text for response area while generating
+        responseArea.innerHTML = 'Generating... shouldn\'t take more than a couple of minutes.';
         responseArea.style.color = '#000';
         responseArea.style.backgroundColor = '#e9ecef';
         responseArea.style.borderColor = '#eee';
@@ -426,9 +424,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show and reset status bar
         uploadStatusContainer.style.display = 'block';
         uploadStatusText.style.display = 'block';
-        uploadStatusBar.style.width = '0%';
-        uploadStatusBar.innerHTML = '0%';
-        uploadStatusText.innerHTML = 'Starting upload...';
+        uploadStatusBar.style.width = '0%'; // Reset progress bar
+        uploadStatusBar.innerHTML = '0%'; // Reset progress text
+        // Status text during generation
+        uploadStatusText.innerHTML = "Generating... shouldn't take more than a couple of minutes.";
 
 
         // --- Create and Configure XMLHttpRequest ---
@@ -438,12 +437,9 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.upload.onprogress = function(event) {
             if (event.lengthComputable) {
                 const percentComplete = (event.loaded / event.total) * 100;
-                const percent = Math.round(percentComplete);
-                uploadStatusBar.style.width = percent + '%';
-                uploadStatusBar.innerHTML = percent + '%';
-                uploadStatusText.innerHTML = `Uploading file(s)... ${percent}%`; // Indicate multiple files now
-                responseArea.innerHTML = `Uploading file(s)... ${percent}%`; // Optional: update response area during upload
-
+                // Update progress bar width, but keep the generic status text
+                uploadStatusBar.style.width = percentComplete + '%';
+                // No percentage text needed if status text is generic
             }
         };
 
@@ -451,9 +447,9 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.onload = function() {
             // Request has completed (either success or failure status)
 
-            // Hide status bar and text
-            uploadStatusContainer.style.display = 'none';
-            uploadStatusText.style.display = 'none';
+            // Hide status bar and text *after* updating final status text below
+            // uploadStatusContainer.style.display = 'none';
+            // uploadStatusText.style.display = 'none';
             submitButton.disabled = false; // Re-enable submit button
 
             if (xhr.status >= 200 && xhr.status < 300) {
@@ -488,6 +484,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); // Use customizedResume if present, fallback to full JSON
 
                     responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Display text nicely formatted
+
+                    // Update final status text on success
+                    uploadStatusText.innerHTML = "Generated!";
+
+
                     responseArea.style.color = '#333'; // Dark grey for success
                     responseArea.style.backgroundColor = '#d4edda'; // Light green for success background
                     responseArea.style.borderColor = '#c3e6cb'; // Green border
@@ -498,13 +499,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Failed to parse the JSON response (e.g., client returned plain text or invalid JSON on success)
                     console.error('Error parsing JSON response:', e, 'Response:', xhr.responseText);
                     responseArea.innerHTML = '<p>Error: Received unexpected response from client.</p><p><code>' + xhr.responseText.substring(0, 500) + '...</code></p>'; // Display partial response text
+
+                    // Update final status text on parse error
+                    uploadStatusText.innerHTML = "Generation failed.";
+
                     responseArea.style.color = '#721c24'; // Dark red for error
                     responseArea.style.backgroundColor = '#f8d7da'; // Light red for error background
                     responseArea.style.borderColor = '#f5c6cb';
                 }
 
             } else {
-                // Request failed (HTTP status is not 2xx, e.g., 404, 500 from client)
+                // Request failed (HTTP status is not 2xx)
                 console.error('HTTP error!', xhr.status, xhr.responseText);
                 let errorMessage = `HTTP error! status: ${xhr.status}`;
                 try {
@@ -521,11 +526,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 responseArea.innerHTML = '<p>Error processing files:</p><p><code>' + errorMessage + '</code></p>';
+                 // Update final status text on HTTP error
+                uploadStatusText.innerHTML = `Error: ${xhr.status}`;
+
+
                 responseArea.style.color = '#721c24';
                 responseArea.style.backgroundColor = '#f8d7da';
                 responseArea.style.borderColor = '#f5c6cb';
             }
-        };
+            // Hide status bar and text after processing response
+            uploadStatusContainer.style.display = 'none';
+            uploadStatusText.style.display = 'none';
+
+
+        }; // End xhr.onload
 
         // --- Handle Network Errors (like connection refused) ---
         xhr.onerror = function() {
@@ -540,6 +554,8 @@ document.addEventListener('DOMContentLoaded', function() {
             responseArea.style.color = '#721c24';
             responseArea.style.backgroundColor = '#f8d7da';
             responseArea.style.borderColor = '#f5c6cb';
+            // Update final status text on network error
+            uploadStatusText.innerHTML = "Network error.";
         };
 
         // --- Handle Request Timeout ---
@@ -553,6 +569,8 @@ document.addEventListener('DOMContentLoaded', function() {
             responseArea.style.color = '#721c24';
             responseArea.style.backgroundColor = '#f8d7da';
             responseArea.style.borderColor = '#f5c6cb';
+             // Update final status text on timeout error
+            uploadStatusText.innerHTML = "Request timed out.";
         };
 
 
@@ -564,15 +582,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         xhr.send(formData); // Send the FormData object containing both files and textarea data
 
-
-        // Optional: Update response area immediately after sending
-        responseArea.innerHTML = 'Starting upload...';
-
+        // Initial text for response area while generating (redundant with responseArea.innerHTML update above)
+        // responseArea.innerHTML = 'Generating...';
 
     });
 }); // End DOMContentLoaded listener
 
 // Add event listener for the copy button (remains the same)
+// This is outside DOMContentLoaded as it relies on the copy button existing,
+// which it does when the page is parsed. It doesn't need to wait for the full DOM.
 document.getElementById('copyButton').addEventListener('click', function() {
     const responseArea = document.getElementById('responseArea');
     // Get ALL text content from the response area div
