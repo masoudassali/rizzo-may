@@ -64,30 +64,34 @@
 
   /* --- Specific styles for the message section to accommodate dropdown suggestions --- */
   .form-section.message-section {
-      flex-direction: row; /* Arrange children (textarea container and dropdown) side-by-side on desktop */
-      gap: 20px; /* Space between the textarea area and the dropdown */
-      flex-wrap: wrap; /* Allow stacking on smaller screens */
-      align-items: flex-start; /* Align to the top */
+      /* Changed from row to column to stack textarea and dropdown */
+      flex-direction: column;
+      gap: 15px; /* Adjust gap for stacked items */
+      flex-wrap: wrap; /* Keep wrap for mobile, though stacking makes it less critical */
+      align-items: flex-start; /* Align items to the start */
       position: relative; /* Needed for absolute positioning of dropdown panel */
   }
 
   .message-textarea-container {
-      flex: 2; /* Allow the textarea container to take up more space */
-      min-width: 280px; /* Ensure minimum width before wrapping */
+      /* Removed flex properties as it's now stacked vertically */
       display: flex; /* Use flex to stack label and textarea inside */
       flex-direction: column;
       gap: 8px; /* Space between label and textarea */
+      min-width: 280px; /* Ensure minimum width */
+      width: 100%; /* Make it take full width when stacked */
+      flex: none; /* Ensure it doesn't try to flex */
   }
 
   /* Styles for the dropdown container */
   .prompt-suggestions-dropdown {
-      flex: 1; /* Allow the dropdown area to take remaining space */
-      min-width: 200px; /* Minimum width before wrapping */
+      /* Removed flex properties as it's now stacked vertically */
+      min-width: 200px; /* Keep minimum width */
       position: relative; /* Container for the absolute panel */
-      align-self: flex-start; /* Align to the top */
+      align-self: flex-start; /* Align to the left under the textarea */
       display: flex; /* Use flex to arrange trigger and panel */
       flex-direction: column;
       gap: 5px; /* Space between trigger and panel */
+      width: auto; /* Allow width to be determined by content/min-width */
   }
 
   /* Style for the dropdown trigger button */
@@ -99,12 +103,13 @@
       cursor: pointer;
       font-size: 0.9em;
       text-align: left; /* Align text to the left */
-      width: 100%; /* Take full width of its container */
+      width: auto; /* Allow button width to be determined by content/padding */
       transition: background-color 0.2s ease;
       display: flex; /* Use flex to align text and arrow */
       justify-content: space-between;
       align-items: center;
       box-sizing: border-box; /* Include padding and border in width */
+      min-width: 200px; /* Match container min-width */
   }
 
   .dropdown-trigger:hover {
@@ -118,10 +123,11 @@
 
   /* Style for the dropdown panel */
   .dropdown-panel {
-      position: absolute; /* Position relative to .form-section.message-section */
-      top: 100%; /* Position below the trigger button */
-      left: 0;
-      right: auto; /* Position from the left */
+      position: absolute; /* Keep absolute positioning */
+      top: auto; /* Position relative to the section, below the trigger */
+      bottom: auto; /* No constraint from bottom */
+      left: 0; /* Align left with the dropdown trigger */
+      right: auto; /* No constraint from right */
       z-index: 100; /* Ensure it appears above other content */
       background-color: #fff;
       border: 1px solid #ccc;
@@ -405,7 +411,7 @@
       }
       /* Stack message section vertically on smaller screens */
       .form-section.message-section {
-          flex-direction: column;
+          flex-direction: column; /* Already column, but keeps consistency */
           gap: 15px; /* Adjust gap for vertical stacking */
           align-items: stretch; /* Allow children to stretch */
       }
@@ -424,22 +430,18 @@
       .dropdown-panel {
           position: static; /* Remove absolute positioning on mobile */
           width: 100%; /* Take full width */
-          max-height: none; /* Remove max height */
-          overflow-y: visible; /* Remove scrolling */
-          border: none; /* Remove border */
-          box-shadow: none; /* Remove shadow */
-          padding: 0; /* Remove padding */
-          gap: 10px; /* Adjust gap */
+          max-height: none;
+          overflow-y: visible;
+          border: none;
+          box-shadow: none;
+          padding: 0;
+          gap: 10px;
       }
        .dropdown-panel p {
-           margin-top: 10px; /* Add space above heading on mobile */
+           margin-top: 10px;
        }
        .dropdown-panel ul {
-           padding-left: 20px; /* Add some indentation for clarity on mobile */
-       }
-
-       .dropdown-panel #addSelectedPrompts {
-           margin-top: 10px; /* Space above button */
+           padding-left: 20px;
        }
        .dropdown-panel li {
            margin-bottom: 8px; /* Keep space between checkbox items */
@@ -499,7 +501,7 @@
 <form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" method="POST">
   <div class="form-section message-section">
     <div class="message-textarea-container">
-        <label for="userMessage">Give me some points on what your resume should focus on, (e.g. clean it up, use x industry terms, etc.)</label>
+        <label for="userMessage">Give me some points on what your resume should focus on (choose from the suggestions below or add your own.)</label>
         <textarea name="userMessage" id="userMessage" rows="4" cols="50"></textarea>
     </div>
     <div class="prompt-suggestions-dropdown">
