@@ -776,6 +776,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const submitButton = form.querySelector('input[type="submit"]');
 
 
+        // Disable all input elements and the submit button in the form
+        form.querySelectorAll('input, textarea, button').forEach(element => {
+            if (element !== submitButton) { // Don't disable the submit button here, it's handled below
+                 element.disabled = true;
+            }
+        });
 
 
         // --- Reset and Show UI Elements ---
@@ -788,7 +794,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // copyButton.style.display = 'none'; // REMOVED
         // copyButton.textContent = 'Copy Text'; // REMOVED
         // copyButton.classList.remove('copied'); // REMOVED
-        submitButton.disabled = true; // Disable button during upload
+        submitButton.disabled = true; // Disable submit button during upload
 
 
         // Show and reset status bar
@@ -832,6 +838,15 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
 
+         // Function to re-enable form elements (call this on completion/error)
+         const reEnableForm = () => {
+              form.querySelectorAll('input, textarea, button').forEach(element => {
+                 // We want the submit button to remain disabled until refresh, so don't re-enable it here
+                 if (element !== submitButton) {
+                     element.disabled = false;
+                 }
+             });
+         };
 
 
         // --- Handle Request Completion (Success or Failure) ---
@@ -840,6 +855,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
             // submitButton.disabled = false; // REMOVED: Keep button disabled until refresh
+            reEnableForm(); // Re-enable other form elements
 
 
             // Set final status text inside the bar (will be hidden shortly)
@@ -976,6 +992,7 @@ document.addEventListener('DOMContentLoaded', function() {
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
             // submitButton.disabled = false; // REMOVED: Keep button disabled until refresh
+            reEnableForm(); // Re-enable other form elements
 
 
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
@@ -995,6 +1012,7 @@ document.addEventListener('DOMContentLoaded', function() {
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
             // submitButton.disabled = false; // REMOVED: Keep button disabled until refresh
+            reEnableForm(); // Re-enable other form elements
 
 
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
@@ -1025,7 +1043,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listener for the new copy button
     const copyCodeButton = document.getElementById('copyCodeButton');
     if (copyCodeButton) { // Check if the button exists
-        copyCodeButton.addEventListener('click', function() {
+        copyCodeButton.addEventListener('click', function(event) { // Added event parameter
+            event.stopPropagation(); // Stop the event from bubbling up
+            event.preventDefault(); // Prevent any default action
+
             const responseArea = document.getElementById('responseArea');
             // Get ALL text content from the response area div
             const textToCopy = responseArea.innerText; // Use innerText for simplicity
