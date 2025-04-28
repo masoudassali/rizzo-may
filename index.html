@@ -563,10 +563,8 @@
 
 
 <h2>rizzooo-may!</h2>
-<p><b>Free <i>(beta): </i></b>Customize your resume for job applications.<br><b>3 simple steps:</b></p>
-
-
-
+<p>Yes you may. Customize your resume to job applications.<br>
+  <b>Yup. 3 simple (free) steps:</b>:</b></p>
 
 <form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook/56d59214-83ea-4bbf-bcca-b67ed32a1261" method="POST">
   <div class="form-section message-section">
@@ -1001,10 +999,11 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
 
-
-
         // --- Open and Send the Request ---
         // IMPORTANT: Replace "https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" with your actual production client webhook URL
+        // Note: This URL appears to be the one from previous discussions.
+        // If you are using the URL from your duplicate workflow that was fixed,
+        // make sure to update this 'action' attribute to that correct URL.
         xhr.open(this.method, this.action); // Use the form's method (POST) and action URL
         // When sending FormData with XHR, the browser automatically sets the Content-Type
         // and boundary header correctly. Do NOT set Content-Type manually here.
@@ -1017,10 +1016,11 @@ document.addEventListener('DOMContentLoaded', function() {
 }); // End DOMContentLoaded listener
 
 
-// Add event listener for the copy button (remains the same)
+// Add event listener for the copy button
 // This is outside DOMContentLoaded as it relies on the copy button existing,
 // which it does when the page is parsed. It doesn't need to wait for the full DOM.
-document.getElementById('copyButton').addEventListener('click', function() {
+document.getElementById('copyButton').addEventListener('click', function(event) { // Added event parameter
+    event.stopPropagation(); // Add this line to stop the click from bubbling
     const responseArea = document.getElementById('responseArea');
     // Get ALL text content from the response area div
     const textToCopy = responseArea.innerText; // Use innerText for simplicity
@@ -1048,11 +1048,8 @@ document.getElementById('copyButton').addEventListener('click', function() {
 
 
 <footer>
-    <p>Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — For feedback, requests or connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Last submission count: <span id="submissionCountDisplay">Loading...</span></p>
+    <p>[v0.4] Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — For feedback, requests or connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Last submission count: <span id="submissionCountDisplay">Loading...</span></p>
 </footer>
-
-
-
 
 </body>
 </html>
