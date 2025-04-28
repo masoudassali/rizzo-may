@@ -697,7 +697,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dropdownPanel.style.display = 'none';
          // Reset arrow (optional)
         const arrow = dropdownTrigger.querySelector('.arrow');
-        if(arrow) { arrow.textContent = '▼'; }
+        if(arrow) { an arrow.textContent = '▼'; }
 
 
     });
@@ -901,7 +901,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Hide status bar container (the bar itself)
             uploadStatusContainer.style.display = 'none';
-            // Keep uploadStatusText visible with the final message
+            // uploadStatusText.style.display = 'none'; // Keep status text visible
+            // *** REMOVED: submitButton.disabled = false; // Prevent re-enabling after first submit ***
+
+
+            // Re-enable submit button after processing is complete (success or failure)
+            submitButton.disabled = false;
 
 
         }; // End xhr.onload
@@ -910,7 +915,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // --- Handle Network Errors (like connection refused) ---
         xhr.onerror = function() {
             console.error('Network error!');
-            // Hide status bar container
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
             // *** REMOVED: submitButton.disabled = false; // Prevent re-enabling after first submit ***
@@ -920,10 +924,14 @@ document.addEventListener('DOMContentLoaded', function() {
             responseArea.style.color = '#721c24';
             responseArea.style.backgroundColor = '#f8d7da';
             responseArea.style.borderColor = '#f5c6cb';
-            // Update final status text below the bar on network error
+             // Update final status text below the bar on network error
             uploadStatusText.innerHTML = "Network error.";
-             // Update status text inside the bar
-            if(uploadStatusBar) { uploadStatusBar.innerHTML = "Error!"; }
+            // Update status text inside the bar
+             if(uploadStatusBar) { uploadStatusBar.innerHTML = "Error!"; }
+
+
+             // Re-enable submit button on network error
+             submitButton.disabled = false;
         };
 
 
@@ -943,6 +951,10 @@ document.addEventListener('DOMContentLoaded', function() {
             uploadStatusText.innerHTML = "Request timed out.";
             // Update status text inside the bar
              if(uploadStatusBar) { uploadStatusBar.innerHTML = "Timeout!"; }
+
+
+            // Re-enable submit button on timeout
+            submitButton.disabled = false;
         };
 
 
@@ -992,7 +1004,7 @@ document.getElementById('copyButton').addEventListener('click', function(event) 
 
 
 <footer>
-    <p>[v0.4] Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — For feedback, requests or connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Resume generation count: <span id="submissionCountDisplay">Loading...</span></p> {/* Changed text here */}
+    <p>[v0.4] Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — For feedback, requests or connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Resume generation count: <span id="submissionCountDisplay">Loading...</span></p>
 </footer>
 
 
