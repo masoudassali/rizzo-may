@@ -455,7 +455,7 @@
            padding-left: 20px;
        }
        .dropdown-panel li {
-           margin-bottom: 8px;
+           margin-bottom: 8px; /* Keep space between checkbox items */
        }
 
 
@@ -649,7 +649,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dropdownPanel.style.display = 'none'; // Hide the panel
              // Reset arrow (optional)
              const arrow = dropdownTrigger.querySelector('.arrow');
-             if(arrow) { arrow.textContent = '▼'; }
+             if(arrow) { col-copyButton.textContent = '▼'; }
         }
     });
 
@@ -992,8 +992,9 @@ document.getElementById('copyButton').addEventListener('click', function(event) 
 
 
 <footer>
-    <p>[v0.4] Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — For feedback, requests or connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Resume generation count: <span id="submissionCountDisplay">Loading...</span></p>
+    <p>[v0.4] Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — For feedback, requests or connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Resume generation count: <span id="submissionCountDisplay">Loading...</span></p> {/* Changed text here */}
 </footer>
+
 
 </body>
 </html>
