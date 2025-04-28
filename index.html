@@ -337,45 +337,55 @@
 
 
   /* Styles for the response area */
-  #responseContainer { /* Container for response header, button, and area */
+  #responseContainer { /* Container for response header and the response area wrapper */
       margin-top: 20px; /* Keep this margin */
   }
 
 
   #responseHeader {
-      display: flex; /* Use flexbox to align header and button */
+      display: flex; /* Use flexbox to align header */
       align-items: center; /* Vertically align */
-      gap: 15px; /* Space between header and button */
+      /* gap: 15px; /* Removed gap as copy button is no longer here */
       margin-bottom: 10px;
   }
 
 
-  /* Modified style for the copy button */
-  #copyButton {
-      padding: 8px 15px; /* Adjusted padding */
-      background-color: #e9ecef; /* Light grey background */
-      color: #333; /* Dark text color */
-      border: 1px solid #ccc; /* Added a light border */
-      border-radius: 8px; /* More rounded corners */
+   /* Style for the wrapper around responseArea to position the copy button */
+   .response-area-wrapper {
+       position: relative; /* Needed for absolute positioning of the button */
+   }
+
+
+  /* Style for the new copy code button */
+  #copyCodeButton {
+      position: absolute;
+      top: 5px; /* Adjust as needed for spacing from the top */
+      right: 5px; /* Adjust as needed for spacing from the right */
+      background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
+      border: 1px solid #ccc; /* Light border */
+      border-radius: 4px; /* Small rounded corners */
+      padding: 5px 8px; /* Add some padding */
       cursor: pointer;
-      font-size: 14px;
-      transition: background-color 0.3s ease, border-color 0.3s ease; /* Add border-color to transition */
+      font-size: 0.8em; /* Smaller font size for the icon/text */
+      color: #333; /* Dark color for the icon/text */
+      z-index: 1; /* Ensure it's above the text area content */
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+      line-height: 1; /* Ensure consistent height */
   }
 
 
-  #copyButton:hover {
-    background-color: #d0d4d7; /* Slightly darker grey on hover */
-    border-color: #bbb; /* Slightly darker border on hover */
+  #copyCodeButton:hover {
+      background-color: rgba(255, 255, 255, 0.8); /* Less transparent on hover */
+      border-color: #bbb;
   }
 
 
-  #copyButton.copied { /* Style when text is copied */
-      background-color: #d4edda; /* Light green, similar to success response background */
-      color: #155724; /* Dark green text */
+  /* Optional: Style for when the text is copied */
+  #copyCodeButton.copied {
+      background-color: #d4edda; /* Light green */
       border-color: #c3e6cb; /* Green border */
+      color: #155724; /* Dark green text */
   }
-
-
 
 
   #responseArea {
@@ -536,8 +546,9 @@
           align-items: flex-start;
           gap: 5px;
       }
-       #copyButton {
-           width: auto; /* Auto width on small screens */
+       #copyCodeButton { /* Adjust copy button style on small screens */
+           position: static; /* Remove absolute positioning */
+           margin-top: 10px; /* Add space above button */
        }
         footer {
             font-size: 0.7em; /* Smaller font on small screens */
@@ -623,10 +634,11 @@
 
 <div id="responseContainer" style="display: none;">
     <div id="responseHeader">
-        <h3>Processing Results:</h3> <button id="copyButton">Copy Text</button>
+        <h3>Processing Results:</h3>
     </div>
-    <div id="responseArea">
-      </div>
+    <div class="response-area-wrapper">
+        <div id="responseArea"></div>
+        <button id="copyCodeButton" title="Copy to clipboard">📋</button> </div>
 </div>
 
 
@@ -757,7 +769,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const responseArea = document.getElementById('responseArea');
         const responseContainer = document.getElementById('responseContainer');
-        const copyButton = document.getElementById('copyButton');
+        // const copyButton = document.getElementById('copyButton'); // REMOVED
         const uploadStatusContainer = document.getElementById('uploadStatusContainer');
         const uploadStatusBar = document.getElementById('uploadStatusBar');
         const uploadStatusText = document.getElementById('uploadStatusText');
@@ -773,9 +785,9 @@ document.addEventListener('DOMContentLoaded', function() {
         responseArea.style.color = '#000';
         responseArea.style.backgroundColor = '#e9ecef';
         responseArea.style.borderColor = '#eee';
-        copyButton.style.display = 'none';
-        copyButton.textContent = 'Copy Text';
-        copyButton.classList.remove('copied');
+        // copyButton.style.display = 'none'; // REMOVED
+        // copyButton.textContent = 'Copy Text'; // REMOVED
+        // copyButton.classList.remove('copied'); // REMOVED
         submitButton.disabled = true; // Disable button during upload
 
 
@@ -873,7 +885,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); // Use customizedResume if present, fallback to full JSON
 
 
-                    responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Display text nicely formatted
+                    // responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Original line
+                     // Display text nicely formatted, preserving pre/code if present or adding pre if needed
+                    if (customizedResumeText.startsWith('<pre>') && customizedResumeText.endsWith('</pre>')) {
+                        responseArea.innerHTML = customizedResumeText; // Use as is if already wrapped
+                    } else {
+                         // Wrap in pre tags for consistent formatting
+                        responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>';
+                    }
 
 
                     // Update final status text below the bar on success
@@ -883,11 +902,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
                     responseArea.style.color = '#333'; // Dark grey for success
-                    responseArea.style.backgroundColor = '#d4edda'; // Light green for success background
-                    responseArea.style.borderColor = '#c3e6cb'; // Green border
-                    copyButton.style.display = 'inline-block'; // Show the copy button
-
-
+                    responseArea.style.backgroundColor = '#e9ecef'; // Light grey, consistent with original response area background
+                    responseArea.style.borderColor = '#eee'; // Light border, consistent with original response area border
+                    // copyButton.style.display = 'inline-block'; // REMOVED: Old copy button
+                    // copyButton.textContent = 'Copy Text'; // REMOVED
+                    // copyButton.classList.remove('copied'); // REMOVED
 
 
                 } catch (e) {
@@ -1002,34 +1021,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     });
+
+    // Add event listener for the new copy button
+    const copyCodeButton = document.getElementById('copyCodeButton');
+    if (copyCodeButton) { // Check if the button exists
+        copyCodeButton.addEventListener('click', function() {
+            const responseArea = document.getElementById('responseArea');
+            // Get ALL text content from the response area div
+            const textToCopy = responseArea.innerText; // Use innerText for simplicity
+
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    const button = document.getElementById('copyCodeButton');
+                    const originalText = button.textContent; // Store original text/icon
+                    button.textContent = 'Copied!'; // Change text to "Copied!"
+                    button.classList.add('copied');
+                    setTimeout(() => {
+                        button.textContent = originalText; // Restore original text/icon
+                        button.classList.remove('copied');
+                    }, 2000); // Revert after 2 seconds
+                })
+                .catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    const button = document.getElementById('copyCodeButton');
+                    const originalText = button.textContent;
+                     button.textContent = 'Copy Failed!'; // Indicate failure
+                     button.classList.add('error'); // Optional: add an error class for styling
+                    setTimeout(() => {
+                         button.textContent = originalText;
+                         button.classList.remove('error');
+                    }, 2000);
+                });
+        });
+    } else {
+        console.error("Copy code button not found!");
+    }
+
 }); // End DOMContentLoaded listener
 
-
-// Add event listener for the copy button (remains the same)
-// This is outside DOMContentLoaded as it relies on the copy button existing,
-// which it does when the page is parsed. It doesn't need to wait for the full DOM.
-document.getElementById('copyButton').addEventListener('click', function() {
-    const responseArea = document.getElementById('responseArea');
-    // Get ALL text content from the response area div
-    const textToCopy = responseArea.innerText; // Use innerText for simplicity
-
-
-    navigator.clipboard.writeText(textToCopy)
-        .then(() => {
-            const button = document.getElementById('copyButton');
-            button.textContent = 'Copied!';
-            button.classList.add('copied');
-            setTimeout(() => {
-                button.textContent = 'Copy Text';
-                button.classList.remove('copied');
-            }, 2000);
-        })
-        .catch(err => {
-            console.error('Failed to copy text: ', err);
-             const button = document.getElementById('copyButton');
-             button.textContent = 'Copy Failed!';
-        });
-});
 
 
 </script>
