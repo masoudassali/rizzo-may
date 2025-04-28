@@ -495,12 +495,14 @@
         }
 
 
-       /* Footer adjustments */
+       /* Footer adjustments - REMOVED */
+        /*
         footer {
             font-size: 0.7em;
             padding: 8px 10px;
             line-height: 1.4;
         }
+        */
 
 
   }
@@ -901,8 +903,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Hide status bar container (the bar itself)
             uploadStatusContainer.style.display = 'none';
-            // uploadStatusText.style.display = 'none'; // Keep status text visible
-            // *** REMOVED: submitButton.disabled = false; // Prevent re-enabling after first submit ***
+            // Keep uploadStatusText visible with the final message
 
 
             // Re-enable submit button after processing is complete (success or failure)
@@ -1001,11 +1002,6 @@ document.getElementById('copyButton').addEventListener('click', function(event) 
 
 
 </script>
-
-
-<footer>
-    <p>[v0.4] Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — For feedback, requests or connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Resume generation count: <span id="submissionCountDisplay">Loading...</span></p>
-</footer>
 
 
 </body>
