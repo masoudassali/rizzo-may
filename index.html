@@ -419,7 +419,7 @@
   }
 
 
-  /* Styles for the footer */
+  /* Styles for the footer - Copied from banana.html */
   footer {
       position: fixed; /* Fix footer to the bottom */
       left: 0;
@@ -965,7 +965,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // --- Handle Network Errors (like connection refused) ---
         xhr.onerror = function() {
             console.error('Network error!');
-            // Hide status bar container
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
             // *** REMOVED: submitButton.disabled = false; // Prevent re-enabling after first submit ***
@@ -975,10 +974,14 @@ document.addEventListener('DOMContentLoaded', function() {
             responseArea.style.color = '#721c24';
             responseArea.style.backgroundColor = '#f8d7da';
             responseArea.style.borderColor = '#f5c6cb';
-            // Update final status text below the bar on network error
+             // Update final status text below the bar on network error
             uploadStatusText.innerHTML = "Network error.";
-             // Update status text inside the bar
-            if(uploadStatusBar) { uploadStatusBar.innerHTML = "Error!"; }
+            // Update status text inside the bar
+             if(uploadStatusBar) { uploadStatusBar.innerHTML = "Error!"; }
+
+
+             // Re-enable submit button on network error
+             submitButton.disabled = false;
         };
 
 
@@ -998,6 +1001,10 @@ document.addEventListener('DOMContentLoaded', function() {
             uploadStatusText.innerHTML = "Request timed out.";
             // Update status text inside the bar
              if(uploadStatusBar) { uploadStatusBar.innerHTML = "Timeout!"; }
+
+
+            // Re-enable submit button on timeout
+            submitButton.disabled = false;
         };
 
 
