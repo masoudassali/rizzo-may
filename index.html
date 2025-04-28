@@ -130,14 +130,6 @@
   }
 
 
-  .dropdown-trigger .arrow {
-      margin-left: 10px;
-  }
-
-
-
-
-  /* Style for the dropdown panel */
   .dropdown-panel {
       position: absolute; /* Keep absolute positioning */
       top: auto; /* Position relative to the section, below the trigger */
@@ -327,7 +319,7 @@
       text-align: center;
       line-height: 20px; /* Vertically center text */
       color: white;
-      border-radius: 4회px;
+      border-radius: 4px;
       transition: width 0.3s ease; /* Smooth animation for the bar */
       font-size: 0.8em; /* Smaller text */
   }
@@ -358,26 +350,29 @@
   }
 
 
+  /* Modified style for the copy button */
   #copyButton {
-      padding: 5px 15px;
-      background-color: #6c757d; /* Grey color for button */
-      color: white;
-      border: none;
-      border-radius: 4px;
+      padding: 8px 15px; /* Adjusted padding */
+      background-color: #e9ecef; /* Light grey background */
+      color: #333; /* Dark text color */
+      border: 1px solid #ccc; /* Added a light border */
+      border-radius: 8px; /* More rounded corners */
       cursor: pointer;
       font-size: 14px;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, border-color 0.3s ease; /* Add border-color to transition */
   }
 
 
   #copyButton:hover {
-    background-color: #5a6268; /* Darker grey on hover */
+    background-color: #d0d4d7; /* Slightly darker grey on hover */
+    border-color: #bbb; /* Slightly darker border on hover */
   }
 
 
   #copyButton.copied { /* Style when text is copied */
-      background-color: #28a745; /* Green */
-      color: white;
+      background-color: #d4edda; /* Light green, similar to success response background */
+      color: #155724; /* Dark green text */
+      border-color: #c3e6cb; /* Green border */
   }
 
 
