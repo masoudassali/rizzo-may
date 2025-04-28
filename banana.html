@@ -383,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // No need to exit here, other parts of the script can still run
     } else {
          // Update the text content of the span with the current count on load
-        if (currentCount === null || isNaN(parseInt(currentCount, 10))) {
+        if (currentCount === null || isNaN(parseInt(currentCount, 10))) { // Also checks if initial read was NaN
             currentCount = 431; // Start count if no previous valid count is found
             localStorage.setItem(localStorageKey, currentCount); // Save initial count
         } else {
@@ -424,9 +424,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show and reset status bar
         uploadStatusContainer.style.display = 'block';
         uploadStatusText.style.display = 'block';
-        uploadStatusBar.style.width = '0%'; // Reset progress bar
-        uploadStatusBar.innerHTML = '0%'; // Reset progress text
-        // Status text during generation
+        uploadStatusBar.style.width = '0%'; // Reset progress bar width
+        uploadStatusBar.innerHTML = '0%'; // Reset percentage text inside bar
+        // Status text below the bar throughout the process until completion/error
         uploadStatusText.innerHTML = "Generating... shouldn't take more than a couple of minutes.";
 
 
@@ -437,9 +437,16 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.upload.onprogress = function(event) {
             if (event.lengthComputable) {
                 const percentComplete = (event.loaded / event.total) * 100;
-                // Update progress bar width, but keep the generic status text
-                uploadStatusBar.style.width = percentComplete + '%';
-                // No percentage text needed if status text is generic
+                const percent = Math.round(percentComplete); // Round for display
+                // Update progress bar width
+                uploadStatusBar.style.width = percent + '%';
+                // Update the text inside the status bar div (e.g., "0%", "50%", "100%")
+                // Optional: only show percentage during upload phase
+                if (percent < 100) {
+                     uploadStatusBar.innerHTML = percent + '%';
+                }
+                // Note: Text below the bar remains "Generating..." during this phase
+
             }
         };
 
@@ -447,10 +454,13 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.onload = function() {
             // Request has completed (either success or failure status)
 
-            // Hide status bar and text *after* updating final status text below
-            // uploadStatusContainer.style.display = 'none';
-            // uploadStatusText.style.display = 'none';
             submitButton.disabled = false; // Re-enable submit button
+
+            // Set final status text inside the bar (will be hidden shortly)
+            if(uploadStatusBar) { // Check exists
+               uploadStatusBar.innerHTML = xhr.status >= 200 && xhr.status < 300 ? '100%' : 'Error'; // Show 100% or Error in bar
+            }
+
 
             if (xhr.status >= 200 && xhr.status < 300) {
                 // Request was successful (HTTP status 2xx)
@@ -459,16 +469,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Only increment if the counter span was found initially
                 if (counterDisplaySpan) {
                     // Ensure currentCount is a number before incrementing
-                    if (typeof currentCount !== 'number' || isNaN(currentCount)) {
-                         // If for some reason currentCount isn't a number here,
-                         // re-read it from local storage or re-initialize
+                     if (typeof currentCount !== 'number' || isNaN(currentCount)) {
+                         // If for some reason currentCount isn't a number here, re-read it
                          currentCount = localStorage.getItem(localStorageKey);
                          if (currentCount === null || isNaN(parseInt(currentCount, 10))) {
                             currentCount = 431;
                          } else {
                              currentCount = parseInt(currentCount, 10);
                          }
-                    }
+                     }
                     currentCount++;
                     localStorage.setItem(localStorageKey, currentCount);
                     // Update the text content of the span in the footer
@@ -485,7 +494,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Display text nicely formatted
 
-                    // Update final status text on success
+                    // Update final status text below the bar on success
                     uploadStatusText.innerHTML = "Generated!";
 
 
@@ -500,8 +509,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.error('Error parsing JSON response:', e, 'Response:', xhr.responseText);
                     responseArea.innerHTML = '<p>Error: Received unexpected response from client.</p><p><code>' + xhr.responseText.substring(0, 500) + '...</code></p>'; // Display partial response text
 
-                    // Update final status text on parse error
-                    uploadStatusText.innerHTML = "Generation failed.";
+                    // Update final status text below the bar on parse error
+                    uploadStatusText.innerHTML = "Generation failed (Parse Error).";
 
                     responseArea.style.color = '#721c24'; // Dark red for error
                     responseArea.style.backgroundColor = '#f8d7da'; // Light red for error background
@@ -526,7 +535,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 responseArea.innerHTML = '<p>Error processing files:</p><p><code>' + errorMessage + '</code></p>';
-                 // Update final status text on HTTP error
+                 // Update final status text below the bar on HTTP error
                 uploadStatusText.innerHTML = `Error: ${xhr.status}`;
 
 
@@ -534,10 +543,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 responseArea.style.backgroundColor = '#f8d7da';
                 responseArea.style.borderColor = '#f5c6cb';
             }
-            // Hide status bar and text after processing response
+            // Hide status bar container (the bar itself)
             uploadStatusContainer.style.display = 'none';
-            uploadStatusText.style.display = 'none';
-
+            // Keep uploadStatusText visible with the final message
 
         }; // End xhr.onload
 
@@ -546,7 +554,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Network error!');
             // Hide status bar and text
             uploadStatusContainer.style.display = 'none';
-            uploadStatusText.style.display = 'none';
+            // uploadStatusText.style.display = 'none'; // Keep status text visible
             submitButton.disabled = false; // Re-enable submit button
 
 
@@ -554,7 +562,7 @@ document.addEventListener('DOMContentLoaded', function() {
             responseArea.style.color = '#721c24';
             responseArea.style.backgroundColor = '#f8d7da';
             responseArea.style.borderColor = '#f5c6cb';
-            // Update final status text on network error
+            // Update final status text below the bar on network error
             uploadStatusText.innerHTML = "Network error.";
         };
 
@@ -562,14 +570,14 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.ontimeout = function() {
             console.error('Request timed out!');
             uploadStatusContainer.style.display = 'none';
-            uploadStatusText.style.display = 'none';
+            // uploadStatusText.style.display = 'none'; // Keep status text visible
             submitButton.disabled = false;
 
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
             responseArea.style.color = '#721c24';
             responseArea.style.backgroundColor = '#f8d7da';
             responseArea.style.borderColor = '#f5c6cb';
-             // Update final status text on timeout error
+             // Update final status text below the bar on timeout error
             uploadStatusText.innerHTML = "Request timed out.";
         };
 
