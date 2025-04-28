@@ -12,11 +12,13 @@
     padding-bottom: 80px; /* Add padding at the bottom to make space for the fixed footer */
   }
 
+
   h2 {
     color: #333;
     border-bottom: 2px solid #007bff; /* A little underline */
     padding-bottom: 10px;
   }
+
 
   h3 {
     color: #555;
@@ -24,18 +26,22 @@
     margin-bottom: 10px;
   }
 
+
   p { /* Style for general paragraphs */
       margin-bottom: 15px;
   }
+
 
   ol {
     /* margin-bottom: 20px; */
     /* padding-left: 20px; */
   }
 
+
   ol li {
       /* margin-bottom: 5px; */
   }
+
 
   /* Styles for the form container using Flexbox */
   form {
@@ -50,10 +56,12 @@
     gap: 20px; /* Add space between form sections */
   }
 
+
   /* Apply box-sizing for more predictable width */
   form *, form *:before, form *:after {
     box-sizing: border-box;
   }
+
 
   /* Style for each main section within the form (message, files, button) */
   .form-section {
@@ -61,6 +69,7 @@
       flex-direction: column; /* Stack elements within each section (label, input/textarea) */
       gap: 8px; /* Space between label and input/textarea */
   }
+
 
   /* --- Specific styles for the message section to accommodate dropdown suggestions --- */
   .form-section.message-section {
@@ -72,6 +81,7 @@
       position: relative; /* Needed for absolute positioning of dropdown panel */
   }
 
+
   .message-textarea-container {
       /* Removed flex properties as it's now stacked vertically */
       display: flex; /* Use flex to stack label and textarea inside */
@@ -81,6 +91,7 @@
       width: 100%; /* Make it take full width when stacked */
       flex: none; /* Ensure it doesn't try to flex */
   }
+
 
   /* Styles for the dropdown container */
   .prompt-suggestions-dropdown {
@@ -93,6 +104,7 @@
       gap: 5px; /* Space between trigger and panel */
       width: auto; /* Allow width to be determined by content/min-width */
   }
+
 
   /* Style for the dropdown trigger button */
   .dropdown-trigger {
@@ -112,13 +124,17 @@
       min-width: 200px; /* Match container min-width */
   }
 
+
   .dropdown-trigger:hover {
       background-color: #d0d4d7;
   }
 
+
   .dropdown-trigger .arrow {
       margin-left: 10px;
   }
+
+
 
 
   /* Style for the dropdown panel */
@@ -142,6 +158,7 @@
       gap: 10px; /* Space between elements */
   }
 
+
   .dropdown-panel p {
       font-weight: bold;
       margin-bottom: 0;
@@ -149,11 +166,13 @@
       color: #555;
   }
 
+
   .dropdown-panel ul {
       list-style: none;
       padding: 0;
       margin: 0;
   }
+
 
   .dropdown-panel li {
       margin-bottom: 8px; /* Space between checkboxes */
@@ -161,14 +180,17 @@
       align-items: center;
   }
 
+
   .dropdown-panel li:last-child {
        margin-bottom: 0;
   }
+
 
   .dropdown-panel input[type="checkbox"] {
       margin-right: 8px; /* Space between checkbox and label */
       flex-shrink: 0; /* Prevent checkbox from shrinking */
   }
+
 
   .dropdown-panel label {
       font-weight: normal; /* Labels for checkboxes don't need to be bold */
@@ -176,6 +198,7 @@
       flex: 1; /* Allow label to take space */
       font-size: 0.9em;
   }
+
 
   .dropdown-panel #addSelectedPrompts {
       display: block; /* Make button block */
@@ -191,12 +214,17 @@
       transition: background-color 0.2s ease;
   }
 
+
   .dropdown-panel #addSelectedPrompts:hover {
       background-color: #0056b3;
   }
 
 
+
+
   /* --- End specific styles for message section --- */
+
+
 
 
   label {
@@ -204,6 +232,7 @@
     font-weight: bold;
     color: #555;
   }
+
 
   input[type="file"],
   textarea {
@@ -215,14 +244,17 @@
     width: 100%; /* Make them fill the width of their parent flex item */
   }
 
+
   textarea {
       resize: vertical; /* Allow only vertical resizing */
       min-height: 100px; /* Give textarea a minimum height */
   }
 
+
    input[type="file"] {
        resize: none;
    }
+
 
     /* Styles for the container holding side-by-side file inputs */
     .file-inputs-container {
@@ -230,6 +262,7 @@
         gap: 20px; /* Space between the two file input groups */
         flex-wrap: wrap; /* Allow wrapping to a new line on smaller screens */
     }
+
 
     /* Style for each individual file input group (Flex items within file-inputs-container) */
     .file-input-group {
@@ -240,9 +273,12 @@
         gap: 5px; /* Space between label and input within the group */
     }
 
+
     .file-input-group label {
         margin-bottom: 0; /* Gap handles spacing */
     }
+
+
 
 
   /* Revised CSS for input[type="submit"] - use max-width and margin: auto, placed in its own section */
@@ -261,14 +297,17 @@
     margin: 0 auto; /* Center the block button horizontally within its parent .form-section */
   }
 
+
   input[type="submit"]:hover {
     background-color: #0056b3; /* Darker blue on hover */
   }
+
 
   input[type="submit"]:disabled { /* Style for disabled button */
     background-color: #cccccc;
     cursor: not-allowed;
   }
+
 
   /* Styles for the upload status bar */
   #uploadStatusContainer {
@@ -279,6 +318,7 @@
       border-radius: 4px;
       overflow: hidden; /* Ensure the status bar stays within bounds */
   }
+
 
   #uploadStatusBar {
       width: 0%;
@@ -292,6 +332,7 @@
       font-size: 0.8em; /* Smaller text */
   }
 
+
    #uploadStatusText {
       margin-top: 5px; /* Keep this margin */
       font-size: 0.9em;
@@ -301,10 +342,13 @@
    }
 
 
+
+
   /* Styles for the response area */
   #responseContainer { /* Container for response header, button, and area */
       margin-top: 20px; /* Keep this margin */
   }
+
 
   #responseHeader {
       display: flex; /* Use flexbox to align header and button */
@@ -312,6 +356,7 @@
       gap: 15px; /* Space between header and button */
       margin-bottom: 10px;
   }
+
 
   #copyButton {
       padding: 5px 15px;
@@ -324,14 +369,18 @@
       transition: background-color 0.3s ease;
   }
 
+
   #copyButton:hover {
     background-color: #5a6268; /* Darker grey on hover */
   }
+
 
   #copyButton.copied { /* Style when text is copied */
       background-color: #28a745; /* Green */
       color: white;
   }
+
+
 
 
   #responseArea {
@@ -346,16 +395,20 @@
     overflow-x: auto; /* Add horizontal scroll if content is too wide */
   }
 
+
   #responseArea pre { /* Style for pre tag inside response area */
       margin: 0; /* Remove default margin from pre */
       padding: 0;
   }
 
 
+
+
   #responseArea p { /* Style for paragraph messages inside response area */
       margin: 5px 0;
       padding: 0;
   }
+
 
   #responseArea code { /* Style for code blocks inside response area */
       background-color: #f8f9fa;
@@ -364,6 +417,7 @@
       font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
       font-size: 0.9em;
   }
+
 
   /* Styles for the footer */
   footer {
@@ -379,25 +433,31 @@
       z-index: 10; /* Ensure footer is above other content if needed */
   }
 
+
   footer p {
       margin: 0; /* Remove margin from footer paragraph */
       padding: 0;
   }
+
 
     footer a {
         color: #f4f7f6; /* Light color for links in footer */
         text-decoration: none; /* Remove underline */
     }
 
+
     footer a:hover {
         text-decoration: underline; /* Underline on hover */
     }
+
 
     /* Style for the counter span inside the footer */
     footer #submissionCountDisplay {
         font-weight: bold; /* Make the count stand out */
         margin-left: 5px; /* Add a little space after "Total Submissions:" */
     }
+
+
 
 
   /* Optional: Add some responsive adjustments */
@@ -427,6 +487,7 @@
            gap: 5px;
        }
 
+
       .dropdown-panel {
           position: static; /* Remove absolute positioning on mobile */
           width: 100%; /* Take full width */
@@ -448,6 +509,8 @@
        }
 
 
+
+
       /* Button styles for mobile - full width, no centering */
       input[type="submit"] {
           width: 100%;
@@ -460,6 +523,7 @@
           align-items: stretch; /* Allow button to stretch */
       }
 
+
        /* Adjust file inputs to stack on mobile */
        .file-inputs-container {
            flex-direction: column; /* Stack items vertically on small screens */
@@ -470,6 +534,7 @@
            width: 100%; /* Ensure they take full width when stacked */
            gap: 5px; /* Keep space between label and input */
        }
+
 
       #responseHeader {
           flex-direction: column; /* Stack header and button on small screens */
@@ -488,17 +553,22 @@
             margin: 0; /* Ensure no extra margin */
         }
 
+
   }
+
 
 </style>
 </head>
 <body>
 
+
 <h2>rizzooo-may!</h2>
-<p><b>Free <i>(beta): </i></b>Customize your resume for job applications.<br>3 simple steps:</p>
+<p><b>Free <i>(beta): </i></b>Customize your resume for job applications.<br><b>3 simple steps:</b></p>
 
 
-<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" method="POST">
+
+
+<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/56d59214-83ea-4bbf-bcca-b67ed32a1261" method="POST">
   <div class="form-section message-section">
     <div class="message-textarea-container">
         <label for="userMessage">Give me some points on what your resume should focus on (choose from the suggestions below or add your own.)</label>
@@ -522,8 +592,11 @@
   </div>
 
 
+
+
   <div class="form-section">
-    <p>Upload files (text file &lt; 1mb)</p>
+    <p><b>Upload files </b><i>(.txt files < 1mb please. I'll add more formats soon.)<i></p>
+
 
     <div class="file-inputs-container">
       <div class="file-input-group">
@@ -538,16 +611,22 @@
   </div>
 
 
+
+
   <div class="form-section button-section">
     <input type="submit" value="Generate Resume">
   </div>
 
+
 </form>
+
 
 <div id="uploadStatusContainer">
   <div id="uploadStatusBar">0%</div>
 </div>
 <div id="uploadStatusText">Uploading...</div>
+
+
 
 
 <div id="responseContainer" style="display: none;">
@@ -559,6 +638,8 @@
 </div>
 
 
+
+
 <script>
 // Global variable for the counter span element
 let counterDisplaySpan = null;
@@ -566,12 +647,16 @@ const localStorageKey = 'rizzoooMaySubmissionCount';
 let currentCount = localStorage.getItem(localStorageKey); // Read initial count globally
 
 
+
+
 // Wait for the DOM to be fully loaded before initializing most script parts
 document.addEventListener('DOMContentLoaded', function() {
+
 
     // --- Submission Counter Initialization ---
     // Get the counter span element once the DOM is loaded
     counterDisplaySpan = document.getElementById('submissionCountDisplay');
+
 
     // Check if the element was found
     if (!counterDisplaySpan) {
@@ -588,10 +673,12 @@ document.addEventListener('DOMContentLoaded', function() {
         counterDisplaySpan.textContent = currentCount;
     }
 
+
     // --- Prompt Suggestions Dropdown Functionality ---
     const dropdownTrigger = document.getElementById('promptDropdownTrigger');
     const dropdownPanel = document.getElementById('promptDropdownPanel');
     const addSelectedButton = document.getElementById('addSelectedPrompts');
+
 
     // Toggle dropdown visibility
     dropdownTrigger.addEventListener('click', function(event) {
@@ -605,6 +692,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+
     // Close dropdown when clicking outside
     document.addEventListener('click', function(event) {
         // If the click is not inside the dropdown trigger AND not inside the dropdown panel
@@ -616,10 +704,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+
     // Prevent dropdown from closing when clicking inside the panel (except on the Add button, handled below)
     dropdownPanel.addEventListener('click', function(event) {
         event.stopPropagation(); // Stop the click from bubbling up to the document
     });
+
+
 
 
     // Handle adding selected prompts to the textarea
@@ -628,6 +719,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const checkboxes = dropdownPanel.querySelectorAll('input[type="checkbox"]:checked');
         let selectedPromptsText = '';
 
+
         checkboxes.forEach(checkbox => {
             // Get the prompt text from the data-prompt attribute
             const promptText = checkbox.dataset.prompt || checkbox.nextElementSibling.textContent; // Use label text as fallback
@@ -635,18 +727,22 @@ document.addEventListener('DOMContentLoaded', function() {
             checkbox.checked = false; // Uncheck the box after adding
         });
 
+
         // Append the collected prompts to the textarea
         if (selectedPromptsText.length > 0) {
              // Add a newline before the first added prompt if the textarea isn't empty and doesn't end with newline
              const prefix = textarea.value.length > 0 && !textarea.value.endsWith('\n') ? '\n' : '';
              textarea.value += prefix + selectedPromptsText;
 
+
              // Optional: Scroll textarea to the bottom
              textarea.scrollTop = textarea.scrollHeight;
+
 
              // Optional: Focus the textarea
              textarea.focus();
         }
+
 
         // Hide the dropdown panel after adding
         dropdownPanel.style.display = 'none';
@@ -654,15 +750,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const arrow = dropdownTrigger.querySelector('.arrow');
         if(arrow) { arrow.textContent = '▼'; }
 
+
     });
+
+
 
 
     // --- Form Submission Handling ---
     document.getElementById('uploadForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent default form submission
 
+
         const form = this;
         const formData = new FormData(form);
+
 
         const responseArea = document.getElementById('responseArea');
         const responseContainer = document.getElementById('responseContainer');
@@ -671,6 +772,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const uploadStatusBar = document.getElementById('uploadStatusBar');
         const uploadStatusText = document.getElementById('uploadStatusText');
         const submitButton = form.querySelector('input[type="submit"]');
+
+
 
 
         // --- Reset and Show UI Elements ---
@@ -685,6 +788,7 @@ document.addEventListener('DOMContentLoaded', function() {
         copyButton.classList.remove('copied');
         submitButton.disabled = true; // Disable button during upload
 
+
         // Show and reset status bar
         uploadStatusContainer.style.display = 'block';
         uploadStatusText.style.display = 'block';
@@ -694,8 +798,11 @@ document.addEventListener('DOMContentLoaded', function() {
         uploadStatusText.innerHTML = "Starting upload...";
 
 
+
+
         // --- Create and Configure XMLHttpRequest ---
         const xhr = new XMLHttpRequest();
+
 
         // --- Track Upload Progress ---
         xhr.upload.onprogress = function(event) {
@@ -709,8 +816,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Update text below the bar during upload
                  uploadStatusText.innerHTML = `Uploading files (${percent}%)...`;
 
+
             }
         };
+
 
         // --- Handle Upload Complete (before response starts) ---
         xhr.onloadstart = function() {
@@ -721,11 +830,15 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
 
+
+
         // --- Handle Request Completion (Success or Failure) ---
         xhr.onload = function() {
             // Request has completed (either success or failure status)
 
+
             submitButton.disabled = false; // Re-enable submit button
+
 
             // Set final status text inside the bar (will be hidden shortly)
             if(uploadStatusBar) { // Check exists
@@ -733,8 +846,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
 
+
+
             if (xhr.status >= 200 && xhr.status < 300) {
                 // Request was successful (HTTP status 2xx)
+
 
                 // --- Increment and save counter on successful submission ---
                 // Only increment if the counter span was found initially
@@ -757,16 +873,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 // --- End counter update ---
 
 
+
+
                 try {
                     const data = JSON.parse(xhr.responseText); // Attempt to parse the JSON response from client
+
 
                     // Display the response from client (assuming JSON with customizedResume key)
                     const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); // Use customizedResume if present, fallback to full JSON
 
+
                     responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Display text nicely formatted
+
 
                     // Update final status text below the bar on success
                     uploadStatusText.innerHTML = "Generated!";
+
+
 
 
                     responseArea.style.color = '#333'; // Dark grey for success
@@ -775,18 +898,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     copyButton.style.display = 'inline-block'; // Show the copy button
 
 
+
+
                 } catch (e) {
                     // Failed to parse the JSON response (e.g., client returned plain text or invalid JSON on success)
                     console.error('Error parsing JSON response:', e, 'Response:', xhr.responseText);
                     responseArea.innerHTML = '<p>Error: Received unexpected response from client.</p><p><code>' + xhr.responseText.substring(0, 500) + '...</code></p>'; // Display partial response text
 
+
                     // Update final status text below the bar on parse error
                     uploadStatusText.innerHTML = "Generation failed (Parse Error).";
+
 
                     responseArea.style.color = '#721c24'; // Dark red for error
                     responseArea.style.backgroundColor = '#f8d7da'; // Light red for error background
                     responseArea.style.borderColor = '#f5c6cb';
                 }
+
 
             } else {
                 // Request failed (HTTP status is not 2xx)
@@ -805,9 +933,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     errorMessage += `, body: ${xhr.responseText}`;
                 }
 
+
                 responseArea.innerHTML = '<p>Error processing files:</p><p><code>' + errorMessage + '</code></p>';
                  // Update final status text below the bar on HTTP error
                 uploadStatusText.innerHTML = `Error: ${xhr.status}`;
+
+
 
 
                 responseArea.style.color = '#721c24';
@@ -820,11 +951,14 @@ document.addEventListener('DOMContentLoaded', function() {
                  // uploadStatusBar.innerHTML = uploadStatusText.innerHTML;
             }
 
+
             // Hide status bar container (the bar itself)
             uploadStatusContainer.style.display = 'none';
             // Keep uploadStatusText visible with the final message
 
+
         }; // End xhr.onload
+
 
         // --- Handle Network Errors (like connection refused) ---
         xhr.onerror = function() {
@@ -833,6 +967,8 @@ document.addEventListener('DOMContentLoaded', function() {
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
             submitButton.disabled = false; // Re-enable button
+
+
 
 
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
@@ -845,12 +981,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if(uploadStatusBar) { uploadStatusBar.innerHTML = "Error!"; }
         };
 
+
         // --- Handle Request Timeout ---
         xhr.ontimeout = function() {
             console.error('Request timed out!');
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
             submitButton.disabled = false;
+
 
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
             responseArea.style.color = '#721c24';
@@ -863,16 +1001,21 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
 
+
+
         // --- Open and Send the Request ---
         // IMPORTANT: Replace "https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" with your actual production client webhook URL
         xhr.open(this.method, this.action); // Use the form's method (POST) and action URL
         // When sending FormData with XHR, the browser automatically sets the Content-Type
         // and boundary header correctly. Do NOT set Content-Type manually here.
 
+
         xhr.send(formData); // Send the FormData object containing both files and textarea data
+
 
     });
 }); // End DOMContentLoaded listener
+
 
 // Add event listener for the copy button (remains the same)
 // This is outside DOMContentLoaded as it relies on the copy button existing,
@@ -881,6 +1024,7 @@ document.getElementById('copyButton').addEventListener('click', function() {
     const responseArea = document.getElementById('responseArea');
     // Get ALL text content from the response area div
     const textToCopy = responseArea.innerText; // Use innerText for simplicity
+
 
     navigator.clipboard.writeText(textToCopy)
         .then(() => {
@@ -899,11 +1043,15 @@ document.getElementById('copyButton').addEventListener('click', function() {
         });
 });
 
+
 </script>
 
+
 <footer>
-    <p>Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Reach out: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Last submission count: <span id="submissionCountDisplay">Loading...</span></p>
+    <p>Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — For feedback, requests or connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Last submission count: <span id="submissionCountDisplay">Loading...</span></p>
 </footer>
+
+
 
 
 </body>
