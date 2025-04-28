@@ -344,160 +344,110 @@
 
 
 
-  /* Styles for the response area */
-  #responseContainer { /* Container for response header, button, and area */
-      margin-top: 20px; /* Keep this margin */
+  /* Styles for the response area and copy button */
+  #responseContainer { /* Container for header and the response area/copy button */
+      margin-top: 20px; /* Space above results section */
+      display: block; /* Arrange header and content stacked */
   }
 
 
-  #responseHeader {
-      display: flex; /* Use flexbox to align header and button */
-      align-items: center; /* Vertically align */
-      gap: 15px; /* Space between header and button */
-      margin-bottom: 10px;
+  #responseContainer h3 { /* Style the header */
+      margin-bottom: 10px; /* Space below header */
   }
 
 
-  #copyButton {
-      padding: 5px 15px;
-      background-color: #6c757d; /* Grey color for button */
-      color: white;
-      border: none;
+  #responseAreaContainer { /* New wrapper for responseArea and copy button */
+      position: relative; /* Needed for absolute positioning of the button */
+      border: 1px solid #eee; /* Border now on this container */
+      border-radius: 8px; /* Border radius on this container */
+      background-color: #e9ecef; /* Background now on this container */
+      padding: 15px; /* Padding inside this container */
+      min-height: 50px; /* Min height on this container */
+      overflow-x: auto; /* Keep horizontal scroll if content is wide */
+      /* Ensure padding is large enough on top/right for the button */
+      padding-top: 35px; /* Add extra padding at the top for the button */
+      padding-right: 45px; /* Add extra padding on the right for the button */
+  }
+
+
+  #responseArea { /* Style for the text area itself */
+      padding: 0; /* Remove padding as it's on the container */
+      border: none; /* Remove border */
+      background-color: transparent; /* Remove background */
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      min-height: 0; /* Remove min-height */
+      color: #333;
+      overflow: visible; /* Allow content to flow within its container */
+  }
+
+
+  #copyButton.copy-code-button {
+      position: absolute; /* Position relative to #responseAreaContainer */
+      top: 5px; /* Distance from the top */
+      right: 5px; /* Distance from the right */
+      z-index: 10; /* Ensure it's above the text */
+      padding: 3px 8px; /* Smaller padding */
+      background-color: #ccc; /* Grey background */
+      color: #333; /* Dark text */
+      border: 1px solid #bbb;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 14px;
-      transition: background-color 0.3s ease;
+      font-size: 0.8em; /* Smaller font */
+      transition: background-color 0.2s ease, opacity 0.2s ease;
+      opacity: 0.8; /* Slightly transparent when not hovered */
   }
 
 
-  #copyButton:hover {
-    background-color: #5a6268; /* Darker grey on hover */
+  #copyButton.copy-code-button:hover {
+      background-color: #bbb; /* Darker grey on hover */
+      opacity: 1; /* Fully opaque on hover */
   }
 
 
-  #copyButton.copied { /* Style when text is copied */
-      background-color: #28a745; /* Green */
-      color: white;
-  }
-
-
-
-
-  #responseArea {
-    padding: 15px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    background-color: #e9ecef; /* Light grey background for response */
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    min-height: 50px; /* Give it a minimum height */
-    color: #333; /* Default text color */
-    overflow-x: auto; /* Add horizontal scroll if content is too wide */
-  }
-
-
-  #responseArea pre { /* Style for pre tag inside response area */
-      margin: 0; /* Remove default margin from pre */
-      padding: 0;
+  #copyButton.copy-code-button.copied {
+       background-color: #28a745; /* Green when copied */
+       color: white;
+       opacity: 1;
   }
 
 
 
 
-  #responseArea p { /* Style for paragraph messages inside response area */
-      margin: 5px 0;
-      padding: 0;
+  /* Hide the old response header flex layout */
+  #responseHeader {
+      display: none; /* Hide the entire old flex header */
   }
 
 
-  #responseArea code { /* Style for code blocks inside response area */
-      background-color: #f8f9fa;
-      padding: 2px 4px;
-      border-radius: 4px;
-      font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-      font-size: 0.9em;
-  }
-
-
-  /* Styles for the footer */
-  footer {
-      position: fixed; /* Fix footer to the bottom */
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      background-color: #333; /* Dark background */
-      color: #f4f7f6; /* Light text */
-      text-align: center;
-      padding: 10px 20px;
-      font-size: 0.8em; /* Small font size */
-      z-index: 10; /* Ensure footer is above other content if needed */
-  }
-
-
-  footer p {
-      margin: 0; /* Remove margin from footer paragraph */
-      padding: 0;
-  }
-
-
-    footer a {
-        color: #f4f7f6; /* Light color for links in footer */
-        text-decoration: none; /* Remove underline */
-    }
-
-
-    footer a:hover {
-        text-decoration: underline; /* Underline on hover */
-    }
-
-
-    /* Style for the counter span inside the footer */
-    footer #submissionCountDisplay {
-        font-weight: bold; /* Make the count stand out */
-        margin-left: 5px; /* Add a little space after "Total Submissions:" */
-    }
-
-
-
-
-  /* Optional: Add some responsive adjustments */
-  @media (max-width: 768px) { /* Adjust breakpoint for message section stacking */
-      body {
-          margin: 10px;
-          padding-bottom: 100px; /* Increase padding for potentially taller footer on mobile */
-      }
-      form {
-          padding: 15px;
-      }
-      /* Stack message section vertically on smaller screens */
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+      /* Keep message section as column */
       .form-section.message-section {
-          flex-direction: column; /* Already column, but keeps consistency */
-          gap: 15px; /* Adjust gap for vertical stacking */
-          align-items: stretch; /* Allow children to stretch */
-      }
+           gap: 15px;
+           align-items: stretch;
+       }
        .message-textarea-container,
-       .prompt-suggestions-dropdown { /* Also make dropdown container take full width */
-           flex: none;
+       .prompt-suggestions-dropdown {
            width: 100%;
            min-width: auto;
+           align-self: stretch;
        }
        .prompt-suggestions-dropdown {
-           position: static; /* Remove absolute positioning on mobile */
-           padding-bottom: 0; /* Adjust padding */
+           position: static;
+           padding-bottom: 0;
            gap: 5px;
        }
-
-
-      .dropdown-panel {
-          position: static; /* Remove absolute positioning on mobile */
-          width: 100%; /* Take full width */
-          max-height: none;
-          overflow-y: visible;
-          border: none;
-          box-shadow: none;
-          padding: 0;
-          gap: 10px;
-      }
+       .dropdown-panel {
+           position: static;
+           width: 100%;
+           max-height: none;
+           overflow-y: visible;
+           border: none;
+           box-shadow: none;
+           padding: 0;
+           gap: 10px;
+       }
        .dropdown-panel p {
            margin-top: 10px;
        }
@@ -505,52 +455,51 @@
            padding-left: 20px;
        }
        .dropdown-panel li {
-           margin-bottom: 8px; /* Keep space between checkbox items */
+           margin-bottom: 8px;
        }
 
 
-
-
-      /* Button styles for mobile - full width, no centering */
-      input[type="submit"] {
-          width: 100%;
-          max-width: none;
-          margin: 0; /* Remove auto margin */
-          text-align: center;
-      }
-       /* Button section on mobile - remove centering as button is full width */
-      .button-section {
-          align-items: stretch; /* Allow button to stretch */
-      }
-
-
-       /* Adjust file inputs to stack on mobile */
+       /* Keep file section stacking */
        .file-inputs-container {
-           flex-direction: column; /* Stack items vertically on small screens */
-           gap: 15px; /* Adjust gap for vertical stacking */
+           flex-direction: column;
+           gap: 15px;
        }
        .file-input-group {
-           min-width: auto; /* Remove min-width constraint on mobile */
-           width: 100%; /* Ensure they take full width when stacked */
-           gap: 5px; /* Keep space between label and input */
+           min-width: auto;
+           width: 100%;
+           gap: 5px;
        }
 
 
-      #responseHeader {
-          flex-direction: column; /* Stack header and button on small screens */
-          align-items: flex-start;
-          gap: 5px;
-      }
-       #copyButton {
-           width: auto; /* Auto width on small screens */
+       /* Keep button section stacking */
+       .button-section {
+           align-items: stretch;
        }
-        footer {
-            font-size: 0.7em; /* Smaller font on small screens */
-            padding: 8px 10px;
-            line-height: 1.4; /* Adjust line height for smaller font */
+       input[type="submit"] {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            text-align: center;
+       }
+
+
+       /* Adjust padding on response area container for mobile */
+       #responseAreaContainer {
+           padding-top: 30px; /* Slightly less padding on mobile */
+           padding-right: 40px;
+       }
+        #copyButton.copy-code-button {
+             top: 3px; /* Adjust top position on mobile */
+             right: 3px; /* Adjust right position on mobile */
+             padding: 2px 6px; /* Smaller padding on mobile */
         }
-        footer p {
-            margin: 0; /* Ensure no extra margin */
+
+
+       /* Footer adjustments */
+        footer {
+            font-size: 0.7em;
+            padding: 8px 10px;
+            line-height: 1.4;
         }
 
 
@@ -564,7 +513,8 @@
 
 <h2>rizzooo-may!</h2>
 <p>Yes you may. Customize your resume to job applications.<br>
-  <b>3 simple (free) steps:</b></b></p>
+  <b>3 simple (free) steps:</b></p>
+
 
 <form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook/56d59214-83ea-4bbf-bcca-b67ed32a1261" method="POST">
   <div class="form-section message-section">
@@ -593,7 +543,7 @@
 
 
   <div class="form-section">
-    <p><b>Upload files </b><i>(.txt files < 1mb please. I'll add more formats soon.)<i></p>
+    <p><b>Upload files </b><i>(.txt files < 1mb please. I'll add more formats soon.)</i></p>
 
 
     <div class="file-inputs-container">
@@ -628,11 +578,12 @@
 
 
 <div id="responseContainer" style="display: none;">
-    <div id="responseHeader">
-        <h3>Processing Results:</h3> <button id="copyButton">Copy Text</button>
+    <h3>Processing Results:</h3>
+    <div id="responseAreaContainer">
+        <div id="responseArea">
+          </div>
+        <button id="copyButton" class="copy-code-button">Copy</button>
     </div>
-    <div id="responseArea">
-      </div>
 </div>
 
 
@@ -781,10 +732,10 @@ document.addEventListener('DOMContentLoaded', function() {
         responseArea.style.color = '#000';
         responseArea.style.backgroundColor = '#e9ecef';
         responseArea.style.borderColor = '#eee';
-        copyButton.style.display = 'none';
-        copyButton.textContent = 'Copy Text';
+        copyButton.style.display = 'none'; // Hide copy button initially
+        copyButton.textContent = 'Copy'; // Reset copy button text
         copyButton.classList.remove('copied');
-        submitButton.disabled = true; // Disable button during upload
+        submitButton.disabled = true; // Disable submit button during upload and processing
 
 
         // Show and reset status bar
@@ -835,7 +786,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Request has completed (either success or failure status)
 
 
-            submitButton.disabled = false; // Re-enable submit button
+            // *** REMOVED: submitButton.disabled = false; // Prevent re-enabling after first submit ***
 
 
             // Set final status text inside the bar (will be hidden shortly)
@@ -886,8 +837,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Update final status text below the bar on success
                     uploadStatusText.innerHTML = "Generated!";
-
-
 
 
                     responseArea.style.color = '#333'; // Dark grey for success
@@ -964,9 +913,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hide status bar container
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
-            submitButton.disabled = false; // Re-enable button
-
-
+            // *** REMOVED: submitButton.disabled = false; // Prevent re-enabling after first submit ***
 
 
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
@@ -985,7 +932,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Request timed out!');
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
-            submitButton.disabled = false;
+            // *** REMOVED: submitButton.disabled = false; // Prevent re-enabling after first submit ***
 
 
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
@@ -1000,10 +947,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
         // --- Open and Send the Request ---
-        // IMPORTANT: Replace "https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" with your actual production client webhook URL
-        // Note: This URL appears to be the one from previous discussions.
-        // If you are using the URL from your duplicate workflow that was fixed,
-        // make sure to update this 'action' attribute to that correct URL.
+        // IMPORTANT: Make sure the action URL below is your CORRECT n8n Production Webhook URL
         xhr.open(this.method, this.action); // Use the form's method (POST) and action URL
         // When sending FormData with XHR, the browser automatically sets the Content-Type
         // and boundary header correctly. Do NOT set Content-Type manually here.
@@ -1032,7 +976,7 @@ document.getElementById('copyButton').addEventListener('click', function(event) 
             button.textContent = 'Copied!';
             button.classList.add('copied');
             setTimeout(() => {
-                button.textContent = 'Copy Text';
+                button.textContent = 'Copy'; // Revert to 'Copy', not 'Copy Text'
                 button.classList.remove('copied');
             }, 2000);
         })
@@ -1048,7 +992,7 @@ document.getElementById('copyButton').addEventListener('click', function(event) 
 
 
 <footer>
-    <p>[v0.4] Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — For feedback, requests or connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Last submission count: <span id="submissionCountDisplay">Loading...</span></p>
+    <p>[v0.4] Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — For feedback, requests or connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Resume generation count: <span id="submissionCountDisplay">Loading...</span></p>
 </footer>
 
 </body>
