@@ -495,10 +495,10 @@
 <body>
 
 <h2>rizzooo-may!</h2>
-<p><b>Free <i>(beta): </i></b>Customize your resume for job applications.<br>3 simple steps:</p>
+<p><b>Free <i>(beta): </i></b>Customize your resume for job applications.<br><b>3 simple steps:</b></p>
 
 
-<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/56d59214-83ea-4bbf-bcca-b67ed32a1261" method="POST">
+<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" method="POST">
   <div class="form-section message-section">
     <div class="message-textarea-container">
         <label for="userMessage">Give me some points on what your resume should focus on (choose from the suggestions below or add your own.)</label>
@@ -523,7 +523,7 @@
 
 
   <div class="form-section">
-    <p>Upload files (text file &lt; 1mb)</p>
+    <p><b>Upload files </b><i>(.txt files < 1mb please. I'll add more formats soon.)<i></p>
 
     <div class="file-inputs-container">
       <div class="file-input-group">
@@ -690,8 +690,8 @@ document.addEventListener('DOMContentLoaded', function() {
         uploadStatusText.style.display = 'block';
         uploadStatusBar.style.width = '0%'; // Reset progress bar width
         uploadStatusBar.innerHTML = '0%'; // Reset percentage text inside bar
-        // Status text below the bar throughout the process until completion/error
-        uploadStatusText.innerHTML = "Generating... shouldn't take more than a couple of minutes.";
+        // Status text below the bar
+        uploadStatusText.innerHTML = "Starting upload...";
 
 
         // --- Create and Configure XMLHttpRequest ---
@@ -705,13 +705,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Update progress bar width
                 uploadStatusBar.style.width = percent + '%';
                 // Update the text inside the status bar div (e.g., "0%", "50%", "100%")
-                // Only update percentage if less than 100 to make space for "Processing..."
-                if (percent < 100) {
-                     uploadStatusBar.innerHTML = percent + '%';
-                }
-                // Text below the bar remains "Generating..." during this phase
+                uploadStatusBar.innerHTML = percent + '%';
+                // Update text below the bar during upload
+                 uploadStatusText.innerHTML = `Uploading files (${percent}%)...`;
+
             }
         };
+
+        // --- Handle Upload Complete (before response starts) ---
+        xhr.onloadstart = function() {
+             // Upload is likely complete here, transition to processing
+             uploadStatusBar.style.width = '100%'; // Set bar to full
+             uploadStatusBar.innerHTML = '100%'; // Show 100% in bar
+             uploadStatusText.innerHTML = "Processing... shouldn't take more than a couple of minutes."; // Change text below bar
+        };
+
 
         // --- Handle Request Completion (Success or Failure) ---
         xhr.onload = function() {
@@ -721,7 +729,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Set final status text inside the bar (will be hidden shortly)
             if(uploadStatusBar) { // Check exists
-               uploadStatusBar.innerHTML = xhr.status >= 200 && xhr.status < 300 ? '100%' : 'Error'; // Show 100% or Error in bar
+               uploadStatusBar.innerHTML = xhr.status >= 200 && xhr.status < 300 ? 'Complete!' : 'Error!'; // Show final status in bar
             }
 
 
@@ -808,7 +816,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
              // Update status text inside the bar to indicate completion or error
             if(uploadStatusBar) { // Check exists
-                 uploadStatusBar.innerHTML = uploadStatusText.innerHTML; // Copy final text to the bar
+                 // This was already set above, keep it consistent
+                 // uploadStatusBar.innerHTML = uploadStatusText.innerHTML;
             }
 
             // Hide status bar container (the bar itself)
@@ -833,7 +842,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update final status text below the bar on network error
             uploadStatusText.innerHTML = "Network error.";
              // Update status text inside the bar
-            if(uploadStatusBar) { uploadStatusBar.innerHTML = uploadStatusText.innerHTML; }
+            if(uploadStatusBar) { uploadStatusBar.innerHTML = "Error!"; }
         };
 
         // --- Handle Request Timeout ---
@@ -850,7 +859,7 @@ document.addEventListener('DOMContentLoaded', function() {
              // Update final status text below the bar on timeout error
             uploadStatusText.innerHTML = "Request timed out.";
             // Update status text inside the bar
-             if(uploadStatusBar) { uploadStatusBar.innerHTML = uploadStatusText.innerHTML; }
+             if(uploadStatusBar) { uploadStatusBar.innerHTML = "Timeout!"; }
         };
 
 
@@ -893,7 +902,7 @@ document.getElementById('copyButton').addEventListener('click', function() {
 </script>
 
 <footer>
-    <p>Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Reach out: masoud.made [@] gmail.com — <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Last submission count: <span id="submissionCountDisplay">Loading...</span></p>
+    <p>Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — For feedback, requests or connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Last submission count: <span id="submissionCountDisplay">Loading...</span></p>
 </footer>
 
 
