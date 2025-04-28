@@ -62,71 +62,134 @@
       gap: 8px; /* Space between label and input/textarea */
   }
 
-  /* --- Specific styles for the message section to accommodate drag-and-drop suggestions --- */
+  /* --- Specific styles for the message section to accommodate dropdown suggestions --- */
   .form-section.message-section {
-      flex-direction: row; /* Arrange children (textarea container and suggestions) side-by-side on desktop */
-      gap: 20px; /* Space between the textarea area and the suggestions box */
+      flex-direction: row; /* Arrange children (textarea container and dropdown) side-by-side on desktop */
+      gap: 20px; /* Space between the textarea area and the dropdown */
       flex-wrap: wrap; /* Allow stacking on smaller screens */
-      align-items: flex-start; /* Align items to the top */
+      align-items: flex-start; /* Align to the top */
+      position: relative; /* Needed for absolute positioning of dropdown panel */
   }
 
   .message-textarea-container {
       flex: 2; /* Allow the textarea container to take up more space */
+      min-width: 280px; /* Ensure minimum width before wrapping */
       display: flex; /* Use flex to stack label and textarea inside */
       flex-direction: column;
       gap: 8px; /* Space between label and textarea */
-      min-width: 280px; /* Ensure minimum width before wrapping */
   }
 
-  .prompt-suggestions {
-      flex: 1; /* Allow the suggestions list to take the remaining space */
+  /* Styles for the dropdown container */
+  .prompt-suggestions-dropdown {
+      flex: 1; /* Allow the dropdown area to take remaining space */
       min-width: 200px; /* Minimum width before wrapping */
-      background-color: #f8f8f8; /* Light background for the suggestions box */
-      border: 1px solid #eee;
+      position: relative; /* Container for the absolute panel */
+      align-self: flex-start; /* Align to the top */
+      display: flex; /* Use flex to arrange trigger and panel */
+      flex-direction: column;
+      gap: 5px; /* Space between trigger and panel */
+  }
+
+  /* Style for the dropdown trigger button */
+  .dropdown-trigger {
+      padding: 8px 15px;
+      background-color: #e9ecef;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+      text-align: left; /* Align text to the left */
+      width: 100%; /* Take full width of its container */
+      transition: background-color 0.2s ease;
+      display: flex; /* Use flex to align text and arrow */
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box; /* Include padding and border in width */
+  }
+
+  .dropdown-trigger:hover {
+      background-color: #d0d4d7;
+  }
+
+  .dropdown-trigger .arrow {
+      margin-left: 10px;
+  }
+
+
+  /* Style for the dropdown panel */
+  .dropdown-panel {
+      position: absolute; /* Position relative to .form-section.message-section */
+      top: 100%; /* Position below the trigger button */
+      left: 0;
+      right: auto; /* Position from the left */
+      z-index: 100; /* Ensure it appears above other content */
+      background-color: #fff;
+      border: 1px solid #ccc;
       border-radius: 4px;
       padding: 15px;
-      display: flex; /* Use flex to stack heading and list */
-      flex-direction: column;
-      gap: 10px; /* Space between paragraph and ul */
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      display: none; /* Initially hidden */
+      min-width: 250px; /* Ensure readability */
+      max-height: 200px; /* Add scrolling if many items */
+      overflow-y: auto; /* Enable vertical scrolling */
+      flex-direction: column; /* Arrange contents vertically */
+      gap: 10px; /* Space between elements */
   }
 
-  .prompt-suggestions p {
+  .dropdown-panel p {
       font-weight: bold;
-      margin-bottom: 0; /* Gap handles spacing */
+      margin-bottom: 0;
       font-size: 0.9em;
       color: #555;
   }
 
-  .prompt-suggestions ul {
-      list-style: none; /* Remove default bullets */
+  .dropdown-panel ul {
+      list-style: none;
       padding: 0;
       margin: 0;
   }
 
-  .prompt-suggestions li {
-      background-color: #e9ecef; /* Light grey background for each suggestion */
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      padding: 8px;
-      margin-bottom: 5px; /* Space between list items */
-      cursor: grab; /* Indicate draggable */
+  .dropdown-panel li {
+      margin-bottom: 8px; /* Space between checkboxes */
+      display: flex; /* Align checkbox and label */
+      align-items: center;
+  }
+
+  .dropdown-panel li:last-child {
+       margin-bottom: 0;
+  }
+
+  .dropdown-panel input[type="checkbox"] {
+      margin-right: 8px; /* Space between checkbox and label */
+      flex-shrink: 0; /* Prevent checkbox from shrinking */
+  }
+
+  .dropdown-panel label {
+      font-weight: normal; /* Labels for checkboxes don't need to be bold */
+      cursor: pointer; /* Indicate clickable */
+      flex: 1; /* Allow label to take space */
       font-size: 0.9em;
+  }
+
+  .dropdown-panel #addSelectedPrompts {
+      display: block; /* Make button block */
+      width: 100%; /* Full width */
+      padding: 8px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+      margin-top: 10px; /* Space above button */
       transition: background-color 0.2s ease;
   }
 
-  .prompt-suggestions li:last-child {
-      margin-bottom: 0; /* Remove margin from the last list item */
+  .dropdown-panel #addSelectedPrompts:hover {
+      background-color: #0056b3;
   }
 
-  .prompt-suggestions li:hover {
-      background-color: #d0d4d7; /* Darker on hover */
-  }
 
-  /* Optional style when dragging over the textarea */
-  /* textarea.drag-over {
-      border-color: #007bff;
-      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  } */
   /* --- End specific styles for message section --- */
 
 
@@ -347,10 +410,39 @@
           align-items: stretch; /* Allow children to stretch */
       }
        .message-textarea-container,
-       .prompt-suggestions {
-           flex: none; /* Remove flex grow/shrink on mobile */
-           width: 100%; /* Take full width on mobile */
-           min-width: auto; /* Remove min-width constraint */
+       .prompt-suggestions-dropdown { /* Also make dropdown container take full width */
+           flex: none;
+           width: 100%;
+           min-width: auto;
+       }
+       .prompt-suggestions-dropdown {
+           position: static; /* Remove absolute positioning on mobile */
+           padding-bottom: 0; /* Adjust padding */
+           gap: 5px;
+       }
+
+      .dropdown-panel {
+          position: static; /* Remove absolute positioning on mobile */
+          width: 100%; /* Take full width */
+          max-height: none; /* Remove max height */
+          overflow-y: visible; /* Remove scrolling */
+          border: none; /* Remove border */
+          box-shadow: none; /* Remove shadow */
+          padding: 0; /* Remove padding */
+          gap: 10px; /* Adjust gap */
+      }
+       .dropdown-panel p {
+           margin-top: 10px; /* Add space above heading on mobile */
+       }
+       .dropdown-panel ul {
+           padding-left: 20px; /* Add some indentation for clarity on mobile */
+       }
+
+       .dropdown-panel #addSelectedPrompts {
+           margin-top: 10px; /* Space above button */
+       }
+       .dropdown-panel li {
+           margin-bottom: 8px; /* Keep space between checkbox items */
        }
 
 
@@ -410,16 +502,20 @@
         <label for="userMessage">Give me some points on what your resume should focus on, (e.g. clean it up, use x industry terms, etc.)</label>
         <textarea name="userMessage" id="userMessage" rows="4" cols="50"></textarea>
     </div>
-    <div class="prompt-suggestions">
-        <p>Drag-n-drop these or add your own:</p>
-        <ul>
-            <li class="draggable-prompt" draggable="true" data-prompt="Clean up and proofread">Clean up and proofread</li>
-            <li class="draggable-prompt" draggable="true" data-prompt="Use [Industry] terms">Use [Industry] terms</li>
-            <li class="draggable-prompt" draggable="true" data-prompt="Emphasize [Skill] experience">Emphasize [Skill] experience</li>
-            <li class="draggable-prompt" draggable="true" data-prompt="Incorporate ATS keywords">Incorporate ATS keywords</li>
-            <li class="draggable-prompt" draggable="true" data-prompt="Strengthen action verbs and numbers">Strengthen action verbs and numbers</li>
-            <li class="draggable-prompt" draggable="true" data-prompt="Condense to one page">Condense to one page</li>
-        </ul>
+    <div class="prompt-suggestions-dropdown">
+        <button id="promptDropdownTrigger" class="dropdown-trigger">Add Suggestions <span class="arrow">▼</span></button>
+        <div id="promptDropdownPanel" class="dropdown-panel">
+            <p>Select suggestions to add:</p>
+            <ul>
+                <li><input type="checkbox" id="prompt-1" data-prompt="Clean up and proofread"><label for="prompt-1">Clean up and proofread</label></li>
+                <li><input type="checkbox" id="prompt-2" data-prompt="Use [Industry] terms"><label for="prompt-2">Use [Industry] terms</label></li>
+                <li><input type="checkbox" id="prompt-3" data-prompt="Emphasize [Skill] experience"><label for="prompt-3">Emphasize [Skill] experience</label></li>
+                <li><input type="checkbox" id="prompt-4" data-prompt="Incorporate ATS keywords"><label for="prompt-4">Incorporate ATS keywords</label></li>
+                <li><input type="checkbox" id="prompt-5" data-prompt="Strengthen action verbs and numbers"><label for="prompt-5">Strengthen action verbs and numbers</label></li>
+                <li><input type="checkbox" id="prompt-6" data-prompt="Condense to one page"><label for="prompt-6">Condense to one page</label></li>
+            </ul>
+            <button id="addSelectedPrompts">Add Selected</button>
+        </div>
     </div>
   </div>
 
@@ -490,64 +586,72 @@ document.addEventListener('DOMContentLoaded', function() {
         counterDisplaySpan.textContent = currentCount;
     }
 
-    // --- Drag and Drop Functionality for Prompts ---
-    const textarea = document.getElementById('userMessage');
-    const draggablePrompts = document.querySelectorAll('.draggable-prompt');
+    // --- Prompt Suggestions Dropdown Functionality ---
+    const dropdownTrigger = document.getElementById('promptDropdownTrigger');
+    const dropdownPanel = document.getElementById('promptDropdownPanel');
+    const addSelectedButton = document.getElementById('addSelectedPrompts');
 
-    // Add dragstart listener to each draggable prompt
-    draggablePrompts.forEach(prompt => {
-        prompt.addEventListener('dragstart', function(event) {
-            // Set the data to be transferred - use the data-prompt attribute or text content
-            event.dataTransfer.setData('text/plain', this.dataset.prompt || this.textContent);
-            // Optional: Set a drag image
-            // event.dataTransfer.setDragImage(this, 0, 0);
+    // Toggle dropdown visibility
+    dropdownTrigger.addEventListener('click', function(event) {
+        event.stopPropagation(); // Prevent click from bubbling up and closing immediately
+        const isVisible = dropdownPanel.style.display === 'flex'; // Check current display style
+        dropdownPanel.style.display = isVisible ? 'none' : 'flex'; // Toggle between none and flex
+        // Adjust arrow direction (optional)
+        const arrow = this.querySelector('.arrow');
+        if(arrow) {
+            arrow.textContent = isVisible ? '▼' : '▲';
+        }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        // If the click is not inside the dropdown trigger AND not inside the dropdown panel
+        if (!dropdownTrigger.contains(event.target) && !dropdownPanel.contains(event.target)) {
+            dropdownPanel.style.display = 'none'; // Hide the panel
+             // Reset arrow (optional)
+             const arrow = dropdownTrigger.querySelector('.arrow');
+             if(arrow) { arrow.textContent = '▼'; }
+        }
+    });
+
+    // Prevent dropdown from closing when clicking inside the panel (except on the Add button, handled below)
+    dropdownPanel.addEventListener('click', function(event) {
+        event.stopPropagation(); // Stop the click from bubbling up to the document
+    });
+
+
+    // Handle adding selected prompts to the textarea
+    addSelectedButton.addEventListener('click', function() {
+        const textarea = document.getElementById('userMessage');
+        const checkboxes = dropdownPanel.querySelectorAll('input[type="checkbox"]:checked');
+        let selectedPromptsText = '';
+
+        checkboxes.forEach(checkbox => {
+            // Get the prompt text from the data-prompt attribute
+            const promptText = checkbox.dataset.prompt || checkbox.nextElementSibling.textContent; // Use label text as fallback
+            selectedPromptsText += promptText + '\n'; // Append prompt text followed by a newline
+            checkbox.checked = false; // Uncheck the box after adding
         });
-    });
 
-    // Add dragover listener to the textarea (the drop target)
-    textarea.addEventListener('dragover', function(event) {
-        // Prevent default to allow dropping
-        event.preventDefault();
-        // Optional: Add a class to indicate a drop target is active
-        // this.classList.add('drag-over');
-    });
+        // Append the collected prompts to the textarea
+        if (selectedPromptsText.length > 0) {
+             // Add a newline before the first added prompt if the textarea isn't empty and doesn't end with newline
+             const prefix = textarea.value.length > 0 && !textarea.value.endsWith('\n') ? '\n' : '';
+             textarea.value += prefix + selectedPromptsText;
 
-    // Add dragleave listener to remove the drag-over class (optional)
-    // textarea.addEventListener('dragleave', function(event) {
-    //     this.classList.remove('drag-over');
-    // });
+             // Optional: Scroll textarea to the bottom
+             textarea.scrollTop = textarea.scrollHeight;
 
+             // Optional: Focus the textarea
+             textarea.focus();
+        }
 
-    // Add drop listener to the textarea
-    textarea.addEventListener('drop', function(event) {
-        // Prevent default action (like opening the data as a link)
-        event.preventDefault();
+        // Hide the dropdown panel after adding
+        dropdownPanel.style.display = 'none';
+         // Reset arrow (optional)
+        const arrow = dropdownTrigger.querySelector('.arrow');
+        if(arrow) { arrow.textContent = '▼'; }
 
-        // Remove the drag-over class (optional)
-        // this.classList.remove('drag-over');
-
-        // Get the data that was set in dragstart
-        const data = event.dataTransfer.getData('text/plain');
-
-        // Get the current cursor position in the textarea
-        const cursorPosition = this.selectionStart;
-
-        // Get the current value of the textarea
-        const currentValue = this.value;
-
-        // Insert the dropped text at the cursor position, followed by a newline
-        const textToInsert = data + '\n';
-        const newValue = currentValue.substring(0, cursorPosition) + textToInsert + currentValue.substring(cursorPosition);
-
-        // Update the textarea's value
-        this.value = newValue;
-
-        // Optional: Set the cursor position after the inserted text
-        this.selectionStart = this.selectionEnd = cursorPosition + textToInsert.length;
-
-        // Trigger input or change event if needed for frameworks (not strictly needed for plain JS)
-        // const inputEvent = new Event('input', { bubbles: true });
-        // this.dispatchEvent(inputEvent);
     });
 
 
@@ -717,7 +821,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hide status bar container
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
-            submitButton.disabled = false; // Re-enable submit button
+            submitButton.disabled = false; // Re-enable button
 
 
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
@@ -756,9 +860,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         xhr.send(formData); // Send the FormData object containing both files and textarea data
 
-        // Initial text for response area while generating (redundant with responseArea.innerHTML update above)
-        // responseArea.innerHTML = 'Generating...';
-
     });
 }); // End DOMContentLoaded listener
 
@@ -790,7 +891,7 @@ document.getElementById('copyButton').addEventListener('click', function() {
 </script>
 
 <footer>
-    <p>Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Reach out: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Last submission count: <span id="submissionCountDisplay">Loading...</span></p>
+    <p>Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Reach out: masoud.made [@] gmail.com — <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Last submission count: <span id="submissionCountDisplay">Loading...</span></p>
 </footer>
 
 
