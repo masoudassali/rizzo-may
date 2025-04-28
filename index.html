@@ -327,7 +327,7 @@
       text-align: center;
       line-height: 20px; /* Vertically center text */
       color: white;
-      border-radius: 4px;
+      border-radius: 4회px;
       transition: width 0.3s ease; /* Smooth animation for the bar */
       font-size: 0.8em; /* Smaller text */
   }
@@ -644,8 +644,6 @@ const localStorageKey = 'rizzoooMaySubmissionCount';
 let currentCount = localStorage.getItem(localStorageKey); // Read initial count globally
 
 
-
-
 // Wait for the DOM to be fully loaded before initializing most script parts
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -834,7 +832,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Request has completed (either success or failure status)
 
 
-            submitButton.disabled = false; // Re-enable submit button
+            // submitButton.disabled = false; // REMOVED: Keep button disabled until refresh
 
 
             // Set final status text inside the bar (will be hidden shortly)
@@ -963,9 +961,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hide status bar container
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
-            submitButton.disabled = false; // Re-enable button
-
-
+            // submitButton.disabled = false; // REMOVED: Keep button disabled until refresh
 
 
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
@@ -984,7 +980,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Request timed out!');
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
-            submitButton.disabled = false;
+            // submitButton.disabled = false; // REMOVED: Keep button disabled until refresh
 
 
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
