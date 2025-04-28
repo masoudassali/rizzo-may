@@ -495,14 +495,20 @@
         }
 
 
-       /* Footer adjustments - REMOVED */
-        /*
+       /* Footer adjustments */
         footer {
             font-size: 0.7em;
             padding: 8px 10px;
             line-height: 1.4;
+            text-align: center; /* Center the text */
+            background-color: #e9ecef; /* Light grey background */
+            border-top: 1px solid #ccc; /* Top border */
+            position: fixed; /* Fixed position */
+            bottom: 0; /* Align to the bottom */
+            left: 0; /* Span full width */
+            width: 100%; /* Span full width */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
         }
-        */
 
 
   }
@@ -673,6 +679,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         checkboxes.forEach(checkbox => {
             // Get the prompt text from the data-prompt attribute
+            const promptText = checkbox.dataset.prompt || checkbox.nextElementSibling.textContent; // Use label text as fallback
             const promptText = checkbox.dataset.prompt || checkbox.nextElementSibling.textContent; // Use label text as fallback
             selectedPromptsText += promptText + '\n'; // Append prompt text followed by a newline
             checkbox.checked = false; // Uncheck the box after adding
@@ -916,6 +923,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // --- Handle Network Errors (like connection refused) ---
         xhr.onerror = function() {
             console.error('Network error!');
+            // Hide status bar container
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
             // *** REMOVED: submitButton.disabled = false; // Prevent re-enabling after first submit ***
@@ -925,14 +933,10 @@ document.addEventListener('DOMContentLoaded', function() {
             responseArea.style.color = '#721c24';
             responseArea.style.backgroundColor = '#f8d7da';
             responseArea.style.borderColor = '#f5c6cb';
-             // Update final status text below the bar on network error
+            // Update final status text below the bar on network error
             uploadStatusText.innerHTML = "Network error.";
-            // Update status text inside the bar
-             if(uploadStatusBar) { uploadStatusBar.innerHTML = "Error!"; }
-
-
-             // Re-enable submit button on network error
-             submitButton.disabled = false;
+             // Update status text inside the bar
+            if(uploadStatusBar) { uploadStatusBar.innerHTML = "Error!"; }
         };
 
 
@@ -952,10 +956,6 @@ document.addEventListener('DOMContentLoaded', function() {
             uploadStatusText.innerHTML = "Request timed out.";
             // Update status text inside the bar
              if(uploadStatusBar) { uploadStatusBar.innerHTML = "Timeout!"; }
-
-
-            // Re-enable submit button on timeout
-            submitButton.disabled = false;
         };
 
 
@@ -1002,6 +1002,11 @@ document.getElementById('copyButton').addEventListener('click', function(event) 
 
 
 </script>
+
+
+<footer>
+    <p>[v0.4] Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — For feedback or connecting:&nbsp;<a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a>&nbsp;— Resume generation count: <span id="submissionCountDisplay">Loading...</span></p>
+</footer>
 
 
 </body>
