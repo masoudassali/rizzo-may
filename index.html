@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>rizzooo-may!</title>
+<title>rizzo-may!</title>
 <style>
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -350,17 +350,19 @@
   }
 
 
-   /* Style for the wrapper around responseArea to position the copy button */
+   /* Style for the wrapper around responseArea to position the buttons */
    .response-area-wrapper {
        position: relative; /* Needed for absolute positioning of the button */
    }
 
 
-  /* Style for the new copy code button */
+  /* Style for the copy code button */
   #copyCodeButton {
       position: absolute;
       top: 5px; /* Adjust as needed for spacing from the top */
-      right: 5px; /* Adjust as needed for spacing from the right */
+      right: 5px; /* Position from the right */
+      /* ... existing styles ... */
+      z-index: 1; /* Ensure it's above the text area content */
       background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
       border: 1px solid #ccc; /* Light border */
       border-radius: 4px; /* Small rounded corners */
@@ -368,7 +370,6 @@
       cursor: pointer;
       font-size: 0.8em; /* Smaller font size for the icon/text */
       color: #333; /* Dark color for the icon/text */
-      z-index: 1; /* Ensure it's above the text area content */
       transition: background-color 0.2s ease, border-color 0.2s ease;
       line-height: 1; /* Ensure consistent height */
   }
@@ -388,6 +389,37 @@
   }
 
 
+  /* Style for the new download button - position it next to the copy button */
+  #downloadResumeButton {
+      position: absolute;
+      top: 5px; /* Align vertically with copy button */
+      right: 40px; /* Position to the left of the copy button */
+      /* ... add styling similar to copyCodeButton ... */
+      background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
+      border: 1px solid #ccc; /* Light border */
+      border-radius: 4px; /* Small rounded corners */
+      padding: 5px 8px; /* Add some padding */
+      cursor: pointer;
+      font-size: 0.8em; /* Smaller font size for the icon/text */
+      color: #333; /* Dark color for the icon/text */
+      z-index: 1; /* Ensure it's above the text area content */
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+      line-height: 1; /* Ensure consistent height */
+  }
+
+
+  #downloadResumeButton:hover {
+      background-color: rgba(255, 255, 255, 0.8); /* Less transparent on hover */
+      border-color: #bbb;
+  }
+   /* Optional: Style for when the text is downloaded */
+  #downloadResumeButton.downloaded {
+      background-color: #d4edda; /* Light green */
+      border-color: #c3e6cb; /* Green border */
+      color: #155724; /* Dark green text */
+  }
+
+
   #responseArea {
     padding: 15px;
     border: 1px solid #eee;
@@ -398,6 +430,8 @@
     min-height: 50px; /* Give it a minimum height */
     color: #333; /* Default text color */
     overflow-x: auto; /* Add horizontal scroll if content is too wide */
+    /* Add padding to the right to prevent text from going under buttons */
+    padding-right: 80px; /* Adjust this value based on button width and spacing */
   }
 
 
@@ -546,10 +580,28 @@
           align-items: flex-start;
           gap: 5px;
       }
-       #copyCodeButton { /* Adjust copy button style on small screens */
+       /* Adjust styles for both buttons on small screens */
+       #copyCodeButton,
+       #downloadResumeButton {
            position: static; /* Remove absolute positioning */
            margin-top: 10px; /* Add space above button */
+           display: block; /* Make them block elements */
+           width: 100%; /* Full width */
+           text-align: center;
        }
+       #downloadResumeButton { /* Add margin between buttons */
+           margin-top: 5px;
+       }
+        /* Adjust the wrapper if needed for mobile stacking */
+        .response-area-wrapper {
+            position: static;
+        }
+        #responseArea { /* Adjust padding if buttons were positioned over it */
+            padding-top: 15px; /* Ensure text isn't hidden by buttons */
+            padding-right: 15px; /* Ensure text isn't hidden by buttons */
+        }
+
+
         footer {
             font-size: 0.7em; /* Smaller font on small screens */
             padding: 8px 10px;
@@ -568,28 +620,28 @@
 <body>
 
 
-<h2>rizzooo-may!</h2>
-<p>Sure. Customize your resume to job applications <i>(it's free)</i>.<br><b>3 simple steps: </b></p>
+<h2>rizzo-may! <span style="font-size: smaller;"><i>(Beta)</i></span></h2>
+<p>Of course you may customize your resume to job applications. <b><i>(it's free.)</i></b><br><b>3 simple steps: </b></p>
 
-<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook/05956d57-f513-45b0-a9f7-dd0287895ab9" method="POST">
+<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook/89357648-3558-4cdb-bbd1-42701925df37" method="POST">
   <div class="form-section message-section">
     <div class="message-textarea-container">
-        <label for="userMessage">[Optional] Add a focus to your resume. <i>(Choose from the suggestions below or add your own.)</i></label>
+        <label for="userMessage">[Optional] Add a focus to your resume. (Choose from the suggestions below or add your own.)</label>
         <textarea name="userMessage" id="userMessage" rows="4" cols="50"></textarea>
     </div>
     <div class="prompt-suggestions-dropdown">
         <button id="promptDropdownTrigger" class="dropdown-trigger">Add Suggestions <span class="arrow">▼</span></button>
         <div id="promptDropdownPanel" class="dropdown-panel">
+            <button id="addSelectedPrompts">Add Selected</button>
             <p>Select suggestions to add:</p>
             <ul>
                 <li><input type="checkbox" id="prompt-1" data-prompt="Clean up and proofread"><label for="prompt-1">Clean up and proofread</label></li>
-                <li><input type="checkbox" id="prompt-2" data-prompt="Use [Industry] terms"><label for="prompt-2">Use [Industry] terms</label></li>
-                <li><input type="checkbox" id="prompt-3" data-prompt="Emphasize [Skill] experience"><label for="prompt-3">Emphasize [Skill] experience</label></li>
                 <li><input type="checkbox" id="prompt-4" data-prompt="Incorporate ATS keywords"><label for="prompt-4">Incorporate ATS keywords</label></li>
-                <li><input type="checkbox" id="prompt-5" data-prompt="Strengthen action verbs and numbers"><label for="prompt-5">Strengthen action verbs and numbers</label></li>
+                <li><input type="checkbox" id="prompt-5" data-prompt="Strengthen using action verbs and numbers"><label for="prompt-5">Strengthen using action verbs and numbers</label></li>
                 <li><input type="checkbox" id="prompt-6" data-prompt="Condense to one page"><label for="prompt-6">Condense to one page</label></li>
+                 <li><input type="checkbox" id="prompt-2" data-prompt="Use [Industry] terms"><label for="prompt-2">Use [Industry] terms</label></li>
+                <li><input type="checkbox" id="prompt-3" data-prompt="Emphasize [Skill] experience"><label for="prompt-3">Emphasize [Skill] experience</label></li>
             </ul>
-            <button id="addSelectedPrompts">Add Selected</button>
         </div>
     </div>
   </div>
@@ -598,7 +650,7 @@
 
 
   <div class="form-section">
-    <p><b>Upload files </b><i>(.txt files < 1mb please. I'll add more formats soon.)<i></p>
+    <p><b>Upload files </b><i>(.txt, .pdf, .docx files < 1mb please.)<i></p>
 
 
     <div class="file-inputs-container">
@@ -638,7 +690,9 @@
     </div>
     <div class="response-area-wrapper">
         <div id="responseArea"></div>
-        <button id="copyCodeButton" title="Copy to clipboard">📋</button> </div>
+        <button id="copyCodeButton" title="Copy to clipboard">📋</button>
+        <button id="downloadResumeButton" title="Download Resume">⬇️</button>
+    </div>
 </div>
 
 
@@ -791,7 +845,7 @@ document.addEventListener('DOMContentLoaded', function() {
         responseArea.style.color = '#000';
         responseArea.style.backgroundColor = '#e9ecef';
         responseArea.style.borderColor = '#eee';
-        // copyButton.style.display = 'none'; // REMOVED
+        // copyButton.style.display = 'inline-block'; // REMOVED: Old copy button
         // copyButton.textContent = 'Copy Text'; // REMOVED
         // copyButton.classList.remove('copied'); // REMOVED
         submitButton.disabled = true; // Disable submit button during upload
@@ -1078,6 +1132,56 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error("Copy code button not found!");
     }
 
+    // Add event listener for the new download button
+    const downloadResumeButton = document.getElementById('downloadResumeButton');
+    if (downloadResumeButton) {
+        downloadResumeButton.addEventListener('click', function() {
+            const responseArea = document.getElementById('responseArea');
+            // Get ALL text content from the response area div
+            const textToDownload = responseArea.innerText; // Use innerText for simplicity
+
+            // Create a Blob from the text
+            const blob = new Blob([textToDownload], { type: 'text/plain' });
+
+            // Create a link element
+            const a = document.createElement('a');
+
+            // Create a URL for the blob and set it as the link's href
+            const url = URL.createObjectURL(blob);
+            a.href = url;
+
+            // Set the download filename - using a simple timestamp for uniqueness + readability
+            const now = new Date();
+            const timestamp = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+            a.download = `customized_resume_${timestamp}.txt`; // Example filename
+
+            // Append the link to the body (needs to be in the DOM to trigger download in some browsers)
+            document.body.appendChild(a);
+
+            // Trigger a click on the link to start the download
+            a.click();
+
+            // Clean up: remove the link and revoke the object URL
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            // Optional: Provide visual feedback to the user (similar to copy button)
+            const button = document.getElementById('downloadResumeButton');
+            const originalIcon = button.textContent; // Store original text/icon
+            button.textContent = 'Downloading...'; // Change text temporarily
+            button.classList.add('downloading'); // Optional: add a class for styling
+             // Revert text after a short delay, download usually happens quickly
+            setTimeout(() => {
+                button.textContent = originalIcon; // Restore original icon
+                button.classList.remove('downloading');
+                 button.classList.remove('error'); // Remove potential error class
+            }, 2000); // Revert after 2 seconds
+        });
+    } else {
+        console.error("Download button not found!");
+    }
+
+
 }); // End DOMContentLoaded listener
 
 
@@ -1086,7 +1190,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 <footer>
-    <p>[v0.4] © 2025 — For feedback / connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Successful generation count: <span id="submissionCountDisplay">Loading...</span></p>
+    <p>[v0.4] © 2025 — For feedback / connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — 👍 generation count: <span id="submissionCountDisplay">Loading...</span></p>
 </footer>
 
 
