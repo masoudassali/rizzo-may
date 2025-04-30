@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>rizzooo-may!</title>
+<title>rizzo-may!</title>
 <style>
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -568,28 +568,28 @@
 <body>
 
 
-<h2>rizzooo-may!</h2>
-<p>Sure. Customize your resume to job applications <i>(it's free)</i>.<br><b>3 simple steps: </b></p>
+<h2>rizzo-may!</h2>
+<p>Sure. Customize your resume to job applications <i>(Beta)</i> <b>(it's free)</b>.<br><b>3 simple steps: </b></p>
 
-<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/89357648-3558-4cdb-bbd1-42701925df37" method="POST">
+<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook/56d59214-83ea-4bbf-bcca-b67ed32a1261" method="POST">
   <div class="form-section message-section">
     <div class="message-textarea-container">
-        <label for="userMessage">[Optional] Add a focus to your resume. <i>(Choose from the suggestions below or add your own.)</i></label>
+        <label for="userMessage">[Optional] Add a focus to your resume. (Choose from the suggestions below or add your own.)</label>
         <textarea name="userMessage" id="userMessage" rows="4" cols="50"></textarea>
     </div>
     <div class="prompt-suggestions-dropdown">
         <button id="promptDropdownTrigger" class="dropdown-trigger">Add Suggestions <span class="arrow">▼</span></button>
         <div id="promptDropdownPanel" class="dropdown-panel">
+            <button id="addSelectedPrompts">Add Selected</button>
             <p>Select suggestions to add:</p>
             <ul>
                 <li><input type="checkbox" id="prompt-1" data-prompt="Clean up and proofread"><label for="prompt-1">Clean up and proofread</label></li>
-                <li><input type="checkbox" id="prompt-2" data-prompt="Use [Industry] terms"><label for="prompt-2">Use [Industry] terms</label></li>
-                <li><input type="checkbox" id="prompt-3" data-prompt="Emphasize [Skill] experience"><label for="prompt-3">Emphasize [Skill] experience</label></li>
                 <li><input type="checkbox" id="prompt-4" data-prompt="Incorporate ATS keywords"><label for="prompt-4">Incorporate ATS keywords</label></li>
-                <li><input type="checkbox" id="prompt-5" data-prompt="Strengthen action verbs and numbers"><label for="prompt-5">Strengthen action verbs and numbers</label></li>
+                <li><input type="checkbox" id="prompt-5" data-prompt="Strengthen using action verbs and numbers"><label for="prompt-5">Strengthen using action verbs and numbers</label></li>
                 <li><input type="checkbox" id="prompt-6" data-prompt="Condense to one page"><label for="prompt-6">Condense to one page</label></li>
+                 <li><input type="checkbox" id="prompt-2" data-prompt="Use [Industry] terms"><label for="prompt-2">Use [Industry] terms</label></li>
+                <li><input type="checkbox" id="prompt-3" data-prompt="Emphasize [Skill] experience"><label for="prompt-3">Emphasize [Skill] experience</label></li>
             </ul>
-            <button id="addSelectedPrompts">Add Selected</button>
         </div>
     </div>
   </div>
