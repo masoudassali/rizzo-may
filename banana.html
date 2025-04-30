@@ -130,14 +130,6 @@
   }
 
 
-  .dropdown-trigger .arrow {
-      margin-left: 10px;
-  }
-
-
-
-
-  /* Style for the dropdown panel */
   .dropdown-panel {
       position: absolute; /* Keep absolute positioning */
       top: auto; /* Position relative to the section, below the trigger */
@@ -345,42 +337,55 @@
 
 
   /* Styles for the response area */
-  #responseContainer { /* Container for response header, button, and area */
+  #responseContainer { /* Container for response header and the response area wrapper */
       margin-top: 20px; /* Keep this margin */
   }
 
 
   #responseHeader {
-      display: flex; /* Use flexbox to align header and button */
+      display: flex; /* Use flexbox to align header */
       align-items: center; /* Vertically align */
-      gap: 15px; /* Space between header and button */
+      /* gap: 15px; /* Removed gap as copy button is no longer here */
       margin-bottom: 10px;
   }
 
 
-  #copyButton {
-      padding: 5px 15px;
-      background-color: #6c757d; /* Grey color for button */
-      color: white;
-      border: none;
-      border-radius: 4px;
+   /* Style for the wrapper around responseArea to position the copy button */
+   .response-area-wrapper {
+       position: relative; /* Needed for absolute positioning of the button */
+   }
+
+
+  /* Style for the new copy code button */
+  #copyCodeButton {
+      position: absolute;
+      top: 5px; /* Adjust as needed for spacing from the top */
+      right: 5px; /* Adjust as needed for spacing from the right */
+      background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
+      border: 1px solid #ccc; /* Light border */
+      border-radius: 4px; /* Small rounded corners */
+      padding: 5px 8px; /* Add some padding */
       cursor: pointer;
-      font-size: 14px;
-      transition: background-color 0.3s ease;
+      font-size: 0.8em; /* Smaller font size for the icon/text */
+      color: #333; /* Dark color for the icon/text */
+      z-index: 1; /* Ensure it's above the text area content */
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+      line-height: 1; /* Ensure consistent height */
   }
 
 
-  #copyButton:hover {
-    background-color: #5a6268; /* Darker grey on hover */
+  #copyCodeButton:hover {
+      background-color: rgba(255, 255, 255, 0.8); /* Less transparent on hover */
+      border-color: #bbb;
   }
 
 
-  #copyButton.copied { /* Style when text is copied */
-      background-color: #28a745; /* Green */
-      color: white;
+  /* Optional: Style for when the text is copied */
+  #copyCodeButton.copied {
+      background-color: #d4edda; /* Light green */
+      border-color: #c3e6cb; /* Green border */
+      color: #155724; /* Dark green text */
   }
-
-
 
 
   #responseArea {
@@ -541,8 +546,9 @@
           align-items: flex-start;
           gap: 5px;
       }
-       #copyButton {
-           width: auto; /* Auto width on small screens */
+       #copyCodeButton { /* Adjust copy button style on small screens */
+           position: static; /* Remove absolute positioning */
+           margin-top: 10px; /* Add space above button */
        }
         footer {
             font-size: 0.7em; /* Smaller font on small screens */
@@ -563,12 +569,12 @@
 
 
 <h2>rizzooo-may!</h2>
-<p><b><i>-- This is a test page. Use index.html for prod. -- </i></b></p>
+<p>Sure. Customize your resume to job applications <i>(it's free)</i>.<br><b>3 simple steps: </b></p>
 
 <form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/89357648-3558-4cdb-bbd1-42701925df37" method="POST">
   <div class="form-section message-section">
     <div class="message-textarea-container">
-        <label for="userMessage">Give me some points on what your resume should focus on (choose from the suggestions below or add your own.)</label>
+        <label for="userMessage">[Optional] Add a focus to your resume. <i>(Choose from the suggestions below or add your own.)</i></label>
         <textarea name="userMessage" id="userMessage" rows="4" cols="50"></textarea>
     </div>
     <div class="prompt-suggestions-dropdown">
@@ -628,10 +634,11 @@
 
 <div id="responseContainer" style="display: none;">
     <div id="responseHeader">
-        <h3>Processing Results:</h3> <button id="copyButton">Copy Text</button>
+        <h3>Processing Results:</h3>
     </div>
-    <div id="responseArea">
-      </div>
+    <div class="response-area-wrapper">
+        <div id="responseArea"></div>
+        <button id="copyCodeButton" title="Copy to clipboard">📋</button> </div>
 </div>
 
 
@@ -642,8 +649,6 @@
 let counterDisplaySpan = null;
 const localStorageKey = 'rizzoooMaySubmissionCount';
 let currentCount = localStorage.getItem(localStorageKey); // Read initial count globally
-
-
 
 
 // Wait for the DOM to be fully loaded before initializing most script parts
@@ -764,13 +769,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const responseArea = document.getElementById('responseArea');
         const responseContainer = document.getElementById('responseContainer');
-        const copyButton = document.getElementById('copyButton');
+        // const copyButton = document.getElementById('copyButton'); // REMOVED
         const uploadStatusContainer = document.getElementById('uploadStatusContainer');
         const uploadStatusBar = document.getElementById('uploadStatusBar');
         const uploadStatusText = document.getElementById('uploadStatusText');
         const submitButton = form.querySelector('input[type="submit"]');
 
 
+        // Disable all input elements and the submit button in the form
+        form.querySelectorAll('input, textarea, button').forEach(element => {
+            if (element !== submitButton) { // Don't disable the submit button here, it's handled below
+                 element.disabled = true;
+            }
+        });
 
 
         // --- Reset and Show UI Elements ---
@@ -780,10 +791,10 @@ document.addEventListener('DOMContentLoaded', function() {
         responseArea.style.color = '#000';
         responseArea.style.backgroundColor = '#e9ecef';
         responseArea.style.borderColor = '#eee';
-        copyButton.style.display = 'none';
-        copyButton.textContent = 'Copy Text';
-        copyButton.classList.remove('copied');
-        submitButton.disabled = true; // Disable button during upload
+        // copyButton.style.display = 'none'; // REMOVED
+        // copyButton.textContent = 'Copy Text'; // REMOVED
+        // copyButton.classList.remove('copied'); // REMOVED
+        submitButton.disabled = true; // Disable submit button during upload
 
 
         // Show and reset status bar
@@ -827,6 +838,15 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
 
+         // Function to re-enable form elements (call this on completion/error)
+         const reEnableForm = () => {
+              form.querySelectorAll('input, textarea, button').forEach(element => {
+                 // We want the submit button to remain disabled until refresh, so don't re-enable it here
+                 if (element !== submitButton) {
+                     element.disabled = false;
+                 }
+             });
+         };
 
 
         // --- Handle Request Completion (Success or Failure) ---
@@ -834,7 +854,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Request has completed (either success or failure status)
 
 
-            submitButton.disabled = false; // Re-enable submit button
+            // submitButton.disabled = false; // REMOVED: Keep button disabled until refresh
+            reEnableForm(); // Re-enable other form elements
 
 
             // Set final status text inside the bar (will be hidden shortly)
@@ -880,7 +901,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); // Use customizedResume if present, fallback to full JSON
 
 
-                    responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Display text nicely formatted
+                    // responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Original line
+                     // Display text nicely formatted, preserving pre/code if present or adding pre if needed
+                    if (customizedResumeText.startsWith('<pre>') && customizedResumeText.endsWith('</pre>')) {
+                        responseArea.innerHTML = customizedResumeText; // Use as is if already wrapped
+                    } else {
+                         // Wrap in pre tags for consistent formatting
+                        responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>';
+                    }
 
 
                     // Update final status text below the bar on success
@@ -890,11 +918,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
                     responseArea.style.color = '#333'; // Dark grey for success
-                    responseArea.style.backgroundColor = '#d4edda'; // Light green for success background
-                    responseArea.style.borderColor = '#c3e6cb'; // Green border
-                    copyButton.style.display = 'inline-block'; // Show the copy button
-
-
+                    responseArea.style.backgroundColor = '#e9ecef'; // Light grey, consistent with original response area background
+                    responseArea.style.borderColor = '#eee'; // Light border, consistent with original response area border
+                    // copyButton.style.display = 'inline-block'; // REMOVED: Old copy button
+                    // copyButton.textContent = 'Copy Text'; // REMOVED
+                    // copyButton.classList.remove('copied'); // REMOVED
 
 
                 } catch (e) {
@@ -963,9 +991,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hide status bar container
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
-            submitButton.disabled = false; // Re-enable button
-
-
+            // submitButton.disabled = false; // REMOVED: Keep button disabled until refresh
+            reEnableForm(); // Re-enable other form elements
 
 
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
@@ -984,7 +1011,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Request timed out!');
             uploadStatusContainer.style.display = 'none';
             // uploadStatusText.style.display = 'none'; // Keep status text visible
-            submitButton.disabled = false;
+            // submitButton.disabled = false; // REMOVED: Keep button disabled until refresh
+            reEnableForm(); // Re-enable other form elements
 
 
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
@@ -1011,41 +1039,54 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     });
+
+    // Add event listener for the new copy button
+    const copyCodeButton = document.getElementById('copyCodeButton');
+    if (copyCodeButton) { // Check if the button exists
+        copyCodeButton.addEventListener('click', function(event) { // Added event parameter
+            event.stopPropagation(); // Stop the event from bubbling up
+            event.preventDefault(); // Prevent any default action
+
+            const responseArea = document.getElementById('responseArea');
+            // Get ALL text content from the response area div
+            const textToCopy = responseArea.innerText; // Use innerText for simplicity
+
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    const button = document.getElementById('copyCodeButton');
+                    const originalText = button.textContent; // Store original text/icon
+                    button.textContent = 'Copied!'; // Change text to "Copied!"
+                    button.classList.add('copied');
+                    setTimeout(() => {
+                        button.textContent = originalText; // Restore original text/icon
+                        button.classList.remove('copied');
+                    }, 2000); // Revert after 2 seconds
+                })
+                .catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    const button = document.getElementById('copyCodeButton');
+                    const originalText = button.textContent;
+                     button.textContent = 'Copy Failed!'; // Indicate failure
+                     button.classList.add('error'); // Optional: add an error class for styling
+                    setTimeout(() => {
+                         button.textContent = originalText;
+                         button.classList.remove('error');
+                    }, 2000);
+                });
+        });
+    } else {
+        console.error("Copy code button not found!");
+    }
+
 }); // End DOMContentLoaded listener
 
-
-// Add event listener for the copy button (remains the same)
-// This is outside DOMContentLoaded as it relies on the copy button existing,
-// which it does when the page is parsed. It doesn't need to wait for the full DOM.
-document.getElementById('copyButton').addEventListener('click', function() {
-    const responseArea = document.getElementById('responseArea');
-    // Get ALL text content from the response area div
-    const textToCopy = responseArea.innerText; // Use innerText for simplicity
-
-
-    navigator.clipboard.writeText(textToCopy)
-        .then(() => {
-            const button = document.getElementById('copyButton');
-            button.textContent = 'Copied!';
-            button.classList.add('copied');
-            setTimeout(() => {
-                button.textContent = 'Copy Text';
-                button.classList.remove('copied');
-            }, 2000);
-        })
-        .catch(err => {
-            console.error('Failed to copy text: ', err);
-             const button = document.getElementById('copyButton');
-             button.textContent = 'Copy Failed!';
-        });
-});
 
 
 </script>
 
 
 <footer>
-    <p>Made with &nbsp;<span style="color: hotpink;">&hearts;</span>&nbsp; in Sunnyvale, CA — Rights reserved © 2025 — For feedback, requests or connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Last submission count: <span id="submissionCountDisplay">Loading...</span></p>
+    <p>[v0.4] © 2025 — For feedback / connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — Successful generation count: <span id="submissionCountDisplay">Loading...</span></p>
 </footer>
 
 
