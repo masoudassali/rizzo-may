@@ -648,23 +648,19 @@
 
 
 
-
   <div class="form-section">
-    <p><b>Upload files </b><i>(.txt, .pdf, .docx files < 1mb please. You can mix & match these formats.)<i></p>
+    <p><b>Add a URL or upload files or </b><i>(.txt, .pdf, .docx files < 1mb please. You can mix & match these formats.)<i></p>
 
 
-    <div class="file-inputs-container">
-      <div class="file-input-group">
-        <label for="file1">Add Resume:</label>
-        <input type="file" name="file1" id="file1" required>
-      </div>
-      <div class="file-input-group">
-        <label for="file2">Add Job Description:</label>
-        <input type="file" name="file2" id="file2" required>
-      </div>
+    <div class="form-section">
+    <p><b>Or, provide a URL to a document:</b></p>
+    <div class="url-input-group">
+        <label for="documentUrl">Enter Document URL:</label>
+        <input type="text" name="documentUrl" id="documentUrl" placeholder="e.g., https://example.com/my_resume.pdf">
+    </div>
+     <p style="font-size: 0.9em; color: #666; margin-top: 5px;"><i>(Entering a URL will ignore the file upload fields.)</i></p>
     </div>
   </div>
-
 
 
 
