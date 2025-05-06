@@ -816,7 +816,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dropdownPanel.style.display = 'none';
          // Reset arrow (optional)
         const arrow = dropdownTrigger.querySelector('.arrow');
-        if(arrow) { arrow.textContent = '▼'; }
+        if(arrow) { repositionArrowAndText(); arrow.textContent = '▼'; }
 
 
     });
@@ -877,7 +877,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Add Validation to Form Submission ---
     const uploadForm = document.getElementById('uploadForm');
     uploadForm.addEventListener('submit', function(event) {
-        // ... (your existing submit handler code before FormData creation) ...
+        event.preventDefault(); // <--- THIS LINE PREVENTS DEFAULT FORM SUBMISSION
+
+        const form = this;
+        const responseArea = document.getElementById('responseArea');
+        const responseContainer = document.getElementById('responseContainer');
+        const uploadStatusContainer = document.getElementById('uploadStatusContainer');
+        const uploadStatusBar = document.getElementById('uploadStatusBar');
+        const uploadStatusText = document.getElementById('uploadStatusText');
+        const submitButton = form.querySelector('input[type="submit"]');
+
 
         // Add validation: Check if either a file OR a URL is provided for Resume and JD
         const isResumeProvided = (resumeFile.files.length > 0 || resumeUrl.value.trim() !== '');
@@ -887,17 +896,24 @@ document.addEventListener('DOMContentLoaded', function() {
             alert("Please provide either a file or a URL for both your Resume and the Job Description.");
             // Re-enable form elements and submit button if validation fails
              const submitButton = uploadForm.querySelector('input[type="submit"]');
-             submitButton.disabled = false;
-              uploadForm.querySelectorAll('input, textarea, button').forEach(element => {
-                 if (element !== submitButton) {
+             submitButton.disabled = false; // Make sure button is enabled
+             // Re-enable inputs if they were disabled by the URL/File logic
+              updateResumeInputState(); // This will re-enable file input if URL is empty
+              updateJdInputState();   // This will re-enable file input if URL is empty
+
+              // Re-enable other disabled elements that aren't part of the file/URL exclusive logic
+               form.querySelectorAll('textarea, button').forEach(element => {
+                 // Ensure we don't accidentally enable the submit button again here
+                 if (element !== submitButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) { // Exclude dropdown trigger/panel elements
                      element.disabled = false;
                  }
              });
+
+
             // Hide any status messages that might have appeared prematurely
              document.getElementById('uploadStatusContainer').style.display = 'none';
              document.getElementById('uploadStatusText').style.display = 'none';
 
-            event.preventDefault(); // Prevent form submission
             return; // Stop the function
         }
 
@@ -905,53 +921,63 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(this); // Use 'this' to refer to the form
 
 
-        // ... (the rest of your existing submit handler code) ...
-         // Ensure you have the xhr.open and xhr.send parts after formData is created
-         // xhr.open(this.method, this.action);
-         // xhr.send(formData);
-
-
         // --- Disable elements and show status before XHR ---
+         // Disable all input elements and the submit button in the form
          form.querySelectorAll('input, textarea, button').forEach(element => {
-            if (element !== submitButton) {
+            // Keep the dropdown trigger enabled so the user can still access suggestions
+            if (element !== submitButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) {
                  element.disabled = true;
             }
         });
          submitButton.disabled = true;
 
-        responseContainer.style.display = 'block';
-        responseArea.innerHTML = 'Generating... shouldn\'t take more than a couple of minutes.';
-        responseArea.style.color = '#000';
-        responseArea.style.backgroundColor = '#e9ecef';
-        responseArea.style.borderColor = '#eee';
 
+        // --- Reset and Show UI Elements ---
+        responseContainer.style.display = 'block';
+        // Initial text for response area while generating
+        responseArea.innerHTML = 'Generating... shouldn\'t take more than a couple of minutes.';
+        responseArea.style.color = '#000'; // Reset to default text color
+        responseArea.style.backgroundColor = '#e9ecef'; // Reset to default background
+        responseArea.style.borderColor = '#eee'; // Reset to default border
         uploadStatusContainer.style.display = 'block';
         uploadStatusText.style.display = 'block';
-        uploadStatusBar.style.width = '0%';
-        uploadStatusBar.innerHTML = '0%';
+        uploadStatusBar.style.width = '0%'; // Reset progress bar width
+        uploadStatusBar.innerHTML = '0%'; // Reset percentage text inside bar
+        // Status text below the bar
         uploadStatusText.innerHTML = "Starting upload...";
+
+
 
 
         // --- Create and Configure XMLHttpRequest ---
         const xhr = new XMLHttpRequest();
 
+
         // --- Track Upload Progress ---
         xhr.upload.onprogress = function(event) {
             if (event.lengthComputable) {
                 const percentComplete = (event.loaded / event.total) * 100;
-                const percent = Math.round(percentComplete);
+                const percent = Math.round(percentComplete); // Round for display
+                // Update progress bar width
                 uploadStatusBar.style.width = percent + '%';
+                // Update the text inside the status bar div (e.g., "0%", "50%", "100%")
                 uploadStatusBar.innerHTML = percent + '%';
-                uploadStatusText.innerHTML = `Uploading files (${percent}%)...`;
+                // Update text below the bar during upload
+                 uploadStatusText.innerHTML = `Uploading files (${percent}%)...`;
+
+
             }
         };
 
+
         // --- Handle Upload Complete (before response starts) ---
         xhr.onloadstart = function() {
-             uploadStatusBar.style.width = '100%';
-             uploadStatusBar.innerHTML = '100%';
-             uploadStatusText.innerHTML = "Processing... shouldn't take more than a couple of minutes.";
+             // Upload is likely complete here, transition to processing
+             uploadStatusBar.style.width = '100%'; // Set bar to full
+             uploadStatusBar.innerHTML = '100%'; // Show 100% in bar
+             uploadStatusText.innerHTML = "Processing... shouldn't take more than a couple of minutes."; // Change text below bar
         };
+
 
          // Function to re-enable form elements (call this on completion/error)
          const reEnableForm = () => {
@@ -960,7 +986,8 @@ document.addEventListener('DOMContentLoaded', function() {
               updateJdInputState();
               // Re-enable other form elements (like the message textarea)
               form.querySelectorAll('textarea, button').forEach(element => {
-                 if (element !== submitButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) { // Don't re-enable dropdown button or panel contents
+                 // We want the submit button to remain disabled until refresh, so don't re-enable it here
+                 if (element !== submitButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) { // Exclude dropdown trigger/panel elements
                      element.disabled = false;
                  }
              });
@@ -970,16 +997,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // --- Handle Request Completion (Success or Failure) ---
         xhr.onload = function() {
-            reEnableForm(); // Re-enable form elements (except submit)
+            // Request has completed (either success or failure status)
 
-            if(uploadStatusBar) {
-               uploadStatusBar.innerHTML = xhr.status >= 200 && xhr.status < 300 ? 'Complete!' : 'Error!';
+
+            // submitButton.disabled = false; // REMOVED: Keep button disabled until refresh
+            reEnableForm(); // Re-enable other form elements
+
+
+            // Set final status text inside the bar (will be hidden shortly)
+            if(uploadStatusBar) { // Check exists
+               uploadStatusBar.innerHTML = xhr.status >= 200 && xhr.status < 300 ? 'Complete!' : 'Error!'; // Show final status in bar
             }
 
+
             if (xhr.status >= 200 && xhr.status < 300) {
-                // Success
+                // Request was successful (HTTP status 2xx)
+
+
+                // --- Increment and save counter on successful submission ---
+                // Only increment if the counter span was found initially
                 if (counterDisplaySpan) {
-                    if (typeof currentCount !== 'number' || isNaN(currentCount)) {
+                    // Ensure currentCount is a number before incrementing
+                     if (typeof currentCount !== 'number' || isNaN(currentCount)) {
+                         // If for some reason currentCount isn't a number here, re-read it
                          currentCount = localStorage.getItem(localStorageKey);
                          if (currentCount === null || isNaN(parseInt(currentCount, 10))) {
                             currentCount = 431;
@@ -989,37 +1029,61 @@ document.addEventListener('DOMContentLoaded', function() {
                      }
                     currentCount++;
                     localStorage.setItem(localStorageKey, currentCount);
+                    // Update the text content of the span in the footer
                     counterDisplaySpan.textContent = currentCount;
                 }
+                // --- End counter update ---
+
 
                 try {
-                    const data = JSON.parse(xhr.responseText);
-                    const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2);
+                    const data = JSON.parse(xhr.responseText); // Attempt to parse the JSON response from client
 
-                    if (customizedResumeText.startsWith('<pre>') && customizedResumeText.endsWith('</pre>')) {
-                        responseArea.innerHTML = customizedResumeText;
+
+                    // Display the response from client (assuming JSON with customizedResume key)
+                    const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); // Use customizedResume if present, fallback to full JSON
+
+
+                     // Display text nicely formatted, preserving pre/code if present or adding pre if needed
+                    if (typeof customizedResumeText === 'string' && customizedResumeText.startsWith('<pre>') && customizedResumeText.endsWith('</pre>')) {
+                        responseArea.innerHTML = customizedResumeText; // Use as is if already wrapped
                     } else {
-                        responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>';
+                         // Wrap in pre tags for consistent formatting
+                         // Ensure string type before wrapping
+                         responseArea.innerHTML = '<pre>' + (typeof customizedResumeText === 'string' ? customizedResumeText : String(customizedResumeText)) + '</pre>';
                     }
+
+
+                    // Update final status text below the bar on success
                     uploadStatusText.innerHTML = "Generated!";
-                    responseArea.style.color = '#333';
-                    responseArea.style.backgroundColor = '#e9ecef';
-                    responseArea.style.borderColor = '#eee';
+
+
+                    responseArea.style.color = '#333'; // Dark grey for success
+                    responseArea.style.backgroundColor = '#e9ecef'; // Light grey, consistent with original response area background
+                    responseArea.style.borderColor = '#eee'; // Light border, consistent with original response area border
+
 
                 } catch (e) {
+                    // Failed to parse the JSON response (e.g., client returned plain text or invalid JSON on success)
                     console.error('Error parsing JSON response:', e, 'Response:', xhr.responseText);
-                    responseArea.innerHTML = '<p>Error: Received unexpected response from client.</p><p><code>' + xhr.responseText.substring(0, 500) + '...</code></p>';
+                    responseArea.innerHTML = '<p>Error: Received unexpected response from client.</p><p><code>' + (xhr.responseText || 'No response text').substring(0, 500) + '...</code></p>'; // Display partial response text
+
+
+                    // Update final status text below the bar on parse error
                     uploadStatusText.innerHTML = "Generation failed (Parse Error).";
-                    responseArea.style.color = '#721c24';
-                    responseArea.style.backgroundColor = '#f8d7da';
+
+
+                    responseArea.style.color = '#721c24'; // Dark red for error
+                    responseArea.style.backgroundColor = '#f8d7da'; // Light red for error background
                     responseArea.style.borderColor = '#f5c6cb';
                 }
 
+
             } else {
-                // Failure
+                // Request failed (HTTP status is not 2xx)
                 console.error('HTTP error!', xhr.status, xhr.responseText);
                 let errorMessage = `HTTP error! status: ${xhr.status}`;
                 try {
+                    // Attempt to parse client's error response if it's JSON
                     const errorResponse = JSON.parse(xhr.responseText);
                     if (errorResponse.message) {
                         errorMessage += `, message: ${errorResponse.message}`;
@@ -1027,78 +1091,116 @@ document.addEventListener('DOMContentLoaded', function() {
                         errorMessage += `, body: ${xhr.responseText}`;
                     }
                 } catch (e) {
+                    // If response isn't JSON, just include the status and response text
                     errorMessage += `, body: ${xhr.responseText}`;
                 }
+
+
                 responseArea.innerHTML = '<p>Error processing files:</p><p><code>' + errorMessage + '</code></p>';
+                 // Update final status text below the bar on HTTP error
                 uploadStatusText.innerHTML = `Error: ${xhr.status}`;
+
+
                 responseArea.style.color = '#721c24';
                 responseArea.style.backgroundColor = '#f8d7da';
                 responseArea.style.borderColor = '#f5c6cb';
             }
+             // Update status text inside the bar to indicate completion or error
+            if(uploadStatusBar) { // Check exists
+                 // This was already set above, keep it consistent
+                 // uploadStatusBar.innerHTML = uploadStatusText.innerHTML;
+            }
+
+
+            // Hide status bar container (the bar itself)
             uploadStatusContainer.style.display = 'none';
-        };
+            // Keep uploadStatusText visible with the final message
+
+
+        }; // End xhr.onload
+
 
         // --- Handle Network Errors (like connection refused) ---
         xhr.onerror = function() {
             console.error('Network error!');
+            // Hide status bar container
             uploadStatusContainer.style.display = 'none';
-            reEnableForm();
+            // uploadStatusText.style.display = 'none'; // Keep status text visible
+            // submitButton.disabled = false; // REMOVED: Keep button disabled until refresh
+            reEnableForm(); // Re-enable other form elements
+
+
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
             responseArea.style.color = '#721c24';
             responseArea.style.backgroundColor = '#f8d7da';
             responseArea.style.borderColor = '#f5c6cb';
+            // Update final status text below the bar on network error
             uploadStatusText.innerHTML = "Network error.";
+             // Update status text inside the bar
             if(uploadStatusBar) { uploadStatusBar.innerHTML = "Error!"; }
         };
+
 
         // --- Handle Request Timeout ---
         xhr.ontimeout = function() {
             console.error('Request timed out!');
             uploadStatusContainer.style.display = 'none';
-            reEnableForm();
+            // uploadStatusText.style.display = 'none'; // Keep status text visible
+            // submitButton.disabled = false; // REMOVED: Keep button disabled until refresh
+            reEnableForm(); // Re-enable other form elements
+
+
             responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
             responseArea.style.color = '#721c24';
             responseArea.style.backgroundColor = '#f8d7da';
             responseArea.style.borderColor = '#f5c6cb';
+             // Update final status text below the bar on timeout error
             uploadStatusText.innerHTML = "Request timed out.";
-            if(uploadStatusBar) { uploadStatusBar.innerHTML = "Timeout!"; }
+            // Update status text inside the bar
+             if(uploadStatusBar) { uploadStatusBar.innerHTML = "Timeout!"; }
         };
 
 
         // --- Open and Send the Request ---
         // IMPORTANT: Replace the action URL with your actual production client webhook URL
-        xhr.open(this.method, this.action);
-        xhr.send(formData);
+        xhr.open(this.method, this.action); // Use the form's method (POST) and action URL
+        // When sending FormData with XHR, the browser automatically sets the Content-Type
+        // and boundary header correctly. Do NOT set Content-Type manually here.
+
+
+        xhr.send(formData); // Send the FormData object containing both files and textarea data
+
 
     });
 
     // Add event listener for the new copy button
     const copyCodeButton = document.getElementById('copyCodeButton');
-    if (copyCodeButton) {
-        copyCodeButton.addEventListener('click', function(event) {
-            event.stopPropagation();
-            event.preventDefault();
+    if (copyCodeButton) { // Check if the button exists
+        copyCodeButton.addEventListener('click', function(event) { // Added event parameter
+            event.stopPropagation(); // Stop the event from bubbling up
+            event.preventDefault(); // Prevent any default action
 
             const responseArea = document.getElementById('responseArea');
-            const textToCopy = responseArea.innerText;
+            // Get ALL text content from the response area div
+            const textToCopy = responseArea.innerText; // Use innerText for simplicity
 
             navigator.clipboard.writeText(textToCopy)
                 .then(() => {
                     const button = document.getElementById('copyCodeButton');
-                    const originalText = button.textContent;
-                    button.textContent = 'Copied!';
+                    const originalText = button.textContent; // Store original text/icon
+                    button.textContent = 'Copied!'; // Change text to "Copied!"
                     button.classList.add('copied');
                     setTimeout(() => {
-                        button.textContent = originalText;
+                        button.textContent = originalText; // Restore original text/icon
                         button.classList.remove('copied');
-                    }, 2000);
+                    }, 2000); // Revert after 2 seconds
                 })
                 .catch(err => {
                     console.error('Failed to copy text: ', err);
                     const button = document.getElementById('copyCodeButton');
                     const originalText = button.textContent;
-                     button.textContent = 'Copy Failed!';
-                     button.classList.add('error');
+                     button.textContent = 'Copy Failed!'; // Indicate failure
+                     button.classList.add('error'); // Optional: add an error class for styling
                     setTimeout(() => {
                          button.textContent = originalText;
                          button.classList.remove('error');
@@ -1114,32 +1216,45 @@ document.addEventListener('DOMContentLoaded', function() {
     if (downloadResumeButton) {
         downloadResumeButton.addEventListener('click', function() {
             const responseArea = document.getElementById('responseArea');
-            const textToDownload = responseArea.innerText;
+            // Get ALL text content from the response area div
+            const textToDownload = responseArea.innerText; // Use innerText for simplicity
 
+            // Create a Blob from the text
             const blob = new Blob([textToDownload], { type: 'text/plain' });
+
+            // Create a link element
             const a = document.createElement('a');
+
+            // Create a URL for the blob and set it as the link's href
             const url = URL.createObjectURL(blob);
             a.href = url;
 
+            // Set the download filename - using a simple timestamp for uniqueness + readability
             const now = new Date();
-            const timestamp = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, 2)}${now.getMinutes().toString().padStart(2, 0)}${now.getSeconds().toString().padStart(2, 0)}`;
-            a.download = `customized_resume_${timestamp}.txt`;
+            const timestamp = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+            a.download = `customized_resume_${timestamp}.txt`; // Example filename
 
+            // Append the link to the body (needs to be in the DOM to trigger download in some browsers)
             document.body.appendChild(a);
+
+            // Trigger a click on the link to start the download
             a.click();
 
+            // Clean up: remove the link and revoke the object URL
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
 
+            // Optional: Provide visual feedback to the user (similar to copy button)
             const button = document.getElementById('downloadResumeButton');
-            const originalIcon = button.textContent;
-            button.textContent = 'Downloading...';
-            button.classList.add('downloading');
+            const originalIcon = button.textContent; // Store original text/icon
+            button.textContent = 'Downloading...'; // Change text temporarily
+            button.classList.add('downloading'); // Optional: add a class for styling
+             // Revert text after a short delay, download usually happens quickly
             setTimeout(() => {
-                button.textContent = originalIcon;
+                button.textContent = originalIcon; // Restore original icon
                 button.classList.remove('downloading');
-                button.classList.remove('error');
-            }, 2000);
+                 button.classList.remove('error'); // Remove potential error class
+            }, 2000); // Revert after 2 seconds
         });
     } else {
         console.error("Download button not found!");
