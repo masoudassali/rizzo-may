@@ -227,7 +227,8 @@
 
 
   input[type="file"],
-  textarea {
+  textarea,
+  input[type="text"] { /* Added input[type="text"] */
     display: block; /* Ensure they take up their flex area */
     padding: 8px;
     border: 1px solid #ccc;
@@ -248,29 +249,50 @@
    }
 
 
-    /* Styles for the container holding side-by-side file inputs */
-    .file-inputs-container {
+    /* Styles for the container holding side-by-side document input groups */
+    .document-inputs-container { /* New class */
         display: flex; /* Use Flexbox for side-by-side layout */
-        gap: 20px; /* Space between the two file input groups */
+        gap: 20px; /* Space between the two document input groups */
         flex-wrap: wrap; /* Allow wrapping to a new line on smaller screens */
     }
 
-
-    /* Style for each individual file input group (Flex items within file-inputs-container) */
-    .file-input-group {
+    /* Style for each individual document input group (Flex items within document-inputs-container) */
+    .document-input-group { /* New class */
         flex: 1; /* Allow each group to grow and shrink equally */
-        min-width: 250px; /* Minimum width before wrapping */
-        display: flex; /* Use Flexbox for label and input within the group */
-        flex-direction: column; /* Stack label and input vertically within the group */
-        gap: 5px; /* Space between label and input within the group */
+        min-width: 280px; /* Adjust minimum width */
+        display: flex; /* Use Flexbox for elements within the group */
+        flex-direction: column; /* Stack elements vertically within the group */
+        gap: 5px; /* Space between elements */
+        padding: 15px; /* Add some padding */
+        border: 1px solid #ddd; /* Add a light border */
+        border-radius: 5px; /* Slightly rounded corners */
+        background-color: #f9f9f9; /* Light background */
     }
 
-
-    .file-input-group label {
+    .document-input-group label {
         margin-bottom: 0; /* Gap handles spacing */
+        text-align: center; /* Center the label */
     }
 
+    /* Adjust input styles to apply to text inputs as well */
+    input[type="file"],
+    textarea,
+    input[type="text"] { /* Ensure text input is styled */
+      display: block;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #f8f8f8;
+      width: 100%; /* Make them fill the width */
+      box-sizing: border-box; /* Include padding and border in width */
+    }
 
+    /* Style for disabled inputs */
+    input[type="file"]:disabled,
+    input[type="text"]:disabled {
+        background-color: #e9e9e9;
+        cursor: not-allowed;
+    }
 
 
   /* Revised CSS for input[type="submit"] - use max-width and margin: auto, placed in its own section */
@@ -563,15 +585,15 @@
       }
 
 
-       /* Adjust file inputs to stack on mobile */
-       .file-inputs-container {
-           flex-direction: column; /* Stack items vertically on small screens */
+       /* Adjust document input groups to stack on mobile */
+       .document-inputs-container { /* New class */
+           flex-direction: column; /* Stack vertically on small screens */
            gap: 15px; /* Adjust gap for vertical stacking */
        }
-       .file-input-group {
-           min-width: auto; /* Remove min-width constraint on mobile */
+       .document-input-group { /* New class */
+           min-width: auto; /* Remove min-width constraint */
            width: 100%; /* Ensure they take full width when stacked */
-           gap: 5px; /* Keep space between label and input */
+           padding: 10px; /* Adjust padding */
        }
 
 
@@ -620,13 +642,13 @@
 <body>
 
 
-<h2>rizzo-may! <span style="font-size: smaller;"><i>(beta)</i></span></h2>
-<p>Of course you may customize your resume to job applications with AI. <b><i>(it's free.)</i></b><br><b>3 simple steps: </b></p>
+<h2>rizzo-may! <span style="font-size: smaller;"><i>(test page -- use index.html for prod.)</i></span></h2>
+<p>Of course you may use AI to customize your resume to job applications. <b><i>(it's free.)</i></b><br><b>3 simple steps: </b></p>
 
-<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook/89357648-3558-4cdb-bbd1-42701925df37" method="POST">
+<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook/c04f5180-4675-45b0-ae75-ce70eeb625d8" method="POST">
   <div class="form-section message-section">
     <div class="message-textarea-container">
-        <label for="userMessage">[Optional] Add a focus to your resume. Choose from the suggestions below or add your own.</label>
+        <label for="userMessage">[Optional] Add a focus to your resume. (Choose from the suggestions below or add your own.)</label>
         <textarea name="userMessage" id="userMessage" rows="4" cols="50"></textarea>
     </div>
     <div class="prompt-suggestions-dropdown">
@@ -646,28 +668,18 @@
     </div>
   </div>
 
-
-
-
   <div class="form-section">
-    <p><b>Upload files </b><i>(.txt, .pdf, .docx files < 1mb please.)<i></p>
+    <p><b>Provide your Resume and the Job Description:</b> <i>(.txt, .pdf, .docx files < 1mb please. You can mix & match formats and input types.)</i></p>
 
+    <div class="document-inputs-container"> <div class="document-input-group"> <label for="resumeInput">Add Resume:</label> <input type="file" name="resumeFile" id="resumeFile"> <p style="text-align: center; margin: 5px 0; font-size: 0.9em; color: #555;">- OR -</p>
+        <input type="text" name="resumeUrl" id="resumeUrl" placeholder="Enter Resume URL"> </div>
 
-    <div class="file-inputs-container">
-      <div class="file-input-group">
-        <label for="file1">Add Resume:</label>
-        <input type="file" name="file1" id="file1" required>
-      </div>
-      <div class="file-input-group">
-        <label for="file2">Add Job Description:</label>
-        <input type="file" name="file2" id="file2" required>
-      </div>
+      <div class="document-input-group"> <label for="jdInput">Add Job Description:</label> <input type="file" name="jdFile" id="jdFile"> <p style="text-align: center; margin: 5px 0; font-size: 0.9em; color: #555;">- OR -</p>
+        <input type="text" name="jdUrl" id="jdUrl" placeholder="Enter JD URL"> </div>
+
     </div>
+     <p style="font-size: 0.9em; color: #666; margin-top: 5px;"><i>(For each document, provide either a file upload OR a URL.)</i></p>
   </div>
-
-
-
-
   <div class="form-section button-section">
     <input type="submit" value="Generate Resume">
   </div>
@@ -804,54 +816,129 @@ document.addEventListener('DOMContentLoaded', function() {
         dropdownPanel.style.display = 'none';
          // Reset arrow (optional)
         const arrow = dropdownTrigger.querySelector('.arrow');
-        if(arrow) { arrow.textContent = '▼'; }
+        if(arrow) { repositionArrowAndText(); arrow.textContent = '▼'; }
 
 
     });
 
+    // --- Mutually Exclusive Document Input (File or URL) ---
+    const resumeFile = document.getElementById('resumeFile');
+    const resumeUrl = document.getElementById('resumeUrl');
+    const jdFile = document.getElementById('jdFile');
+    const jdUrl = document.getElementById('jdUrl');
+
+    const updateResumeInputState = () => {
+        if (resumeUrl.value.trim() !== '') {
+            // Resume URL has text, disable Resume file input
+            resumeFile.disabled = true;
+            // resumeFile.required = false; // We'll handle required validation in the submit handler or backend
+        } else {
+            // Resume URL is empty, enable Resume file input
+            resumeFile.disabled = false;
+            // resumeFile.required = true; // We'll handle required validation
+        }
+    };
+
+    const updateJdInputState = () => {
+        if (jdUrl.value.trim() !== '') {
+            // JD URL has text, disable JD file input
+            jdFile.disabled = true;
+            // jdFile.required = false; // We'll handle required validation
+        } else {
+            // JD URL is empty, enable JD file input
+            jdFile.disabled = false;
+            // jdFile.required = true; // We'll handle required validation
+        }
+    };
+
+    // Add event listeners for Resume inputs
+    resumeUrl.addEventListener('input', updateResumeInputState);
+    resumeFile.addEventListener('change', () => {
+        if (resumeFile.files.length > 0) {
+            resumeUrl.value = ''; // Clear URL if a file is selected
+        }
+        updateResumeInputState(); // Update states after change
+    });
+
+    // Add event listeners for JD inputs
+    jdUrl.addEventListener('input', updateJdInputState);
+    jdFile.addEventListener('change', () => {
+        if (jdFile.files.length > 0) {
+            jdUrl.value = ''; // Clear URL if a file is selected
+        }
+        updateJdInputState(); // Update states after change
+    });
 
 
+    // Initial check on page load
+    updateResumeInputState();
+    updateJdInputState();
 
-    // --- Form Submission Handling ---
-    document.getElementById('uploadForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent default form submission
-
+    // --- Add Validation to Form Submission ---
+    const uploadForm = document.getElementById('uploadForm');
+    uploadForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // <--- THIS LINE PREVENTS DEFAULT FORM SUBMISSION
 
         const form = this;
-        const formData = new FormData(form);
-
-
         const responseArea = document.getElementById('responseArea');
         const responseContainer = document.getElementById('responseContainer');
-        // const copyButton = document.getElementById('copyButton'); // REMOVED
         const uploadStatusContainer = document.getElementById('uploadStatusContainer');
         const uploadStatusBar = document.getElementById('uploadStatusBar');
         const uploadStatusText = document.getElementById('uploadStatusText');
         const submitButton = form.querySelector('input[type="submit"]');
 
 
-        // Disable all input elements and the submit button in the form
-        form.querySelectorAll('input, textarea, button').forEach(element => {
-            if (element !== submitButton) { // Don't disable the submit button here, it's handled below
+        // Add validation: Check if either a file OR a URL is provided for Resume and JD
+        const isResumeProvided = (resumeFile.files.length > 0 || resumeUrl.value.trim() !== '');
+        const isJdProvided = (jdFile.files.length > 0 || jdUrl.value.trim() !== '');
+
+        if (!isResumeProvided || !isJdProvided) {
+            alert("Please provide either a file or a URL for both your Resume and the Job Description.");
+            // Re-enable form elements and submit button if validation fails
+             const submitButton = uploadForm.querySelector('input[type="submit"]');
+             submitButton.disabled = false; // Make sure button is enabled
+             // Re-enable inputs if they were disabled by the URL/File logic
+              updateResumeInputState(); // This will re-enable file input if URL is empty
+              updateJdInputState();   // This will re-enable file input if URL is empty
+
+              // Re-enable other disabled elements that aren't part of the file/URL exclusive logic
+               form.querySelectorAll('textarea, button').forEach(element => {
+                 // Ensure we don't accidentally enable the submit button again here
+                 if (element !== submitButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) { // Exclude dropdown trigger/panel elements
+                     element.disabled = false;
+                 }
+             });
+
+
+            // Hide any status messages that might have appeared prematurely
+             document.getElementById('uploadStatusContainer').style.display = 'none';
+             document.getElementById('uploadStatusText').style.display = 'none';
+
+            return; // Stop the function
+        }
+
+        // If validation passes, proceed with FormData
+        const formData = new FormData(this); // Use 'this' to refer to the form
+
+
+        // --- Disable elements and show status before XHR ---
+         // Disable all input elements and the submit button in the form
+         form.querySelectorAll('input, textarea, button').forEach(element => {
+            // Keep the dropdown trigger enabled so the user can still access suggestions
+            if (element !== submitButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) {
                  element.disabled = true;
             }
         });
+         submitButton.disabled = true;
 
 
         // --- Reset and Show UI Elements ---
         responseContainer.style.display = 'block';
         // Initial text for response area while generating
         responseArea.innerHTML = 'Generating... shouldn\'t take more than a couple of minutes.';
-        responseArea.style.color = '#000';
-        responseArea.style.backgroundColor = '#e9ecef';
-        responseArea.style.borderColor = '#eee';
-        // copyButton.style.display = 'inline-block'; // REMOVED: Old copy button
-        // copyButton.textContent = 'Copy Text'; // REMOVED
-        // copyButton.classList.remove('copied'); // REMOVED
-        submitButton.disabled = true; // Disable submit button during upload
-
-
-        // Show and reset status bar
+        responseArea.style.color = '#000'; // Reset to default text color
+        responseArea.style.backgroundColor = '#e9ecef'; // Reset to default background
+        responseArea.style.borderColor = '#eee'; // Reset to default border
         uploadStatusContainer.style.display = 'block';
         uploadStatusText.style.display = 'block';
         uploadStatusBar.style.width = '0%'; // Reset progress bar width
@@ -894,12 +981,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
          // Function to re-enable form elements (call this on completion/error)
          const reEnableForm = () => {
-              form.querySelectorAll('input, textarea, button').forEach(element => {
+              // Re-enable resume/JD inputs based on their last state before disabling
+              updateResumeInputState();
+              updateJdInputState();
+              // Re-enable other form elements (like the message textarea)
+              form.querySelectorAll('textarea, button').forEach(element => {
                  // We want the submit button to remain disabled until refresh, so don't re-enable it here
-                 if (element !== submitButton) {
+                 if (element !== submitButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) { // Exclude dropdown trigger/panel elements
                      element.disabled = false;
                  }
              });
+              // Keep the submit button disabled until refresh or explicit re-enable logic
          };
 
 
@@ -916,8 +1008,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if(uploadStatusBar) { // Check exists
                uploadStatusBar.innerHTML = xhr.status >= 200 && xhr.status < 300 ? 'Complete!' : 'Error!'; // Show final status in bar
             }
-
-
 
 
             if (xhr.status >= 200 && xhr.status < 300) {
@@ -945,8 +1035,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // --- End counter update ---
 
 
-
-
                 try {
                     const data = JSON.parse(xhr.responseText); // Attempt to parse the JSON response from client
 
@@ -955,13 +1043,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); // Use customizedResume if present, fallback to full JSON
 
 
-                    // responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>'; // Original line
                      // Display text nicely formatted, preserving pre/code if present or adding pre if needed
-                    if (customizedResumeText.startsWith('<pre>') && customizedResumeText.endsWith('</pre>')) {
+                    if (typeof customizedResumeText === 'string' && customizedResumeText.startsWith('<pre>') && customizedResumeText.endsWith('</pre>')) {
                         responseArea.innerHTML = customizedResumeText; // Use as is if already wrapped
                     } else {
                          // Wrap in pre tags for consistent formatting
-                        responseArea.innerHTML = '<pre>' + customizedResumeText + '</pre>';
+                         // Ensure string type before wrapping
+                         responseArea.innerHTML = '<pre>' + (typeof customizedResumeText === 'string' ? customizedResumeText : String(customizedResumeText)) + '</pre>';
                     }
 
 
@@ -969,20 +1057,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     uploadStatusText.innerHTML = "Generated!";
 
 
-
-
                     responseArea.style.color = '#333'; // Dark grey for success
                     responseArea.style.backgroundColor = '#e9ecef'; // Light grey, consistent with original response area background
                     responseArea.style.borderColor = '#eee'; // Light border, consistent with original response area border
-                    // copyButton.style.display = 'inline-block'; // REMOVED: Old copy button
-                    // copyButton.textContent = 'Copy Text'; // REMOVED
-                    // copyButton.classList.remove('copied'); // REMOVED
 
 
                 } catch (e) {
                     // Failed to parse the JSON response (e.g., client returned plain text or invalid JSON on success)
                     console.error('Error parsing JSON response:', e, 'Response:', xhr.responseText);
-                    responseArea.innerHTML = '<p>Error: Received unexpected response from client.</p><p><code>' + xhr.responseText.substring(0, 500) + '...</code></p>'; // Display partial response text
+                    responseArea.innerHTML = '<p>Error: Received unexpected response from client.</p><p><code>' + (xhr.responseText || 'No response text').substring(0, 500) + '...</code></p>'; // Display partial response text
 
 
                     // Update final status text below the bar on parse error
@@ -1016,8 +1099,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 responseArea.innerHTML = '<p>Error processing files:</p><p><code>' + errorMessage + '</code></p>';
                  // Update final status text below the bar on HTTP error
                 uploadStatusText.innerHTML = `Error: ${xhr.status}`;
-
-
 
 
                 responseArea.style.color = '#721c24';
@@ -1080,10 +1161,8 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
 
-
-
         // --- Open and Send the Request ---
-        // IMPORTANT: Replace "https://steak.servequake.com/webhook-test/b1592350-e356-44e8-98b6-26b21b1c36b8" with your actual production client webhook URL
+        // IMPORTANT: Replace the action URL with your actual production client webhook URL
         xhr.open(this.method, this.action); // Use the form's method (POST) and action URL
         // When sending FormData with XHR, the browser automatically sets the Content-Type
         // and boundary header correctly. Do NOT set Content-Type manually here.
@@ -1190,10 +1269,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 <footer>
-    <p>[v0.4] © 2025 — For feedback / connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — 👍 generation count: <span id="submissionCountDisplay">Loading...</span></p>
+    <p>[v0.5] © 2025 — For feedback / connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — 👍 generation count: <span id="submissionCountDisplay">Loading...</span></p>
 </footer>
-
-
 
 
 </body>
