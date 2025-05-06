@@ -441,6 +441,24 @@
       color: #155724; /* Dark green text */
   }
 
+    /* Style for the editable textarea */
+    #editResponseArea {
+        padding: 15px;
+        border: 1px solid #eee; /* Match responseArea border */
+        border-radius: 8px; /* Match responseArea border-radius */
+        background-color: #fff; /* Use a white background for editing */
+        white-space: pre-wrap; /* Preserve formatting similar to pre-wrap */
+        word-wrap: break-word;
+        min-height: 200px; /* Give it a decent editing height */
+        width: 100%; /* Take full width */
+        box-sizing: border-box; /* Include padding and border in width */
+        color: #333;
+        font-family: inherit; /* Inherit font from body/parent */
+        font-size: inherit; /* Inherit font size */
+        resize: vertical; /* Allow vertical resizing */
+        margin-bottom: 10px; /* Space below textarea */
+    }
+
 
   #responseArea {
     padding: 15px;
@@ -453,7 +471,8 @@
     color: #333; /* Default text color */
     overflow-x: auto; /* Add horizontal scroll if content is too wide */
     /* Add padding to the right to prevent text from going under buttons */
-    padding-right: 80px; /* Adjust this value based on button width and spacing */
+    /* Adjust if needed based on button widths */
+     padding-right: 110px; /* Example: 80px (copy/download) + space for Edit button */
   }
 
 
@@ -477,6 +496,55 @@
       border-radius: 4px;
       font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
       font-size: 0.9em;
+  }
+
+
+  /* Hide the default scrollbar on the responseArea div if you prefer the textarea's */
+  #responseArea {
+      overflow-y: hidden; /* Hide vertical scrollbar */
+      overflow-x: auto;   /* Keep horizontal scroll if needed */
+  }
+
+
+  /* Style and position the new Edit button */
+  #editResponseButton {
+      position: absolute;
+      top: 5px; /* Align vertically with other buttons */
+      right: 75px; /* Position to the left of the download button */
+      z-index: 1;
+      background-color: rgba(255, 255, 255, 0.5);
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 5px 8px;
+      cursor: pointer;
+      font-size: 0.8em;
+      color: #333;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+      line-height: 1;
+  }
+
+  #editResponseButton:hover {
+      background-color: rgba(255, 255, 255, 0.8);
+      border-color: #bbb;
+  }
+
+  /* Style and position the Done Editing button */
+  #doneEditingButton {
+      display: block; /* Make it a block element */
+      width: auto; /* Auto width based on content */
+      padding: 8px 15px;
+      background-color: #28a745; /* Green color */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      margin: 10px auto; /* Center below the textarea */
+      transition: background-color 0.2s ease;
+  }
+
+  #doneEditingButton:hover {
+      background-color: #218838; /* Darker green on hover */
   }
 
 
@@ -604,14 +672,18 @@
       }
        /* Adjust styles for both buttons on small screens */
        #copyCodeButton,
-       #downloadResumeButton {
-           position: static; /* Remove absolute positioning */
+       #downloadResumeButton,
+       #editResponseButton { /* Include the new edit button */
+           position: static; /* Remove absolute positioning on mobile */
            margin-top: 10px; /* Add space above button */
            display: block; /* Make them block elements */
            width: 100%; /* Full width */
            text-align: center;
        }
        #downloadResumeButton { /* Add margin between buttons */
+           margin-top: 5px;
+       }
+        #editResponseButton { /* Add margin between buttons */
            margin-top: 5px;
        }
         /* Adjust the wrapper if needed for mobile stacking */
@@ -621,6 +693,16 @@
         #responseArea { /* Adjust padding if buttons were positioned over it */
             padding-top: 15px; /* Ensure text isn't hidden by buttons */
             padding-right: 15px; /* Ensure text isn't hidden by buttons */
+        }
+
+        #editResponseArea {
+            padding-right: 15px; /* Adjust padding for textarea on mobile */
+        }
+
+
+        #doneEditingButton {
+            width: 100%;
+            margin: 10px 0; /* Adjust margin for mobile */
         }
 
 
@@ -702,8 +784,10 @@
     </div>
     <div class="response-area-wrapper">
         <div id="responseArea"></div>
-        <button id="copyCodeButton" title="Copy to clipboard">📋</button>
+        <textarea id="editResponseArea" style="display: none;"></textarea> <button id="editResponseButton" title="Edit Response">✏️</button> <button id="copyCodeButton" title="Copy to clipboard">📋</button>
         <button id="downloadResumeButton" title="Download Resume">⬇️</button>
+
+        <button id="doneEditingButton" style="display: none;" title="Done Editing">✅ Done Editing</button>
     </div>
 </div>
 
@@ -816,7 +900,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dropdownPanel.style.display = 'none';
          // Reset arrow (optional)
         const arrow = dropdownTrigger.querySelector('.arrow');
-        if(arrow) { repositionArrowAndText(); arrow.textContent = '▼'; }
+        if(arrow) { arrow.textContent = '▼'; }
 
 
     });
@@ -887,6 +971,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const uploadStatusText = document.getElementById('uploadStatusText');
         const submitButton = form.querySelector('input[type="submit"]');
 
+         // --- Get elements for editing feature ---
+        const editResponseArea = document.getElementById('editResponseArea'); // The textarea for editing
+        const editResponseButton = document.getElementById('editResponseButton'); // The Edit button
+        const doneEditingButton = document.getElementById('doneEditingButton'); // The Done Editing button
+
 
         // Add validation: Check if either a file OR a URL is provided for Resume and JD
         const isResumeProvided = (resumeFile.files.length > 0 || resumeUrl.value.trim() !== '');
@@ -904,7 +993,8 @@ document.addEventListener('DOMContentLoaded', function() {
               // Re-enable other disabled elements that aren't part of the file/URL exclusive logic
                form.querySelectorAll('textarea, button').forEach(element => {
                  // Ensure we don't accidentally enable the submit button again here
-                 if (element !== submitButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) { // Exclude dropdown trigger/panel elements
+                 // Also make sure to not enable the edit/done buttons as they are for the results area
+                 if (element !== submitButton && element !== editResponseButton && element !== doneEditingButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) { // Exclude dropdown trigger/panel elements
                      element.disabled = false;
                  }
              });
@@ -925,7 +1015,8 @@ document.addEventListener('DOMContentLoaded', function() {
          // Disable all input elements and the submit button in the form
          form.querySelectorAll('input, textarea, button').forEach(element => {
             // Keep the dropdown trigger enabled so the user can still access suggestions
-            if (element !== submitButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) {
+            // Also ensure edit/done buttons are not affected here (they are for results)
+            if (element !== submitButton && element !== editResponseButton && element !== doneEditingButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) {
                  element.disabled = true;
             }
         });
@@ -939,15 +1030,20 @@ document.addEventListener('DOMContentLoaded', function() {
         responseArea.style.color = '#000'; // Reset to default text color
         responseArea.style.backgroundColor = '#e9ecef'; // Reset to default background
         responseArea.style.borderColor = '#eee'; // Reset to default border
+
+        // Ensure editing elements are hidden when starting new submission
+        editResponseArea.style.display = 'none';
+        doneEditingButton.style.display = 'none';
+        // Ensure view elements are shown initially
+        responseArea.style.display = 'block';
+        // editResponseButton will be shown later in onload success
+
         uploadStatusContainer.style.display = 'block';
         uploadStatusText.style.display = 'block';
         uploadStatusBar.style.width = '0%'; // Reset progress bar width
         uploadStatusBar.innerHTML = '0%'; // Reset percentage text inside bar
         // Status text below the bar
         uploadStatusText.innerHTML = "Starting upload...";
-
-
-
 
         // --- Create and Configure XMLHttpRequest ---
         const xhr = new XMLHttpRequest();
@@ -975,7 +1071,7 @@ document.addEventListener('DOMContentLoaded', function() {
              // Upload is likely complete here, transition to processing
              uploadStatusBar.style.width = '100%'; // Set bar to full
              uploadStatusBar.innerHTML = '100%'; // Show 100% in bar
-             uploadStatusText.innerHTML = "Processing... shouldn't take more than a couple of minutes."; // Change text below bar
+             uploadStatusText.innerHTML = "Processing... shouldn\'t take more than a couple of minutes."; // Change text below bar
         };
 
 
@@ -987,11 +1083,11 @@ document.addEventListener('DOMContentLoaded', function() {
               // Re-enable other form elements (like the message textarea)
               form.querySelectorAll('textarea, button').forEach(element => {
                  // We want the submit button to remain disabled until refresh, so don't re-enable it here
-                 if (element !== submitButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) { // Exclude dropdown trigger/panel elements
+                 // Ensure edit/done buttons are not affected here (they are for results area)
+                 if (element !== submitButton && element !== editResponseButton && element !== doneEditingButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) {
                      element.disabled = false;
                  }
              });
-              // Keep the submit button disabled until refresh or explicit re-enable logic
          };
 
 
@@ -1008,6 +1104,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if(uploadStatusBar) { // Check exists
                uploadStatusBar.innerHTML = xhr.status >= 200 && xhr.status < 300 ? 'Complete!' : 'Error!'; // Show final status in bar
             }
+
+
 
 
             if (xhr.status >= 200 && xhr.status < 300) {
@@ -1049,7 +1147,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else {
                          // Wrap in pre tags for consistent formatting
                          // Ensure string type before wrapping
-                         responseArea.innerHTML = '<pre>' + (typeof customizedResumeText === 'string' ? customizedResumeText : String(customizedResumeText)) + '</pre>';
+                        responseArea.innerHTML = '<pre>' + (typeof customizedResumeText === 'string' ? customizedResumeText : String(customizedResumeText)) + '</pre>';
                     }
 
 
@@ -1060,6 +1158,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     responseArea.style.color = '#333'; // Dark grey for success
                     responseArea.style.backgroundColor = '#e9ecef'; // Light grey, consistent with original response area background
                     responseArea.style.borderColor = '#eee'; // Light border, consistent with original response area border
+
+
+                    // --- Show the edit/copy/download buttons after successful generation ---
+                    editResponseButton.style.display = 'inline-block';
+                    copyCodeButton.style.display = 'inline-block';
+                    downloadResumeButton.style.display = 'inline-block';
+
+                    // Ensure button display styles are correct after switching
+                    if (window.innerWidth <= 768) { // Adjust for mobile layout if needed
+                        editResponseButton.style.display = 'block';
+                        copyCodeButton.style.display = 'block';
+                        downloadResumeButton.style.display = 'block';
+                    }
+                     // --- End show buttons ---
 
 
                 } catch (e) {
@@ -1075,6 +1187,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     responseArea.style.color = '#721c24'; // Dark red for error
                     responseArea.style.backgroundColor = '#f8d7da'; // Light red for error background
                     responseArea.style.borderColor = '#f5c6cb';
+
+                    // Hide edit/copy/download buttons on error
+                    editResponseButton.style.display = 'none';
+                    copyCodeButton.style.display = 'none';
+                    downloadResumeButton.style.display = 'none';
                 }
 
 
@@ -1104,6 +1221,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 responseArea.style.color = '#721c24';
                 responseArea.style.backgroundColor = '#f8d7da';
                 responseArea.style.borderColor = '#f5c6cb';
+
+                 // Hide edit/copy/download buttons on error
+                editResponseButton.style.display = 'none';
+                copyCodeButton.style.display = 'none';
+                downloadResumeButton.style.display = 'none';
             }
              // Update status text inside the bar to indicate completion or error
             if(uploadStatusBar) { // Check exists
@@ -1138,6 +1260,11 @@ document.addEventListener('DOMContentLoaded', function() {
             uploadStatusText.innerHTML = "Network error.";
              // Update status text inside the bar
             if(uploadStatusBar) { uploadStatusBar.innerHTML = "Error!"; }
+
+             // Hide edit/copy/download buttons on error
+            editResponseButton.style.display = 'none';
+            copyCodeButton.style.display = 'none';
+            downloadResumeButton.style.display = 'none';
         };
 
 
@@ -1158,6 +1285,11 @@ document.addEventListener('DOMContentLoaded', function() {
             uploadStatusText.innerHTML = "Request timed out.";
             // Update status text inside the bar
              if(uploadStatusBar) { uploadStatusBar.innerHTML = "Timeout!"; }
+
+            // Hide edit/copy/download buttons on error
+            editResponseButton.style.display = 'none';
+            copyCodeButton.style.display = 'none';
+            downloadResumeButton.style.display = 'none';
         };
 
 
@@ -1173,92 +1305,120 @@ document.addEventListener('DOMContentLoaded', function() {
 
     });
 
-    // Add event listener for the new copy button
-    const copyCodeButton = document.getElementById('copyCodeButton');
-    if (copyCodeButton) { // Check if the button exists
-        copyCodeButton.addEventListener('click', function(event) { // Added event parameter
-            event.stopPropagation(); // Stop the event from bubbling up
-            event.preventDefault(); // Prevent any default action
+    // --- Edit Response Area Functionality ---
+    // Get elements for editing feature (defined above in submit handler, redefine here for global scope)
+    // const responseArea = document.getElementById('responseArea'); // Already defined earlier in DOMContentLoaded scope
+    // const editResponseArea = document.getElementById('editResponseArea'); // Already defined earlier
+    // const editResponseButton = document.getElementById('editResponseButton'); // Already defined earlier
+    // const doneEditingButton = document.getElementById('doneEditingButton'); // Already defined earlier
+    // const copyCodeButton = document.getElementById('copyCodeButton'); // Already defined earlier
+    // const downloadResumeButton = document.getElementById('downloadResumeButton'); // Already defined earlier
 
-            const responseArea = document.getElementById('responseArea');
-            // Get ALL text content from the response area div
-            const textToCopy = responseArea.innerText; // Use innerText for simplicity
 
-            navigator.clipboard.writeText(textToCopy)
-                .then(() => {
-                    const button = document.getElementById('copyCodeButton');
-                    const originalText = button.textContent; // Store original text/icon
-                    button.textContent = 'Copied!'; // Change text to "Copied!"
-                    button.classList.add('copied');
-                    setTimeout(() => {
-                        button.textContent = originalText; // Restore original text/icon
-                        button.classList.remove('copied');
-                    }, 2000); // Revert after 2 seconds
-                })
-                .catch(err => {
-                    console.error('Failed to copy text: ', err);
-                    const button = document.getElementById('copyCodeButton');
-                    const originalText = button.textContent;
-                     button.textContent = 'Copy Failed!'; // Indicate failure
-                     button.classList.add('error'); // Optional: add an error class for styling
-                    setTimeout(() => {
-                         button.textContent = originalText;
-                         button.classList.remove('error');
-                    }, 2000);
-                });
-        });
+    // Function to switch to editing mode
+    const switchToEditMode = () => {
+        // Get the current text from the responseArea div
+        const textToEdit = responseArea.innerText; // Use innerText to get just the text content
+
+        // Populate the textarea with the text
+        editResponseArea.value = textToEdit;
+
+        // Hide the responseArea div and the Copy/Download/Edit buttons
+        responseArea.style.display = 'none';
+        editResponseButton.style.display = 'none';
+        copyCodeButton.style.display = 'none';
+        downloadResumeButton.style.display = 'none';
+
+        // Show the textarea and the "Done Editing" button
+        editResponseArea.style.display = 'block';
+        doneEditingButton.style.display = 'block';
+
+        // Optional: Focus the textarea for immediate editing
+        editResponseArea.focus();
+    };
+
+    // Function to switch back to viewing mode
+    const switchToViewMode = () => {
+        // Get the edited text from the textarea
+        const editedText = editResponseArea.value;
+
+        // Update the responseArea div's content (wrap in pre tags for consistent formatting)
+        responseArea.innerHTML = '<pre>' + editedText + '</pre>';
+
+        // Hide the textarea and the "Done Editing" button
+        editResponseArea.style.display = 'none';
+        doneEditingButton.style.display = 'none';
+
+        // Show the responseArea div and the Copy/Download/Edit buttons again
+        responseArea.style.display = 'block';
+
+         // Ensure button display styles are correct after switching
+         // Check if results were successfully generated (buttons were shown)
+         // Only show buttons if they were previously visible
+         if (editResponseButton.style.display !== 'none' || copyCodeButton.style.display !== 'none' || downloadResumeButton.style.display !== 'none') {
+             if (window.innerWidth <= 768) { // Adjust for mobile layout if needed
+                 editResponseButton.style.display = 'block';
+                 copyCodeButton.style.display = 'block';
+                 downloadResumeButton.style.display = 'block';
+             } else { // Desktop layout
+                 editResponseButton.style.display = 'inline-block';
+                 copyCodeButton.style.display = 'inline-block';
+                 downloadResumeButton.style.display = 'inline-block';
+             }
+         } else {
+            // If buttons were hidden (e.g., due to error), keep them hidden
+             editResponseButton.style.display = 'none';
+             copyCodeButton.style.display = 'none';
+             downloadResumeButton.style.display = 'none';
+         }
+    };
+
+
+    // Add event listener to the Edit button
+    if (editResponseButton) {
+        editResponseButton.addEventListener('click', switchToEditMode);
     } else {
-        console.error("Copy code button not found!");
+        console.error("Edit response button not found!");
     }
 
-    // Add event listener for the new download button
-    const downloadResumeButton = document.getElementById('downloadResumeButton');
-    if (downloadResumeButton) {
-        downloadResumeButton.addEventListener('click', function() {
-            const responseArea = document.getElementById('responseArea');
-            // Get ALL text content from the response area div
-            const textToDownload = responseArea.innerText; // Use innerText for simplicity
-
-            // Create a Blob from the text
-            const blob = new Blob([textToDownload], { type: 'text/plain' });
-
-            // Create a link element
-            const a = document.createElement('a');
-
-            // Create a URL for the blob and set it as the link's href
-            const url = URL.createObjectURL(blob);
-            a.href = url;
-
-            // Set the download filename - using a simple timestamp for uniqueness + readability
-            const now = new Date();
-            const timestamp = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-            a.download = `customized_resume_${timestamp}.txt`; // Example filename
-
-            // Append the link to the body (needs to be in the DOM to trigger download in some browsers)
-            document.body.appendChild(a);
-
-            // Trigger a click on the link to start the download
-            a.click();
-
-            // Clean up: remove the link and revoke the object URL
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-
-            // Optional: Provide visual feedback to the user (similar to copy button)
-            const button = document.getElementById('downloadResumeButton');
-            const originalIcon = button.textContent; // Store original text/icon
-            button.textContent = 'Downloading...'; // Change text temporarily
-            button.classList.add('downloading'); // Optional: add a class for styling
-             // Revert text after a short delay, download usually happens quickly
-            setTimeout(() => {
-                button.textContent = originalIcon; // Restore original icon
-                button.classList.remove('downloading');
-                 button.classList.remove('error'); // Remove potential error class
-            }, 2000); // Revert after 2 seconds
-        });
+    // Add event listener to the "Done Editing" button
+    if (doneEditingButton) {
+        doneEditingButton.addEventListener('click', switchToViewMode);
     } else {
-        console.error("Download button not found!");
+        console.error("Done Editing button not found!");
     }
+
+
+    // --- IMPORTANT: Update xhr.onload success handler ---
+    // Find the xhr.onload function in your script:
+    // Inside the `if (xhr.status >= 200 && xhr.status < 300)` block (success):
+    // After `responseArea.innerHTML = ...;` and `uploadStatusText.innerHTML = "Generated!";`
+    // Ensure the view mode is set correctly and buttons are visible:
+    /*
+    // Example within xhr.onload success block:
+    if (xhr.status >= 200 && xhr.status < 300) {
+        // ... your existing success code ...
+
+        try {
+             // ... JSON parsing and responseArea.innerHTML update ...
+
+             uploadStatusText.innerHTML = "Generated!";
+
+             // --- Ensure view mode is set after results are loaded ---
+             // This makes the responseArea div visible and hides the textarea
+             // It also handles showing the buttons based on screen size
+             switchToViewMode();
+
+
+         } catch(e) {
+             // ... error parsing JSON ...
+         }
+
+    } // ... rest of xhr.onload (error handling etc) ...
+
+    */
+    // You already have a call to switchToViewMode() in your xhr.onload success block,
+    // which is good! Just make sure it's correctly placed after responseArea.innerHTML is set.
 
 
 }); // End DOMContentLoaded listener
@@ -1269,7 +1429,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 <footer>
-    <p>[v0.5] © 2025 — For feedback / connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — 👍 generation count: <span id="submissionCountDisplay">Loading...</span></p>
+    <p>[v0.6] © 2025 — For feedback / connecting: <a href="https://www.linkedin.com/in/masassali" target="_blank">linkedin.com/in/masassali</a> — 👍 generation count: <span id="submissionCountDisplay">Loading...</span></p>
 </footer>
 
 
