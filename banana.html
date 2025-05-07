@@ -835,6 +835,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Prompt Suggestions Dropdown Functionality ---
     if (dropdownTrigger && dropdownPanel && addSelectedButton) {
         dropdownTrigger.addEventListener('click', function(event) {
+            event.preventDefault(); // Add preventDefault
             event.stopPropagation();
             const isVisible = dropdownPanel.style.display === 'flex';
             dropdownPanel.style.display = isVisible ? 'none' : 'flex';
@@ -856,7 +857,8 @@ document.addEventListener('DOMContentLoaded', function() {
             event.stopPropagation();
         });
 
-        addSelectedButton.addEventListener('click', function() {
+        addSelectedButton.addEventListener('click', function(event) {
+            event.preventDefault(); // Add preventDefault
             const textarea = document.getElementById('userMessage');
             const checkboxes = dropdownPanel.querySelectorAll('input[type="checkbox"]:checked');
             let selectedPromptsText = '';
@@ -924,7 +926,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Form Submission ---
     if (uploadForm) {
         uploadForm.addEventListener('submit', function(event) {
-            event.preventDefault();
+            event.preventDefault(); // Prevent default form submission
+
+            console.log("Form submit triggered."); // Log when the submit handler runs
 
             const form = this;
             const responseContainer = document.getElementById('responseContainer');
@@ -1371,8 +1375,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const subject = "My Customized Resume";
             const body = resumeText;
             const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-            // Removed the mailto link length check
 
             window.location.href = mailtoLink;
 
