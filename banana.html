@@ -442,46 +442,46 @@
 
 
     #quillCustomToolbar {
-        display: none; 
-        margin-bottom: 0; 
+        display: none;
+        margin-bottom: 0;
     }
 
     #editor {
-        width: 100%; 
-        box-sizing: border-box; 
-        color: #333; 
-        font-family: inherit; 
-        font-size: inherit; 
-        margin-bottom: 10px; 
-        display: none; 
+        width: 100%;
+        box-sizing: border-box;
+        color: #333;
+        font-family: inherit;
+        font-size: inherit;
+        margin-bottom: 10px;
+        display: none;
     }
 
-    .ql-toolbar.ql-snow { 
+    .ql-toolbar.ql-snow {
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
         background-color: #f8f8f8;
-        border: 1px solid #eee; 
-        border-bottom: none; 
-        box-sizing: border-box; 
+        border: 1px solid #eee;
+        border-bottom: none;
+        box-sizing: border-box;
     }
 
-    .ql-container.ql-snow { 
+    .ql-container.ql-snow {
         border-bottom-left-radius: 8px;
         border-bottom-right-radius: 8px;
-        min-height: 200px; 
-        font-family: inherit; 
-        font-size: inherit; 
+        min-height: 200px;
+        font-family: inherit;
+        font-size: inherit;
         color: #333;
-        border: 1px solid #eee; 
-        background-color: #fff; 
-        box-sizing: border-box; 
-    }
-    
-    .ql-editor {
-        min-height: 200px; 
-        padding: 12px 15px; 
+        border: 1px solid #eee;
+        background-color: #fff;
         box-sizing: border-box;
-        overflow-y: auto; 
+    }
+
+    .ql-editor {
+        min-height: 200px;
+        padding: 12px 15px;
+        box-sizing: border-box;
+        overflow-y: auto;
     }
 
 
@@ -489,32 +489,32 @@
     padding: 15px;
     border: 1px solid #eee;
     border-radius: 8px;
-    background-color: #e9ecef; 
-    white-space: pre-wrap; 
+    background-color: #e9ecef;
+    white-space: pre-wrap;
     word-wrap: break-word;
-    min-height: 50px; 
-    color: #333; 
-    overflow-x: auto; 
-    padding-right: 15px; 
+    min-height: 50px;
+    color: #333;
+    overflow-x: auto;
+    padding-right: 15px;
   }
 
 
-  #responseArea pre { 
-      margin: 0; 
+  #responseArea pre {
+      margin: 0;
       padding: 0;
-      white-space: pre-wrap; 
+      white-space: pre-wrap;
   }
 
 
 
 
-  #responseArea p { 
+  #responseArea p {
       margin: 5px 0;
       padding: 0;
   }
 
 
-  #responseArea code { 
+  #responseArea code {
       background-color: #f8f9fa;
       padding: 2px 4px;
       border-radius: 4px;
@@ -524,99 +524,99 @@
 
 
   #responseArea {
-      overflow-y: hidden; 
-      overflow-x: auto;   
+      overflow-y: hidden;
+      overflow-x: auto;
   }
 
 
   #doneEditingButton {
-      display: block; 
-      width: auto; 
+      display: block;
+      width: auto;
       padding: 8px 15px;
-      background-color: #28a745; 
+      background-color: #28a745;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       font-size: 1em;
-      margin: 10px auto; 
+      margin: 10px auto;
       transition: background-color 0.2s ease;
   }
 
   #doneEditingButton:hover {
-      background-color: #218838; 
+      background-color: #218838;
   }
 
 
   /* Styles for the footer */
   footer {
-      position: fixed; 
+      position: fixed;
       left: 0;
       bottom: 0;
       width: 100%;
-      background-color: #333; 
-      color: #f4f7f6; 
+      background-color: #333;
+      color: #f4f7f6;
       text-align: center;
       padding: 10px 20px;
-      font-size: 0.8em; 
-      z-index: 10; 
+      font-size: 0.8em;
+      z-index: 10;
   }
 
 
   footer p {
-      margin: 0; 
+      margin: 0;
       padding: 0;
   }
 
 
     footer a {
-        color: #f4f7f6; 
-        text-decoration: none; 
+        color: #f4f7f6;
+        text-decoration: none;
     }
 
 
     footer a:hover {
-        text-decoration: underline; 
+        text-decoration: underline;
     }
 
 
     footer #submissionCountDisplay {
-        font-weight: bold; 
-        margin-left: 5px; 
+        font-weight: bold;
+        margin-left: 5px;
     }
 
 
 
 
-  @media (max-width: 768px) { 
+  @media (max-width: 768px) {
       body {
           margin: 10px;
-          padding-bottom: 100px; 
+          padding-bottom: 100px;
       }
       form {
           padding: 15px;
       }
       .form-section.message-section {
-          flex-direction: column; 
-          gap: 15px; 
-          align-items: stretch; 
+          flex-direction: column;
+          gap: 15px;
+          align-items: stretch;
       }
        .message-textarea-container,
-       .prompt-suggestions-dropdown { 
+       .prompt-suggestions-dropdown {
            flex: none;
            width: 100%;
            min-width: auto;
        }
        .prompt-suggestions-dropdown {
-           position: static; 
-           padding-bottom: 0; 
+           position: static;
+           padding-bottom: 0;
            gap: 5px;
        }
 
 
       .dropdown-panel {
-          position: static; 
-          width: 100%; 
+          position: static;
+          width: 100%;
           max-height: none;
           overflow-y: visible;
           border: none;
@@ -631,7 +631,7 @@
            padding-left: 20px;
        }
        .dropdown-panel li {
-           margin-bottom: 8px; 
+           margin-bottom: 8px;
        }
 
 
@@ -640,73 +640,73 @@
       input[type="submit"] {
           width: 100%;
           max-width: none;
-          margin: 0; 
+          margin: 0;
           text-align: center;
       }
       .button-section {
-          align-items: stretch; 
+          align-items: stretch;
       }
 
 
-       .document-inputs-container { 
-           flex-direction: column; 
-           gap: 15px; 
+       .document-inputs-container {
+           flex-direction: column;
+           gap: 15px;
        }
-       .document-input-group { 
-           min-width: auto; 
-           width: 100%; 
-           padding: 10px; 
+       .document-input-group {
+           min-width: auto;
+           width: 100%;
+           padding: 10px;
        }
 
       #responseHeader {
           flex-direction: column;
           align-items: flex-start;
-          gap: 10px; 
+          gap: 10px;
       }
 
       .response-buttons {
           width: 100%;
-          justify-content: flex-start; 
+          justify-content: flex-start;
       }
 
 
        #copyCodeButton,
        #downloadResumeButton,
        #editResponseButton,
-       #emailResumeButton { /* Added emailResumeButton */
-           position: static; 
-           margin-top: 0; 
-           display: inline-block; 
-           width: auto; 
+       #emailResumeButton {
+           position: static;
+           margin-top: 0;
+           display: inline-block;
+           width: auto;
            text-align: center;
        }
 
         .response-area-wrapper {
             position: static;
         }
-        #responseArea { 
-            padding-top: 15px; 
-            padding-right: 15px; 
+        #responseArea {
+            padding-top: 15px;
+            padding-right: 15px;
         }
 
-        #editor { 
+        #editor {
             /* padding-right: 15px; */
         }
 
 
         #doneEditingButton {
             width: 100%;
-            margin: 10px 0; 
+            margin: 10px 0;
         }
 
 
         footer {
-            font-size: 0.7em; 
+            font-size: 0.7em;
             padding: 8px 10px;
-            line-height: 1.4; 
+            line-height: 1.4;
         }
         footer p {
-            margin: 0; 
+            margin: 0;
         }
   }
 </style>
@@ -772,12 +772,12 @@
     <div id="responseHeader">
         <h3>Your customized rizzo-may:</h3>
         <div class="response-buttons">
-            <button id="editResponseButton" title="Edit on the spot">Edit on the spot</button>
+            <button id="editResponseButton" title="Edit on the spot">Edit</button>
             <button id="emailResumeButton" title="Send as Email">📧 Email</button> <button id="copyCodeButton" title="Copy to clipboard">📋 Copy</button>
             <button id="downloadResumeButton" title="Download Resume">⬇️ Download</button>
         </div>
     </div>
-    <div id="quillCustomToolbar" style="display: none;"></div> 
+    <div id="quillCustomToolbar" style="display: none;"></div>
     <div class="response-area-wrapper">
         <div id="responseArea"></div>
         <div id="editor" style="display: none;"></div>
@@ -807,9 +807,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const jdUrl = document.getElementById('jdUrl');
     const uploadForm = document.getElementById('uploadForm');
     const responseArea = document.getElementById('responseArea');
-    const editorContentArea = document.getElementById('editor'); 
+    const editorContentArea = document.getElementById('editor');
     const quillCustomToolbarContainer = document.getElementById('quillCustomToolbar');
-    
+
     // Response action buttons
     const editResponseButton = document.getElementById('editResponseButton');
     const copyCodeButton = document.getElementById('copyCodeButton');
@@ -822,11 +822,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!counterDisplaySpan) {
         console.error("Submission count display span not found in footer! Counter will not display.");
     } else {
-        if (currentCount === null || isNaN(parseInt(currentCount, 10))) { 
-            currentCount = 431; 
-            localStorage.setItem(localStorageKey, currentCount); 
+        if (currentCount === null || isNaN(parseInt(currentCount, 10))) {
+            currentCount = 431;
+            localStorage.setItem(localStorageKey, currentCount);
         } else {
-             currentCount = parseInt(currentCount, 10); 
+             currentCount = parseInt(currentCount, 10);
         }
         counterDisplaySpan.textContent = currentCount;
     }
@@ -835,9 +835,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Prompt Suggestions Dropdown Functionality ---
     if (dropdownTrigger && dropdownPanel && addSelectedButton) {
         dropdownTrigger.addEventListener('click', function(event) {
-            event.stopPropagation(); 
-            const isVisible = dropdownPanel.style.display === 'flex'; 
-            dropdownPanel.style.display = isVisible ? 'none' : 'flex'; 
+            event.stopPropagation();
+            const isVisible = dropdownPanel.style.display === 'flex';
+            dropdownPanel.style.display = isVisible ? 'none' : 'flex';
             const arrow = this.querySelector('.arrow');
             if(arrow) {
                 arrow.textContent = isVisible ? '▼' : '▲';
@@ -846,14 +846,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.addEventListener('click', function(event) {
             if (!dropdownTrigger.contains(event.target) && !dropdownPanel.contains(event.target)) {
-                dropdownPanel.style.display = 'none'; 
+                dropdownPanel.style.display = 'none';
                  const arrow = dropdownTrigger.querySelector('.arrow');
                  if(arrow) { arrow.textContent = '▼'; }
             }
         });
 
         dropdownPanel.addEventListener('click', function(event) {
-            event.stopPropagation(); 
+            event.stopPropagation();
         });
 
         addSelectedButton.addEventListener('click', function() {
@@ -862,9 +862,9 @@ document.addEventListener('DOMContentLoaded', function() {
             let selectedPromptsText = '';
 
             checkboxes.forEach(checkbox => {
-                const promptText = checkbox.dataset.prompt || checkbox.nextElementSibling.textContent; 
-                selectedPromptsText += promptText + '\n'; 
-                checkbox.checked = false; 
+                const promptText = checkbox.dataset.prompt || checkbox.nextElementSibling.textContent;
+                selectedPromptsText += promptText + '\n';
+                checkbox.checked = false;
             });
 
             if (selectedPromptsText.length > 0 && textarea) {
@@ -905,16 +905,16 @@ document.addEventListener('DOMContentLoaded', function() {
         resumeUrl.addEventListener('input', updateResumeInputState);
         resumeFile.addEventListener('change', () => {
             if (resumeFile.files.length > 0) {
-                resumeUrl.value = ''; 
+                resumeUrl.value = '';
             }
-            updateResumeInputState(); 
+            updateResumeInputState();
         });
         jdUrl.addEventListener('input', updateJdInputState);
         jdFile.addEventListener('change', () => {
             if (jdFile.files.length > 0) {
-                jdUrl.value = ''; 
+                jdUrl.value = '';
             }
-            updateJdInputState(); 
+            updateJdInputState();
         });
         updateResumeInputState();
         updateJdInputState();
@@ -924,7 +924,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Form Submission ---
     if (uploadForm) {
         uploadForm.addEventListener('submit', function(event) {
-            event.preventDefault(); 
+            event.preventDefault();
 
             const form = this;
             const responseContainer = document.getElementById('responseContainer');
@@ -932,26 +932,36 @@ document.addEventListener('DOMContentLoaded', function() {
             const uploadStatusBar = document.getElementById('uploadStatusBar');
             const uploadStatusText = document.getElementById('uploadStatusText');
             const submitButton = form.querySelector('input[type="submit"]');
-            
+
+            // --- Get elements for editing feature ---
+            const editorContainer = document.getElementById('editor'); // The div for Quill editor
+            const editResponseButton = document.getElementById('editResponseButton'); // The Edit button
+            const doneEditingButton = document.getElementById('doneEditingButton'); // The Done Editing button
+            const copyCodeButton = document.getElementById('copyCodeButton'); // The Copy button
+            const downloadResumeButton = document.getElementById('downloadResumeButton'); // The Download button
+             const emailResumeButton = document.getElementById('emailResumeButton'); // New email button
+
+
+            // Add validation: Check if either a file OR a URL is provided for Resume and JD
             const isResumeProvided = (resumeFile.files.length > 0 || (resumeUrl && resumeUrl.value.trim() !== ''));
             const isJdProvided = (jdFile.files.length > 0 || (jdUrl && jdUrl.value.trim() !== ''));
 
             if (!isResumeProvided || !isJdProvided) {
                 alert("Please provide either a file or a URL for both your Resume and the Job Description.");
-                if(submitButton) submitButton.disabled = false; 
-                updateResumeInputState(); 
-                updateJdInputState();   
+                if(submitButton) submitButton.disabled = false;
+                updateResumeInputState();
+                updateJdInputState();
                 form.querySelectorAll('input, textarea, button').forEach(element => {
-                     if (element !== submitButton && element !== editResponseButton && element !== doneEditingButton && element !== copyCodeButton && element !== downloadResumeButton && element !== emailResumeButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) { 
+                     if (element !== submitButton && element !== editResponseButton && element !== doneEditingButton && element !== copyCodeButton && element !== downloadResumeButton && element !== emailResumeButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) {
                          element.disabled = false;
                      }
                  });
                 if(uploadStatusContainer) uploadStatusContainer.style.display = 'none';
                 if(uploadStatusText) uploadStatusText.style.display = 'none';
-                return; 
+                return;
             }
 
-            const formData = new FormData(this); 
+            const formData = new FormData(this);
 
             form.querySelectorAll('input, textarea, button').forEach(element => {
                 if (element !== submitButton && element !== editResponseButton && element !== doneEditingButton && element !== copyCodeButton && element !== downloadResumeButton && element !== emailResumeButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) {
@@ -963,14 +973,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if(responseContainer) responseContainer.style.display = 'block';
             if(responseArea) {
                 responseArea.innerHTML = 'Generating... shouldn\'t take more than a couple of minutes.';
-                responseArea.style.color = '#000'; 
-                responseArea.style.backgroundColor = '#e9ecef'; 
-                responseArea.style.borderColor = '#eee'; 
+                responseArea.style.color = '#000';
+                responseArea.style.backgroundColor = '#e9ecef';
+                responseArea.style.borderColor = '#eee';
                 responseArea.style.display = 'block';
             }
-            
+
             if(quillCustomToolbarContainer) quillCustomToolbarContainer.style.display = 'none';
-            if(editorContentArea) editorContentArea.style.display = 'none'; 
+            if(editorContainer) editorContainer.style.display = 'none';
             if(doneEditingButton) doneEditingButton.style.display = 'none';
             if(editResponseButton) editResponseButton.style.display = 'none';
             if(copyCodeButton) copyCodeButton.style.display = 'none';
@@ -978,14 +988,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if(emailResumeButton) emailResumeButton.style.display = 'none';
 
 
-            const isUploadingFiles = resumeFile.files.length > 0 || jdFile.files.length > 0;
+            const isUploadingFiles = resumeFile.files.length > 0 || (jdFile && jdFile.files.length > 0);
             const isProcessingUrls = (resumeUrl && resumeUrl.value.trim() !== '') || (jdUrl && jdUrl.value.trim() !== '');
 
             if(uploadStatusContainer) uploadStatusContainer.style.display = 'block';
             if(uploadStatusText) uploadStatusText.style.display = 'block';
             if(uploadStatusBar) {
-                uploadStatusBar.style.width = '0%'; 
-                uploadStatusBar.innerHTML = '0%'; 
+                uploadStatusBar.style.width = '0%';
+                uploadStatusBar.innerHTML = '0%';
             }
 
             if (isUploadingFiles) {
@@ -1002,7 +1012,7 @@ document.addEventListener('DOMContentLoaded', function() {
             xhr.upload.onprogress = function(event) {
                 if (event.lengthComputable) {
                     const percentComplete = (event.loaded / event.total) * 100;
-                    const percent = Math.round(percentComplete); 
+                    const percent = Math.round(percentComplete);
                     if(uploadStatusBar) {
                         uploadStatusBar.style.width = percent + '%';
                         uploadStatusBar.innerHTML = percent + '%';
@@ -1032,7 +1042,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             };
-            
+
              const reEnableForm = () => {
                   updateResumeInputState();
                   updateJdInputState();
@@ -1044,9 +1054,9 @@ document.addEventListener('DOMContentLoaded', function() {
              };
 
             xhr.onload = function() {
-                reEnableForm(); 
-                if(uploadStatusBar) { 
-                   uploadStatusBar.innerHTML = xhr.status >= 200 && xhr.status < 300 ? 'Complete!' : 'Error!'; 
+                reEnableForm();
+                if(uploadStatusBar) {
+                   uploadStatusBar.innerHTML = xhr.status >= 200 && xhr.status < 300 ? 'Complete!' : 'Error!';
                 }
 
                 if (xhr.status >= 200 && xhr.status < 300) {
@@ -1065,22 +1075,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     try {
-                        const data = JSON.parse(xhr.responseText); 
-                        const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2); 
+                        const data = JSON.parse(xhr.responseText);
+                        const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2);
                         if(responseArea) responseArea.innerHTML = customizedResumeText;
                         if(uploadStatusText) uploadStatusText.innerHTML = "Generated!";
                         if(responseArea) {
-                            responseArea.style.color = '#333'; 
-                            responseArea.style.backgroundColor = '#e9ecef'; 
+                            responseArea.style.color = '#333';
+                            responseArea.style.backgroundColor = '#e9ecef';
                             responseArea.style.borderColor = '#eee';
                         }
-                        
+
                         if(editResponseButton) editResponseButton.style.display = 'inline-block';
                         if(copyCodeButton) copyCodeButton.style.display = 'inline-block';
                         if(downloadResumeButton) downloadResumeButton.style.display = 'inline-block';
                         if(emailResumeButton) emailResumeButton.style.display = 'inline-block'; // Show email button
 
-                        if (window.innerWidth <= 768) { 
+                        if (window.innerWidth <= 768) {
                             if(editResponseButton) editResponseButton.style.display = 'block';
                             if(copyCodeButton) copyCodeButton.style.display = 'block';
                             if(downloadResumeButton) downloadResumeButton.style.display = 'block';
@@ -1088,11 +1098,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     } catch (e) {
                         console.error('Error parsing JSON response:', e, 'Response:', xhr.responseText);
-                        if(responseArea) responseArea.innerHTML = '<p>Error: Received unexpected response from client.</p><p><code>' + (xhr.responseText || 'No response text').substring(0, 500) + '...</code></p>'; 
+                        if(responseArea) responseArea.innerHTML = '<p>Error: Received unexpected response from client.</p><p><code>' + (xhr.responseText || 'No response text').substring(0, 500) + '...</code></p>';
                         if(uploadStatusText) uploadStatusText.innerHTML = "Generation failed (Parse Error).";
                         if(responseArea) {
-                            responseArea.style.color = '#721c24'; 
-                            responseArea.style.backgroundColor = '#f8d7da'; 
+                            responseArea.style.color = '#721c24';
+                            responseArea.style.backgroundColor = '#f8d7da';
                             responseArea.style.borderColor = '#f5c6cb';
                         }
                         if(editResponseButton) editResponseButton.style.display = 'none';
@@ -1101,17 +1111,50 @@ document.addEventListener('DOMContentLoaded', function() {
                         if(emailResumeButton) emailResumeButton.style.display = 'none';
                     }
                 } else {
-                    // ... (rest of error handling, ensuring emailResumeButton is hidden)
+                    // Request failed (HTTP status is not 2xx)
+                    console.error('HTTP error!', xhr.status, xhr.responseText);
+                    let errorMessage = `HTTP error! status: ${xhr.status}`;
+                    try {
+                        const errorResponse = JSON.parse(xhr.responseText);
+                        if (errorResponse.message) {
+                            errorMessage += `, message: ${errorResponse.message}`;
+                        } else {
+                            errorMessage += `, body: ${xhr.responseText}`;
+                        }
+                    } catch (e) {
+                        errorMessage += `, body: ${xhr.responseText}`;
+                    }
+
+                    if(responseArea) responseArea.innerHTML = '<p>Error processing files:</p><p><code>' + errorMessage + '</code></p>';
+                    if(uploadStatusText) uploadStatusText.innerHTML = `Error: ${xhr.status}`;
+                    if(responseArea) {
+                        responseArea.style.color = '#721c24';
+                        responseArea.style.backgroundColor = '#f8d7da';
+                        responseArea.style.borderColor = '#f5c6cb';
+                    }
+
                     if(editResponseButton) editResponseButton.style.display = 'none';
                     if(copyCodeButton) copyCodeButton.style.display = 'none';
                     if(downloadResumeButton) downloadResumeButton.style.display = 'none';
                     if(emailResumeButton) emailResumeButton.style.display = 'none'; // Hide on error
                 }
                 if(uploadStatusContainer) uploadStatusContainer.style.display = 'none';
-            }; 
+            };
 
             xhr.onerror = function() {
-                // ... (ensure emailResumeButton is hidden)
+                console.error('Network error!');
+                if(uploadStatusContainer) uploadStatusContainer.style.display = 'none';
+                reEnableForm();
+
+                if(responseArea) responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
+                if(responseArea) {
+                    responseArea.style.color = '#721c24';
+                    responseArea.style.backgroundColor = '#f8d7da';
+                    responseArea.style.borderColor = '#f5c6cb';
+                }
+                if(uploadStatusText) uploadStatusText.innerHTML = "Network error.";
+                if(uploadStatusBar) { uploadStatusBar.innerHTML = "Error!"; }
+
                 if(editResponseButton) editResponseButton.style.display = 'none';
                 if(copyCodeButton) copyCodeButton.style.display = 'none';
                 if(downloadResumeButton) downloadResumeButton.style.display = 'none';
@@ -1119,14 +1162,26 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             xhr.ontimeout = function() {
-                // ... (ensure emailResumeButton is hidden)
+                console.error('Request timed out!');
+                if(uploadStatusContainer) uploadStatusContainer.style.display = 'none';
+                reEnableForm();
+
+                if(responseArea) responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
+                if(responseArea) {
+                    responseArea.style.color = '#721c24';
+                    responseArea.style.backgroundColor = '#f8d7da';
+                    responseArea.style.borderColor = '#f5c6cb';
+                }
+                if(uploadStatusText) uploadStatusText.innerHTML = "Request timed out.";
+                if(uploadStatusBar) { uploadStatusBar.innerHTML = "Timeout!"; }
+
                 if(editResponseButton) editResponseButton.style.display = 'none';
                 if(copyCodeButton) copyCodeButton.style.display = 'none';
                 if(downloadResumeButton) downloadResumeButton.style.display = 'none';
                 if(emailResumeButton) emailResumeButton.style.display = 'none'; // Hide on error
             };
-            xhr.open(this.method, this.action); 
-            xhr.send(formData); 
+            xhr.open(this.method, this.action);
+            xhr.send(formData);
         });
     }
 
@@ -1136,16 +1191,16 @@ document.addEventListener('DOMContentLoaded', function() {
         ['bold', 'italic', 'underline', 'strike'], ['blockquote', 'code-block'],
         [{ 'header': 1 }, { 'header': 2 }], [{ 'list': 'ordered'}, { 'list': 'bullet' }],
         [{ 'script': 'sub'}, { 'script': 'super' }], [{ 'indent': '-1'}, { 'indent': '+1' }],
-        [{ 'direction': 'rtl' }], [{ 'size': ['small', false, 'large', 'huge'] }], 
+        [{ 'direction': 'rtl' }], [{ 'size': ['small', false, 'large', 'huge'] }],
         [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
         [{ 'color': [] }, { 'background': [] }], [{ 'font': [] }], [{ 'align': [] }],
-        ['clean'] 
+        ['clean']
     ];
 
     if (editorContentArea) {
-        quill = new Quill(editorContentArea, { 
+        quill = new Quill(editorContentArea, {
             modules: { toolbar: toolbarOptions },
-            theme: 'snow' 
+            theme: 'snow'
         });
 
         const createdToolbar = editorContentArea.querySelector('.ql-toolbar');
@@ -1165,21 +1220,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const firstChild = responseArea.firstChild;
 
         if (responseArea.childNodes.length === 1 && firstChild && firstChild.nodeName === 'PRE') {
-            contentToEdit = firstChild.innerText; 
-            contentToEdit = contentToEdit.split('\n').map(line => `<p>${line || '<br>'}</p>`).join(''); 
+            contentToEdit = firstChild.innerText;
+            contentToEdit = contentToEdit.split('\n').map(line => `<p>${line || '<br>'}</p>`).join('');
         } else if (responseArea.style.whiteSpace === 'pre-wrap' && !contentToEdit.match(/<\s*p[^>]*>|<\s*br[^>]*>/i)) {
-            contentToEdit = responseArea.innerText; 
+            contentToEdit = responseArea.innerText;
             contentToEdit = contentToEdit.split('\n').map(line => `<p>${line || '<br>'}</p>`).join('');
         }
-        
+
         quill.root.innerHTML = contentToEdit;
         responseArea.style.display = 'none';
         editResponseButton.style.display = 'none';
         copyCodeButton.style.display = 'none';
         downloadResumeButton.style.display = 'none';
         emailResumeButton.style.display = 'none'; // Hide email button during edit
-        
-        quillCustomToolbarContainer.style.display = 'block'; 
+
+        quillCustomToolbarContainer.style.display = 'block';
         editorContentArea.style.display = 'block';
         doneEditingButton.style.display = 'block';
         quill.focus();
@@ -1191,7 +1246,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const editedHtml = quill.root.innerHTML;
         responseArea.innerHTML = editedHtml;
 
-        quillCustomToolbarContainer.style.display = 'none'; 
+        quillCustomToolbarContainer.style.display = 'none';
         editorContentArea.style.display = 'none';
         doneEditingButton.style.display = 'none';
         responseArea.style.display = 'block';
@@ -1207,27 +1262,97 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (editResponseButton) editResponseButton.addEventListener('click', switchToEditMode);
     if (doneEditingButton) doneEditingButton.addEventListener('click', switchToViewMode);
-    
+
     // --- Action Button Event Listeners ---
     if (copyCodeButton) {
         copyCodeButton.addEventListener('click', function() {
-            // ... (copy functionality as before)
+            const sourceElement = responseArea.style.display !== 'none' ? responseArea : editorContentArea.querySelector('.ql-editor');
+            let textToCopy;
+
+            if (sourceElement && sourceElement.classList) { // Check if sourceElement and classList exist
+                 if (sourceElement.classList.contains('ql-editor')) {
+                     textToCopy = quill.getText();
+                     if (textToCopy.length > 0 && textToCopy.endsWith('\n')) {
+                         textToCopy = textToCopy.slice(0, -1);
+                     }
+                 } else {
+                     textToCopy = sourceElement.innerText;
+                 }
+            } else if (sourceElement) { // Fallback for older browsers or unexpected structures
+                 textToCopy = sourceElement.innerText;
+            } else {
+                console.error("Copy source element not found.");
+                return;
+            }
+
+
+            navigator.clipboard.writeText(textToCopy).then(function() {
+                console.log('Text successfully copied to clipboard');
+                copyCodeButton.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    copyCodeButton.textContent = '📋 Copy';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Could not copy text: ', err);
+                 copyCodeButton.textContent = '❌ Copy Failed';
+                 setTimeout(() => {
+                     copyCodeButton.textContent = '📋 Copy';
+                 }, 2000);
+            });
         });
-    } 
+    }
 
     if (downloadResumeButton) {
         downloadResumeButton.addEventListener('click', function() {
-            // ... (download functionality as before)
+            const sourceElement = responseArea.style.display !== 'none' ? responseArea : editorContentArea.querySelector('.ql-editor');
+            let textToDownload;
+
+            if (sourceElement && sourceElement.classList) { // Check if sourceElement and classList exist
+                 if (sourceElement.classList.contains('ql-editor')) {
+                     textToDownload = quill.getText();
+                     if (textToDownload.length > 1 && textToDownload.endsWith('\n')) {
+                         textToDownload = textToDownload.slice(0, -1);
+                     }
+                 } else {
+                     textToDownload = sourceElement.innerText;
+                 }
+            } else if (sourceElement) { // Fallback
+                textToDownload = sourceElement.innerText;
+            } else {
+                 console.error("Download source element not found.");
+                 return;
+            }
+
+
+            const blob = new Blob([textToDownload], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'customized_resume.txt';
+
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+
+            console.log('Download initiated');
+             downloadResumeButton.textContent = '✅ Downloaded!';
+             setTimeout(() => {
+                 downloadResumeButton.textContent = '⬇️ Download';
+             }, 2000);
         });
-    } 
+    }
 
     if (emailResumeButton) {
         emailResumeButton.addEventListener('click', function() {
-            if (!quill || !responseArea || !editorContentArea) return;
+            if (!quill || !responseArea || !editorContentArea) {
+                console.error("Email function elements not found.");
+                return;
+            }
+
             const sourceElement = responseArea.style.display !== 'none' ? responseArea : editorContentArea.querySelector('.ql-editor');
             let resumeText = "";
 
-            if (sourceElement) {
+            if (sourceElement && sourceElement.classList) { // Check if sourceElement and classList exist
                 if (sourceElement.classList.contains('ql-editor')) {
                     resumeText = quill.getText();
                     if (resumeText.length > 0 && resumeText.endsWith('\n')) {
@@ -1236,16 +1361,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     resumeText = sourceElement.innerText;
                 }
+            } else if (sourceElement) { // Fallback
+                 resumeText = sourceElement.innerText;
+            } else {
+                 console.error("Email source element not found.");
+                 return;
             }
 
             const subject = "My Customized Resume";
             const body = resumeText;
             const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-            if (mailtoLink.length > 2000) { // Basic check for mailto length
-                alert("The resume content is too long to be sent directly via email client. Please copy and paste it manually.");
-                return;
-            }
+            // Removed the mailto link length check
 
             window.location.href = mailtoLink;
 
@@ -1258,7 +1385,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-}); 
+});
 </script>
 
 
