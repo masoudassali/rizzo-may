@@ -455,38 +455,50 @@
 
     /* Style for the Quill editor container */
     #editor {
-        padding: 15px;
-        border: 1px solid #eee;
-        border-radius: 8px; /* Corrected border-radius */
-        background-color: #fff; /* Use a white background for editing */
-        min-height: 200px; /* Give it a decent editing height */
-        width: 100%; /* Take full width */
-        box-sizing: border-box; /* Include padding and border in width */
-        color: #333;
-        font-family: inherit; /* Inherit font from body/parent */
-        font-size: inherit; /* Inherit font size */
-        resize: vertical; /* Allow vertical resizing (handled by Quill's scroll) */
-        margin-bottom: 10px; /* Space below textarea */
+        /* padding: 15px; MODIFIED: Removed padding */
+        /* border: 1px solid #eee; MODIFIED: Removed border */
+        /* border-radius: 8px; MODIFIED: Removed border-radius */
+        background-color: #fff; /* Keep or let Quill themes handle */
+        /* min-height: 200px; MODIFIED: Removed, handled by .ql-container/.ql-editor */
+        width: 100%; 
+        box-sizing: border-box; 
+        color: #333; /* Base text color, Quill might override */
+        font-family: inherit; /* Base font, Quill might override */
+        font-size: inherit; /* Base font size, Quill might override */
+        /* resize: vertical; MODIFIED: Quill handles its own scroll/resize behavior */
+        margin-bottom: 10px; 
         display: none; /* Initially hidden */
-        /* Quill adds its own styling, may need overrides */
     }
+
      /* Style for Quill's toolbar */
-    .ql-toolbar {
+    .ql-toolbar.ql-snow { /* Added .ql-snow for specificity */
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
-         border-color: #eee;
-         background-color: #f8f8f8;
+        background-color: #f8f8f8;
+        border: 1px solid #eee; /* MODIFIED: Full border definition */
+        border-bottom: none; /* MODIFIED: Connects to editor area */
+        box-sizing: border-box; /* ADDED: For consistent box model */
     }
 
     /* Style for Quill's editor area (the content div) */
-    .ql-container {
+    .ql-container.ql-snow { /* Added .ql-snow for specificity */
         border-bottom-left-radius: 8px;
         border-bottom-right-radius: 8px;
-        border-color: #eee;
-        min-height: 200px; /* Match editor min-height */
-         font-family: inherit; /* Inherit font */
-         font-size: inherit; /* Inherit font size */
-         color: #333;
+        min-height: 200px; 
+        font-family: inherit; 
+        font-size: inherit; 
+        color: #333;
+        border: 1px solid #eee; /* MODIFIED: Full border definition */
+        background-color: #fff; /* ADDED: Ensure editor background if not covered by theme */
+        box-sizing: border-box; /* ADDED: For consistent box model */
+    }
+    
+    /* ADDED: Style for the actual editable area within Quill */
+    .ql-editor {
+        min-height: 200px; /* Ensure editable area has min height */
+        padding: 12px 15px; /* Standard Quill padding, adjust as needed */
+        box-sizing: border-box;
+        overflow-y: auto; /* Allow scrolling within editor */
     }
 
 
@@ -495,21 +507,19 @@
     border: 1px solid #eee;
     border-radius: 8px;
     background-color: #e9ecef; /* Light grey background for response */
-    /* white-space: pre-wrap; Removed pre-wrap as Quill outputs HTML */
+    white-space: pre-wrap; /* MODIFIED: Ensure pre-wrap is active for legible plain text */
     word-wrap: break-word;
     min-height: 50px; /* Give it a minimum height */
     color: #333; /* Default text color */
     overflow-x: auto; /* Add horizontal scroll if content is too wide */
-     padding-right: 15px; /* Adjusted padding as buttons are moved */
-     /* Ensure it can render HTML from Quill */
+    padding-right: 15px; /* Adjusted padding as buttons are moved */
   }
 
 
   #responseArea pre { /* Style for pre tag inside response area */
       margin: 0; /* Remove default margin from pre */
       padding: 0;
-      /* Keep pre-wrap if pre tags are still desired for initial plain text */
-      white-space: pre-wrap;
+      white-space: pre-wrap; /* Ensures <pre> content itself also wraps */
   }
 
 
@@ -730,7 +740,7 @@
         }
 
         #editor { /* Adjust padding for Quill editor on mobile */
-            padding-right: 15px;
+            /* padding-right: 15px; No longer needed as #editor has no padding */
         }
 
 
@@ -1372,7 +1382,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ['clean']                                         // remove formatting button
     ];
 
-    quill = new Quill(editorContainer, {
+    quill = new Quill(editorContainer, { // Initialize Quill on #editor
         modules: {
             toolbar: toolbarOptions // Use the defined toolbar options
         },
@@ -1385,14 +1395,19 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get the current HTML content from responseArea
         // If the content is wrapped in <pre>, get the text inside
         let contentToEdit = responseArea.innerHTML;
-        if (contentToEdit.startsWith('<pre>') && contentToEdit.endsWith('</pre>')) {
-            contentToEdit = responseArea.innerText; // Get plain text inside pre
+        const firstChild = responseArea.firstChild;
+
+        if (responseArea.childNodes.length === 1 && firstChild && firstChild.nodeName === 'PRE') {
+            // If content is wrapped in a single <pre> tag (e.g., from JSON stringify display)
+            contentToEdit = firstChild.innerText; 
              // Convert plain text with newlines to simple HTML paragraphs for Quill
-             contentToEdit = contentToEdit.split('\n').map(line => `<p>${line}</p>`).join('');
-        } else {
-             // Use innerHTML directly if it's not pre-formatted
-             // Might need more robust conversion if responseArea contains complex HTML
+            contentToEdit = contentToEdit.split('\n').map(line => `<p>${line || '<br>'}</p>`).join(''); // Handle empty lines as <p><br></p>
+        } else if (responseArea.style.whiteSpace === 'pre-wrap' && !contentToEdit.match(/<\s*p[^>]*>|<\s*br[^>]*>/i)) {
+            // If it was plain text displayed with white-space: pre-wrap and no obvious HTML line breaks
+            contentToEdit = responseArea.innerText; // Get text content
+            contentToEdit = contentToEdit.split('\n').map(line => `<p>${line || '<br>'}</p>`).join('');
         }
+        // Otherwise, assume contentToEdit (responseArea.innerHTML) is already suitable HTML from Quill or server
 
 
         // Set the Quill editor's content with the HTML
@@ -1460,14 +1475,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (copyCodeButton) {
         copyCodeButton.addEventListener('click', function() {
             // Determine which element is currently visible and contains the text
-            const sourceElement = responseArea.style.display !== 'none' ? responseArea : editorContainer; // Check if responseArea or editor is visible
+            const sourceElement = responseArea.style.display !== 'none' ? responseArea : editorContainer.querySelector('.ql-editor'); 
             let textToCopy;
 
-            if (sourceElement === editorContainer) {
+            if (sourceElement === editorContainer.querySelector('.ql-editor')) {
                  // Get plain text from Quill editor
                  textToCopy = quill.getText();
                  // Quill adds a trailing newline, remove it if it's the only character
-                 if (textToCopy.length > 1 && textToCopy.endsWith('\n')) {
+                 if (textToCopy.length > 0 && textToCopy.endsWith('\n')) { // Check length before slice
                      textToCopy = textToCopy.slice(0, -1);
                  }
             } else {
@@ -1505,14 +1520,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (downloadResumeButton) {
         downloadResumeButton.addEventListener('click', function() {
              // Determine which element is currently visible and contains the text
-            const sourceElement = responseArea.style.display !== 'none' ? responseArea : editorContainer; // Check if responseArea or editor is visible
+            const sourceElement = responseArea.style.display !== 'none' ? responseArea : editorContainer.querySelector('.ql-editor');
             let textToDownload;
 
-            if (sourceElement === editorContainer) {
+            if (sourceElement === editorContainer.querySelector('.ql-editor')) {
                  // Get plain text from Quill editor
                  textToDownload = quill.getText();
                   // Quill adds a trailing newline, remove it if it's the only character
-                 if (textToDownload.length > 1 && textToDownload.endsWith('\n')) {
+                 if (textToDownload.length > 0 && textToDownload.endsWith('\n')) { // Check length
                      textToDownload = textToDownload.slice(0, -1);
                  }
             } else {
@@ -1522,7 +1537,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
             // Create a Blob with the text content
-            const blob = new Blob([textToDownload], { type: 'text/plain' });
+            const blob = new Blob([textToDownload], { type: 'text/plain;charset=utf-8' });
 
 
             // Create a link element
@@ -1580,7 +1595,7 @@ document.addEventListener('DOMContentLoaded', function() {
              // This makes the responseArea div visible and hides the textarea
              // It also handles showing the buttons based on screen size
              // NOTE: This call is already present and correct.
-             // switchToViewMode();
+             // switchToViewMode(); // This would be incorrect here as it might try to read from Quill which isn't populated yet
 
 
          } catch(e) {
@@ -1590,8 +1605,9 @@ document.addEventListener('DOMContentLoaded', function() {
     } // ... rest of xhr.onload (error handling etc) ...
 
     */
-    // You already have a call to switchToViewMode() in your xhr.onload success block,
-    // which is good! Just make sure it's correctly placed after responseArea.innerHTML is set.
+    // The original switchToViewMode() call was correctly placed in the 'Done Editing' button handler.
+    // After loading new content from XHR, we are in "view mode" by default (responseArea is shown, editor is hidden).
+    // The logic to show edit/copy/download buttons is already in the XHR success handler.
 
 
 }); // End DOMContentLoaded listener
