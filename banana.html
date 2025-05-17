@@ -156,19 +156,18 @@
       list-style: none;
       padding: 0;
       margin: 0;
-  }
+    }
 
+    /* The list item with the new option */
+    .dropdown-panel ul li {
+        margin-bottom: 8px; /* Space between checkboxes */
+        display: flex; /* Align checkbox and label */
+        align-items: center;
+    }
 
-  .dropdown-panel li {
-      margin-bottom: 8px; /* Space between checkboxes */
-      display: flex; /* Align checkbox and label */
-      align-items: center;
-  }
-
-
-  .dropdown-panel li:last-child {
-       margin-bottom: 0;
-  }
+    .dropdown-panel ul li:last-child {
+        margin-bottom: 0;
+    }
 
 
   .dropdown-panel input[type="checkbox"] {
@@ -829,8 +828,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Prompt Suggestions Dropdown Functionality ---
     if (dropdownTrigger && dropdownPanel && addSelectedButton) {
         dropdownTrigger.addEventListener('click', function(event) {
-            event.preventDefault(); // Add preventDefault
-            event.stopPropagation();
+            event.preventDefault(); // Prevent default browser click behavior
+            event.stopPropagation(); // Stop event from bubbling up to document
             const isVisible = dropdownPanel.style.display === 'flex';
             dropdownPanel.style.display = isVisible ? 'none' : 'flex';
             const arrow = this.querySelector('.arrow');
@@ -839,37 +838,41 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Close dropdown if clicked outside
         document.addEventListener('click', function(event) {
-            if (!dropdownTrigger.contains(event.target) && !dropdownPanel.contains(event.target)) {
+            if (dropdownPanel && !dropdownTrigger.contains(event.target) && !dropdownPanel.contains(event.target)) {
                 dropdownPanel.style.display = 'none';
                  const arrow = dropdownTrigger.querySelector('.arrow');
                  if(arrow) { arrow.textContent = '▼'; }
             }
         });
 
+        // Prevent clicks inside dropdown from closing it immediately
         dropdownPanel.addEventListener('click', function(event) {
             event.stopPropagation();
         });
 
+        // Add selected prompts to textarea
         addSelectedButton.addEventListener('click', function(event) {
-            event.preventDefault(); // Add preventDefault
+            event.preventDefault(); // Prevent default button click
             const textarea = document.getElementById('userMessage');
             const checkboxes = dropdownPanel.querySelectorAll('input[type="checkbox"]:checked');
             let selectedPromptsText = '';
 
             checkboxes.forEach(checkbox => {
-                const promptText = checkbox.dataset.prompt || checkbox.nextElementSibling.textContent;
+                const promptText = checkbox.dataset.prompt || checkbox.nextElementSibling.textContent.trim(); // Use dataset.prompt or label text, trim whitespace
                 selectedPromptsText += promptText + '\n';
-                checkbox.checked = false;
+                checkbox.checked = false; // Deselect after adding
             });
 
             if (selectedPromptsText.length > 0 && textarea) {
+                 // Add a newline prefix only if textarea is not empty and doesn't already end with a newline
                  const prefix = textarea.value.length > 0 && !textarea.value.endsWith('\n') ? '\n' : '';
                  textarea.value += prefix + selectedPromptsText;
-                 textarea.scrollTop = textarea.scrollHeight;
-                 textarea.focus();
+                 textarea.scrollTop = textarea.scrollHeight; // Scroll to bottom
+                 textarea.focus(); // Put cursor back in textarea
             }
-            dropdownPanel.style.display = 'none';
+            dropdownPanel.style.display = 'none'; // Close dropdown after adding
             const arrow = dropdownTrigger.querySelector('.arrow');
             if(arrow) { arrow.textContent = '▼'; }
         });
@@ -901,17 +904,18 @@ document.addEventListener('DOMContentLoaded', function() {
         resumeUrl.addEventListener('input', updateResumeInputState);
         resumeFile.addEventListener('change', () => {
             if (resumeFile.files.length > 0) {
-                resumeUrl.value = '';
+                resumeUrl.value = ''; // Clear URL if file is selected
             }
             updateResumeInputState();
         });
         jdUrl.addEventListener('input', updateJdInputState);
         jdFile.addEventListener('change', () => {
             if (jdFile.files.length > 0) {
-                jdUrl.value = '';
+                jdUrl.value = ''; // Clear URL if file is selected
             }
             updateJdInputState();
         });
+        // Set initial state on page load
         updateResumeInputState();
         updateJdInputState();
     }
@@ -925,7 +929,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("Form submit triggered."); // Log when the submit handler runs
             // Diagnostic log: Check value right before creating FormData
             const userMessageTextarea = document.getElementById('userMessage');
-            console.log("Value of userMessage just before FormData:", userMessageTextarea ? userMessageTextarea.value : "Textarea not found"); // ADDED THIS LINE
+            console.log("Value of userMessage just before FormData:", userMessageTextarea ? userMessageTextarea.value : "Textarea not found"); // Diagnostic line
 
 
             const form = this;
@@ -941,37 +945,68 @@ document.addEventListener('DOMContentLoaded', function() {
             const doneEditingButton = document.getElementById('doneEditingButton'); // The Done Editing button
             const copyCodeButton = document.getElementById('copyCodeButton'); // The Copy button
             const downloadResumeButton = document.getElementById('downloadResumeButton'); // The Download button
-             const emailResumeButton = document.getElementById('emailResumeButton'); // New email button
+            const emailResumeButton = document.getElementById('emailResumeButton'); // New email button
 
 
             // Add validation: Check if either a file OR a URL is provided for Resume and JD
-            const isResumeProvided = (resumeFile.files.length > 0 || (resumeUrl && resumeUrl.value.trim() !== ''));
-            const isJdProvided = (jdFile.files.length > 0 || (jdUrl && jdUrl.value.trim() !== ''));
+            const isResumeProvided = (resumeFile && resumeFile.files && resumeFile.files.length > 0) || (resumeUrl && resumeUrl.value.trim() !== '');
+            const isJdProvided = (jdFile && jdFile.files && jdFile.files.length > 0) || (jdUrl && jdUrl.value.trim() !== '');
+
 
             if (!isResumeProvided || !isJdProvided) {
                 alert("Please provide either a file or a URL for both your Resume and the Job Description.");
+                // Re-enable form elements and hide status bar if validation fails
                 if(submitButton) submitButton.disabled = false;
-                updateResumeInputState();
-                updateJdInputState();
-                form.querySelectorAll('input, textarea, button').forEach(element => {
-                     if (element !== submitButton && element !== editResponseButton && element !== doneEditingButton && element !== copyCodeButton && element !== downloadResumeButton && element !== emailResumeButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) {
+                reEnableForm(); // Use the helper function to re-enable
+                if(uploadStatusContainer) uploadStatusContainer.style.display = 'none';
+                if(uploadStatusText) uploadStatusText.style.display = 'none';
+                return; // Stop the submission process
+            }
+
+            const formData = new FormData(form); // Use form instead of this for clarity
+
+
+            // Helper function to re-enable form elements, excluding action buttons and dropdown controls
+            const reEnableForm = () => {
+                  updateResumeInputState(); // Re-run state logic for file/url
+                  updateJdInputState(); // Re-run state logic for file/url
+                  // Re-enable all form elements except the submit button, editing buttons, and dropdown trigger/panel contents
+                  form.querySelectorAll('input, textarea, button').forEach(element => {
+                     // Check if the element is NOT one of the action buttons or part of the dropdown panel/trigger
+                     if (element !== submitButton &&
+                         element !== editResponseButton &&
+                         element !== doneEditingButton &&
+                         element !== copyCodeButton &&
+                         element !== downloadResumeButton &&
+                         element !== emailResumeButton &&
+                         element.id !== 'promptDropdownTrigger' && // Don't disable the trigger button
+                         !element.closest('.prompt-suggestions-dropdown') // Don't disable anything inside the dropdown panel (checkboxes, Add Selected button)
+                         ) {
                          element.disabled = false;
                      }
                  });
-                if(uploadStatusContainer) uploadStatusContainer.style.display = 'none';
-                if(uploadStatusText) uploadStatusText.style.display = 'none';
-                return;
-            }
+            };
 
-            const formData = new FormData(this);
 
+            // Disable form elements during submission
             form.querySelectorAll('input, textarea, button').forEach(element => {
-                if (element !== submitButton && element !== editResponseButton && element !== doneEditingButton && element !== copyCodeButton && element !== downloadResumeButton && element !== emailResumeButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) {
+                 // Exclude action buttons and dropdown controls from being disabled here
+                 if (element !== submitButton &&
+                     element !== editResponseButton &&
+                     element !== doneEditingButton &&
+                     element !== copyCodeButton &&
+                     element !== downloadResumeButton &&
+                     element !== emailResumeButton &&
+                     element.id !== 'promptDropdownTrigger' && // Don't disable the trigger button
+                     !element.closest('.prompt-suggestions-dropdown') // Don't disable anything inside the dropdown panel
+                     ) {
                      element.disabled = true;
-                }
-            });
-            if(submitButton) submitButton.disabled = true;
+                 }
+             });
+            if(submitButton) submitButton.disabled = true; // Disable the submit button specifically
 
+
+            // Show initial generating/uploading state
             if(responseContainer) responseContainer.style.display = 'block';
             if(responseArea) {
                 responseArea.innerHTML = 'Generating... shouldn\'t take more than a couple of minutes.';
@@ -979,18 +1014,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 responseArea.style.backgroundColor = '#e9ecef';
                 responseArea.style.borderColor = '#eee';
                 responseArea.style.display = 'block';
+                // Ensure editor is hidden if shown
+                if(editorContainer) editorContainer.style.display = 'none';
+                if(quillCustomToolbarContainer) quillCustomToolbarContainer.style.display = 'none';
+                if(doneEditingButton) doneEditingButton.style.display = 'none';
             }
 
-            if(quillCustomToolbarContainer) quillCustomToolbarContainer.style.display = 'none';
-            if(editorContainer) editorContainer.style.display = 'none';
-            if(doneEditingButton) doneEditingButton.style.display = 'none';
+            // Hide action buttons initially
             if(editResponseButton) editResponseButton.style.display = 'none';
             if(copyCodeButton) copyCodeButton.style.display = 'none';
             if(downloadResumeButton) downloadResumeButton.style.display = 'none';
             if(emailResumeButton) emailResumeButton.style.display = 'none';
 
 
-            const isUploadingFiles = resumeFile.files.length > 0 || (jdFile && jdFile.files.length > 0);
+            const isUploadingFiles = (resumeFile && resumeFile.files && resumeFile.files.length > 0) || (jdFile && jdFile.files && jdFile.files.length > 0);
             const isProcessingUrls = (resumeUrl && resumeUrl.value.trim() !== '') || (jdUrl && jdUrl.value.trim() !== '');
 
             if(uploadStatusContainer) uploadStatusContainer.style.display = 'block';
@@ -1005,12 +1042,13 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (isProcessingUrls) {
                 if(uploadStatusText) uploadStatusText.innerHTML = "Sending data for URL processing...";
             } else {
-                if(uploadStatusText) uploadStatusText.innerHTML = "Preparing request...";
+                if(uploadStatusText) uploadStatusText.innerHTML = "Preparing request..."; // Should not happen with validation
             }
 
 
             const xhr = new XMLHttpRequest();
 
+            // --- XHR Event Handlers ---
             xhr.upload.onprogress = function(event) {
                 if (event.lengthComputable) {
                     const percentComplete = (event.loaded / event.total) * 100;
@@ -1022,98 +1060,114 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (isUploadingFiles) {
                         if(uploadStatusText) uploadStatusText.innerHTML = `Uploading files (${percent}%)...`;
                     } else {
-                        if(uploadStatusText) uploadStatusText.innerHTML = `Sending data (${percent}%)...`;
+                        // For non-file uploads, progress might jump straight to 100 or not fire
+                        if(uploadStatusText && percent > 0) uploadStatusText.innerHTML = `Sending data (${percent}%)...`;
                     }
                 }
             };
 
             xhr.upload.onload = function() {
-                if(uploadStatusBar) {
+                // This fires when upload portion is complete, not entire request
+                console.log("XHR Upload Complete");
+                 if(uploadStatusBar) {
                     uploadStatusBar.style.width = '100%';
                     uploadStatusBar.innerHTML = '100%';
                 }
-                if(uploadStatusText) {
-                    if (isUploadingFiles && isProcessingUrls) {
-                        uploadStatusText.innerHTML = "Upload complete. Server processing files and URLs...";
-                    } else if (isUploadingFiles) {
-                        uploadStatusText.innerHTML = "Upload complete. Server processing files...";
-                    } else if (isProcessingUrls) {
-                        uploadStatusText.innerHTML = "Data received by server. Processing URLs...";
-                    } else {
-                        uploadStatusText.innerHTML = "Request sent. Awaiting server response...";
-                    }
-                }
+                 if(uploadStatusText) {
+                     if (isUploadingFiles) {
+                         uploadStatusText.innerHTML = "Upload complete. Waiting for server processing...";
+                     } else {
+                         uploadStatusText.innerHTML = "Data sent. Waiting for server response...";
+                     }
+                 }
             };
 
-             const reEnableForm = () => {
-                  updateResumeInputState();
-                  updateJdInputState();
-                  form.querySelectorAll('textarea, button').forEach(element => {
-                     if (element !== submitButton && element !== editResponseButton && element !== doneEditingButton && element !== copyCodeButton && element !== downloadResumeButton && element !== emailResumeButton && element.id !== 'promptDropdownTrigger' && !element.closest('.dropdown-panel')) {
-                         element.disabled = false;
-                     }
-                 });
-             };
-
             xhr.onload = function() {
-                reEnableForm();
+                console.log("XHR Load Complete. Status:", xhr.status);
+                reEnableForm(); // Re-enable form elements
+
+                // Update status bar final state
                 if(uploadStatusBar) {
                    uploadStatusBar.innerHTML = xhr.status >= 200 && xhr.status < 300 ? 'Complete!' : 'Error!';
+                   uploadStatusBar.style.backgroundColor = xhr.status >= 200 && xhr.status < 300 ? '#4CAF50' : '#f44336'; // Green or Red
                 }
 
+
                 if (xhr.status >= 200 && xhr.status < 300) {
+                    // Success response
                     if (counterDisplaySpan) {
+                         // Ensure currentCount is a number before incrementing
                          if (typeof currentCount !== 'number' || isNaN(currentCount)) {
-                             currentCount = localStorage.getItem(localStorageKey);
-                             if (currentCount === null || isNaN(parseInt(currentCount, 10))) {
-                                currentCount = 431;
-                             } else {
-                                 currentCount = parseInt(currentCount, 10);
-                             }
+                             // Try reading from localStorage again as fallback
+                             const storedCount = localStorage.getItem(localStorageKey);
+                             currentCount = storedCount === null || isNaN(parseInt(storedCount, 10)) ? 431 : parseInt(storedCount, 10);
                          }
-                        currentCount++;
-                        localStorage.setItem(localStorageKey, currentCount);
-                        counterDisplaySpan.textContent = currentCount;
+                        currentCount++; // Increment count on successful generation
+                        localStorage.setItem(localStorageKey, currentCount); // Save updated count
+                        counterDisplaySpan.textContent = currentCount; // Update display
                     }
 
                     try {
                         const data = JSON.parse(xhr.responseText);
-                        const customizedResumeText = data.customizedResume || JSON.stringify(data, null, 2);
-                        if(responseArea) responseArea.innerHTML = customizedResumeText;
-                        if(uploadStatusText) uploadStatusText.innerHTML = "Generated!";
+                        // Assuming the resume text is in data.customizedResume
+                        const customizedResumeText = data.customizedResume || 'Error: "customizedResume" field not found in response.'; // Provide fallback text
+                        if(responseArea) {
+                             // Display response in responseArea
+                             // Handle potential HTML or just plain text output
+                             // If response is plain text, wrap in <pre> or convert newlines to <br>
+                             if (customizedResumeText && typeof customizedResumeText === 'string' && !customizedResumeText.trim().startsWith('<')) {
+                                 responseArea.innerHTML = '<pre>' + escapeHTML(customizedResumeText) + '</pre>'; // Use <pre> for plain text, escape HTML entities
+                             } else if (customizedResumeText) {
+                                 responseArea.innerHTML = customizedResumeText; // Assume it's HTML or error message
+                             } else {
+                                 responseArea.innerHTML = 'Generated response is empty.';
+                             }
+
+                             responseArea.style.display = 'block'; // Ensure response area is visible
+                         }
+
+
+                        if(uploadStatusText) uploadStatusText.innerHTML = "Generated!"; // Final status text
+                         // Reset response area styles to normal on success
                         if(responseArea) {
                             responseArea.style.color = '#333';
                             responseArea.style.backgroundColor = '#e9ecef';
                             responseArea.style.borderColor = '#eee';
                         }
 
-                        if(editResponseButton) editResponseButton.style.display = 'inline-block';
-                        if(copyCodeButton) copyCodeButton.style.display = 'inline-block';
-                        if(downloadResumeButton) downloadResumeButton.style.display = 'inline-block';
-                        if(emailResumeButton) emailResumeButton.style.display = 'inline-block'; // Show email button
 
-                        if (window.innerWidth <= 768) {
-                            if(editResponseButton) editResponseButton.style.display = 'block';
-                            if(copyCodeButton) copyCodeButton.style.display = 'block';
-                            if(downloadResumeButton) downloadResumeButton.style.display = 'block';
-                            if(emailResumeButton) emailResumeButton.style.display = 'block'; // Show email button on mobile
-                        }
+                        // Show action buttons on success
+                        const isMobile = window.innerWidth <= 768;
+                        const displayStyle = isMobile ? 'block' : 'inline-block';
+
+                        if(editResponseButton) editResponseButton.style.display = displayStyle;
+                        if(copyCodeButton) copyCodeButton.style.display = displayStyle;
+                        if(downloadResumeButton) downloadResumeButton.style.display = displayStyle;
+                        if(emailResumeButton) emailResumeButton.style.display = displayStyle;
+
+
                     } catch (e) {
+                        // Handle JSON parsing errors or unexpected response structure
                         console.error('Error parsing JSON response:', e, 'Response:', xhr.responseText);
-                        if(responseArea) responseArea.innerHTML = '<p>Error: Received unexpected response from client.</p><p><code>' + (xhr.responseText || 'No response text').substring(0, 500) + '...</code></p>';
-                        if(uploadStatusText) uploadStatusText.innerHTML = "Generation failed (Parse Error).";
                         if(responseArea) {
+                            responseArea.innerHTML = '<p>Error: Received unexpected response format.</p><p><code>' + escapeHTML(xhr.responseText || 'No response text').substring(0, 500) + '...</code></p>'; // Display error with raw response snippet
+                             // Set error styles for response area
                             responseArea.style.color = '#721c24';
                             responseArea.style.backgroundColor = '#f8d7da';
                             responseArea.style.borderColor = '#f5c6cb';
+                             responseArea.style.display = 'block'; // Ensure response area is visible
                         }
+
+                        if(uploadStatusText) uploadStatusText.innerHTML = "Generation failed (Parse Error)."; // Final status text
+
+                        // Hide action buttons on error
                         if(editResponseButton) editResponseButton.style.display = 'none';
                         if(copyCodeButton) copyCodeButton.style.display = 'none';
                         if(downloadResumeButton) downloadResumeButton.style.display = 'none';
                         if(emailResumeButton) emailResumeButton.style.display = 'none';
                     }
                 } else {
-                    // Request failed (HTTP status is not 2xx)
+                    // Handle HTTP errors (status not 2xx)
                     console.error('HTTP error!', xhr.status, xhr.responseText);
                     let errorMessage = `HTTP error! status: ${xhr.status}`;
                     try {
@@ -1121,68 +1175,93 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (errorResponse.message) {
                             errorMessage += `, message: ${errorResponse.message}`;
                         } else {
-                            errorMessage += `, body: ${xhr.responseText}`;
+                             // If JSON has no 'message', just show a snippet of the response
+                            errorMessage += `, body: ${escapeHTML(xhr.responseText).substring(0, 200)}...`;
                         }
                     } catch (e) {
-                        errorMessage += `, body: ${xhr.responseText}`;
+                         // If response is not JSON, just show a snippet
+                        errorMessage += `, body: ${escapeHTML(xhr.responseText).substring(0, 200)}...`;
                     }
 
-                    if(responseArea) responseArea.innerHTML = '<p>Error processing files:</p><p><code>' + errorMessage + '</code></p>';
-                    if(uploadStatusText) uploadStatusText.innerHTML = `Error: ${xhr.status}`;
                     if(responseArea) {
+                         responseArea.innerHTML = '<p>Error processing request:</p><p><code>' + errorMessage + '</code></p>'; // Display error message
+                         // Set error styles for response area
                         responseArea.style.color = '#721c24';
                         responseArea.style.backgroundColor = '#f8d7da';
                         responseArea.style.borderColor = '#f5c6cb';
+                         responseArea.style.display = 'block'; // Ensure response area is visible
                     }
 
+                    if(uploadStatusText) uploadStatusText.innerHTML = `Error: ${xhr.status}`; // Final status text
+
+                    // Hide action buttons on error
                     if(editResponseButton) editResponseButton.style.display = 'none';
                     if(copyCodeButton) copyCodeButton.style.display = 'none';
                     if(downloadResumeButton) downloadResumeButton.style.display = 'none';
-                    if(emailResumeButton) emailResumeButton.style.display = 'none'; // Hide on error
+                    if(emailResumeButton) emailResumeButton.style.display = 'none';
                 }
+                 // Hide upload status bar and text after request is complete (success or error)
                 if(uploadStatusContainer) uploadStatusContainer.style.display = 'none';
+                if(uploadStatusText) uploadStatusText.style.display = 'none';
             };
 
             xhr.onerror = function() {
+                // Handle network connection errors
                 console.error('Network error!');
+                 // Hide upload status bar and text
                 if(uploadStatusContainer) uploadStatusContainer.style.display = 'none';
-                reEnableForm();
+                if(uploadStatusText) uploadStatusText.style.display = 'none';
+                reEnableForm(); // Re-enable form elements
 
-                if(responseArea) responseArea.innerHTML = '<p>Error processing files:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>';
                 if(responseArea) {
+                     responseArea.innerHTML = '<p>Error processing request:</p><p><code>Network request failed. Please check your connection or the server status.</code></p>'; // Display network error message
+                     // Set error styles for response area
                     responseArea.style.color = '#721c24';
                     responseArea.style.backgroundColor = '#f8d7da';
                     responseArea.style.borderColor = '#f5c6cb';
+                     responseArea.style.display = 'block'; // Ensure response area is visible
                 }
-                if(uploadStatusText) uploadStatusText.innerHTML = "Network error.";
-                if(uploadStatusBar) { uploadStatusBar.innerHTML = "Error!"; }
+                 if(uploadStatusBar) {
+                    uploadStatusBar.innerHTML = "Error!";
+                    uploadStatusBar.style.backgroundColor = '#f44336'; // Red
+                 }
 
+                // Hide action buttons on error
                 if(editResponseButton) editResponseButton.style.display = 'none';
                 if(copyCodeButton) copyCodeButton.style.display = 'none';
                 if(downloadResumeButton) downloadResumeButton.style.display = 'none';
-                if(emailResumeButton) emailResumeButton.style.display = 'none'; // Hide on error
+                if(emailResumeButton) emailResumeButton.style.display = 'none';
             };
 
             xhr.ontimeout = function() {
+                // Handle request timeout
                 console.error('Request timed out!');
+                 // Hide upload status bar and text
                 if(uploadStatusContainer) uploadStatusContainer.style.display = 'none';
-                reEnableForm();
+                if(uploadStatusText) uploadStatusText.style.display = 'none';
+                reEnableForm(); // Re-enable form elements
 
-                if(responseArea) responseArea.innerHTML = '<p>Error processing files:</p><p><code>Request timed out. The server took too long to respond.</code></p>';
                 if(responseArea) {
+                     responseArea.innerHTML = '<p>Error processing request:</p><p><code>Request timed out. The server took too long to respond.</code></p>'; // Display timeout message
+                     // Set error styles for response area
                     responseArea.style.color = '#721c24';
                     responseArea.style.backgroundColor = '#f8d7da';
                     responseArea.style.borderColor = '#f5c6cb';
+                     responseArea.style.display = 'block'; // Ensure response area is visible
                 }
-                if(uploadStatusText) uploadStatusText.innerHTML = "Request timed out.";
-                if(uploadStatusBar) { uploadStatusBar.innerHTML = "Timeout!"; }
+                 if(uploadStatusBar) {
+                     uploadStatusBar.innerHTML = "Timeout!";
+                     uploadStatusBar.style.backgroundColor = '#f44336'; // Red
+                 }
 
+                // Hide action buttons on error
                 if(editResponseButton) editResponseButton.style.display = 'none';
                 if(copyCodeButton) copyCodeButton.style.display = 'none';
                 if(downloadResumeButton) downloadResumeButton.style.display = 'none';
-                if(emailResumeButton) emailResumeButton.style.display = 'none'; // Hide on error
+                if(emailResumeButton) emailResumeButton.style.display = 'none';
             };
             xhr.open(this.method, this.action);
+            // No need to set Content-Type header for FormData, browser does it correctly including boundary
             xhr.send(formData);
         });
     }
@@ -1205,6 +1284,7 @@ document.addEventListener('DOMContentLoaded', function() {
             theme: 'snow'
         });
 
+        // Move the generated Quill toolbar to the custom container
         const createdToolbar = editorContentArea.querySelector('.ql-toolbar');
         if (createdToolbar && quillCustomToolbarContainer) {
             quillCustomToolbarContainer.appendChild(createdToolbar);
@@ -1216,41 +1296,73 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Edit/View Mode Switching ---
     const switchToEditMode = () => {
-        if (!quill || !responseArea || !editorContentArea || !quillCustomToolbarContainer || !doneEditingButton || !editResponseButton || !copyCodeButton || !downloadResumeButton || !emailResumeButton) return;
-
-        let contentToEdit = responseArea.innerHTML;
-        const firstChild = responseArea.firstChild;
-
-        if (responseArea.childNodes.length === 1 && firstChild && firstChild.nodeName === 'PRE') {
-            contentToEdit = firstChild.innerText;
-            contentToEdit = contentToEdit.split('\n').map(line => `<p>${line || '<br>'}</p>').join('');
-        } else if (responseArea.style.whiteSpace === 'pre-wrap' && !contentToEdit.match(/<\s*p[^>]*>|<\s*br[^>]*>/i)) {
-            contentToEdit = responseArea.innerText;
-            contentToEdit = contentToEdit.split('\n').map(line => `<p>${line || '<br>'}</p>').join('');
+        // Ensure necessary elements exist
+        if (!quill || !responseArea || !editorContentArea || !quillCustomToolbarContainer || !doneEditingButton || !editResponseButton || !copyCodeButton || !downloadResumeButton || !emailResumeButton) {
+            console.error("Missing elements for edit mode switch.");
+            return;
         }
 
-        quill.root.innerHTML = contentToEdit;
-        responseArea.style.display = 'none';
+        let contentToEdit = '';
+        const responseAreaContent = responseArea.innerHTML.trim();
+
+        // Check if responseArea has content and is plain text wrapped in <pre>
+        if (responseAreaContent.startsWith('<pre>') && responseAreaContent.endsWith('</pre>')) {
+            contentToEdit = responseArea.firstChild.innerText; // Get plain text from inside <pre>
+            // Convert plain text with newlines to Quill's paragraph format
+             contentToEdit = contentToEdit.split('\n').map(line => `<p>${escapeHTML(line) || '<br>'}</p>`).join('');
+
+        } else if (responseAreaContent) {
+             // Assume it might be HTML (e.g., if AI outputted HTML directly or had error formatting)
+             // Or if it's plain text without <pre>, convert newlines to <br> within a single <p>
+             // A robust solution might parse HTML, but for simplicity, treat as plain text unless it's clearly structured HTML
+             // Let's check if it looks like a simple multi-line text that wasn't <pre> wrapped
+             if (!responseAreaContent.match(/<\s*[a-zA-Z][^>]*>/i)) { // Check if it doesn't contain common HTML tags
+                  contentToEdit = responseArea.innerText; // Get plain text value
+                  contentToEdit = contentToEdit.split('\n').map(line => `<p>${escapeHTML(line) || '<br>'}</p>`).join('');
+             } else {
+                  // If it looks like HTML, load it directly (be cautious of arbitrary HTML)
+                  contentToEdit = responseAreaContent;
+             }
+
+        } else {
+            // If responseArea is empty
+            contentToEdit = ''; // Start with empty editor
+        }
+
+
+        quill.root.innerHTML = contentToEdit; // Set editor content
+        responseArea.style.display = 'none'; // Hide view mode area
+
+        // Hide action buttons during edit
         editResponseButton.style.display = 'none';
         copyCodeButton.style.display = 'none';
         downloadResumeButton.style.display = 'none';
-        emailResumeButton.style.display = 'none'; // Hide email button during edit
+        emailResumeButton.style.display = 'none';
 
+        // Show editor and done button
         quillCustomToolbarContainer.style.display = 'block';
         editorContentArea.style.display = 'block';
         doneEditingButton.style.display = 'block';
-        quill.focus();
+
+        quill.focus(); // Focus the editor for immediate typing
     };
 
     const switchToViewMode = () => {
-        if (!quill || !responseArea || !editorContentArea || !quillCustomToolbarContainer || !doneEditingButton || !editResponseButton || !copyCodeButton || !downloadResumeButton || !emailResumeButton) return;
+        // Ensure necessary elements exist
+        if (!quill || !responseArea || !editorContentArea || !quillCustomToolbarContainer || !doneEditingButton || !editResponseButton || !copyCodeButton || !downloadResumeButton || !emailResumeButton) {
+            console.error("Missing elements for view mode switch.");
+            return;
+        }
 
-        const editedHtml = quill.root.innerHTML;
-        responseArea.innerHTML = editedHtml;
+        const editedHtml = quill.root.innerHTML; // Get HTML content from editor
+        responseArea.innerHTML = editedHtml; // Set content in view mode area
 
+        // Hide editor and done button
         quillCustomToolbarContainer.style.display = 'none';
         editorContentArea.style.display = 'none';
         doneEditingButton.style.display = 'none';
+
+        // Show view mode area and action buttons
         responseArea.style.display = 'block';
 
         const isMobile = window.innerWidth <= 768;
@@ -1259,8 +1371,16 @@ document.addEventListener('DOMContentLoaded', function() {
         editResponseButton.style.display = displayStyle;
         copyCodeButton.style.display = displayStyle;
         downloadResumeButton.style.display = displayStyle;
-        emailResumeButton.style.display = displayStyle; // Show email button in view mode
+        emailResumeButton.style.display = displayStyle;
     };
+
+    // Helper function to escape HTML entities
+    function escapeHTML(str) {
+        const div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+
 
     if (editResponseButton) editResponseButton.addEventListener('click', switchToEditMode);
     if (doneEditingButton) doneEditingButton.addEventListener('click', switchToViewMode);
@@ -1268,34 +1388,48 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Action Button Event Listeners ---
     if (copyCodeButton) {
         copyCodeButton.addEventListener('click', function() {
-            const sourceElement = responseArea.style.display !== 'none' ? responseArea : editorContentArea.querySelector('.ql-editor');
-            let textToCopy;
+            // Determine the source element for text: responseArea (view) or editor (edit)
+            const sourceElement = responseArea.style.display !== 'none' ? responseArea : (quill ? quill.root : null); // Use quill.root for the editor's content div
 
-            if (sourceElement && sourceElement.classList) { // Check if sourceElement and classList exist
-                 if (sourceElement.classList.contains('ql-editor')) {
-                     textToCopy = quill.getText();
-                     if (textToCopy.length > 0 && textToCopy.endsWith('\n')) {
-                         textToCopy = textToCopy.slice(0, -1);
+
+            let textToCopy = '';
+
+            if (sourceElement) {
+                 if (sourceElement === responseArea) {
+                     // If in view mode, get the visible text, preserving line breaks
+                     // If it's a <pre>, get innerText. Otherwise, get innerText and handle newlines.
+                     if (responseArea.firstChild && responseArea.firstChild.nodeName === 'PRE') {
+                         textToCopy = responseArea.firstChild.innerText;
+                     } else {
+                          // Attempt to convert HTML content to plain text with line breaks
+                          // This is a simple approach; a more robust method might be needed for complex HTML
+                          textToCopy = responseArea.innerText; // Gets visible text, preserving line breaks from rendered HTML structure
                      }
-                 } else {
-                     textToCopy = sourceElement.innerText;
+                 } else if (sourceElement === quill.root) {
+                      // If in edit mode (Quill editor is visible), get the plain text from Quill
+                      textToCopy = quill.getText();
+                      // Remove trailing newline if Quill always adds one
+                      if (textToCopy.length > 0 && textToCopy.endsWith('\n')) {
+                          textToCopy = textToCopy.slice(0, -1);
+                      }
                  }
-            } else if (sourceElement) { // Fallback for older browsers or unexpected structures
-                 textToCopy = sourceElement.innerText;
             } else {
-                console.error("Copy source element not found.");
+                console.error("Copy source element not found or Quill not initialized.");
                 return;
             }
 
 
+            // Use navigator.clipboard.writeText to copy
             navigator.clipboard.writeText(textToCopy).then(function() {
                 console.log('Text successfully copied to clipboard');
+                // Provide visual feedback
                 copyCodeButton.textContent = '✅ Copied!';
                 setTimeout(() => {
                     copyCodeButton.textContent = '📋 Copy';
                 }, 2000);
             }).catch(function(err) {
                 console.error('Could not copy text: ', err);
+                 // Provide visual feedback for failure
                  copyCodeButton.textContent = '❌ Copy Failed';
                  setTimeout(() => {
                      copyCodeButton.textContent = '📋 Copy';
@@ -1306,37 +1440,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (downloadResumeButton) {
         downloadResumeButton.addEventListener('click', function() {
-            const sourceElement = responseArea.style.display !== 'none' ? responseArea : editorContentArea.querySelector('.ql-editor');
-            let textToDownload;
+             // Determine the source element for text: responseArea (view) or editor (edit)
+            const sourceElement = responseArea.style.display !== 'none' ? responseArea : (quill ? quill.root : null); // Use quill.root for the editor's content div
 
-            if (sourceElement && sourceElement.classList) { // Check if sourceElement and classList exist
-                 if (sourceElement.classList.contains('ql-editor')) {
-                     textToDownload = quill.getText();
-                     if (textToDownload.length > 1 && textToDownload.endsWith('\n')) {
-                         textToDownload = textToDownload.slice(0, -1);
+            let textToDownload = '';
+
+            if (sourceElement) {
+                 if (sourceElement === responseArea) {
+                     // If in view mode, get the visible text, preserving line breaks
+                     if (responseArea.firstChild && responseArea.firstChild.nodeName === 'PRE') {
+                         textToDownload = responseArea.firstChild.innerText;
+                     } else {
+                          textToDownload = responseArea.innerText;
                      }
-                 } else {
-                     textToDownload = sourceElement.innerText;
+                 } else if (sourceElement === quill.root) {
+                      // If in edit mode (Quill editor is visible), get the plain text from Quill
+                      textToDownload = quill.getText();
+                       // Remove trailing newline if Quill always adds one
+                       if (textToDownload.length > 0 && textToDownload.endsWith('\n')) {
+                          textToDownload = textToDownload.slice(0, -1);
+                      }
                  }
-            } else if (sourceElement) { // Fallback
-                textToDownload = sourceElement.innerText;
             } else {
-                 console.error("Download source element not found.");
+                 console.error("Download source element not found or Quill not initialized.");
                  return;
             }
 
 
+            // Create a Blob and a download link
             const blob = new Blob([textToDownload], { type: 'text/plain' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = 'customized_resume.txt';
+            a.download = 'customized_resume.txt'; // Set desired filename
 
+            // Trigger the download
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(a.href);
+            URL.revokeObjectURL(a.href); // Clean up URL object
 
             console.log('Download initiated');
+            // Provide visual feedback
              downloadResumeButton.textContent = '✅ Downloaded!';
              setTimeout(() => {
                  downloadResumeButton.textContent = '⬇️ Download';
@@ -1346,36 +1490,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (emailResumeButton) {
         emailResumeButton.addEventListener('click', function() {
-            if (!quill || !responseArea || !editorContentArea) {
-                console.error("Email function elements not found.");
-                return;
-            }
+            // Determine the source element for text: responseArea (view) or editor (edit)
+            const sourceElement = responseArea.style.display !== 'none' ? responseArea : (quill ? quill.root : null); // Use quill.root for the editor's content div
 
-            const sourceElement = responseArea.style.display !== 'none' ? responseArea : editorContentArea.querySelector('.ql-editor');
+
             let resumeText = "";
 
-            if (sourceElement && sourceElement.classList) { // Check if sourceElement and classList exist
-                if (sourceElement.classList.contains('ql-editor')) {
-                    resumeText = quill.getText();
-                    if (resumeText.length > 0 && resumeText.endsWith('\n')) {
-                        resumeText = resumeText.slice(0, -1);
-                    }
-                } else {
-                    resumeText = sourceElement.innerText;
-                }
-            } else if (sourceElement) { // Fallback
-                 resumeText = sourceElement.innerText;
+             if (sourceElement) {
+                 if (sourceElement === responseArea) {
+                     // If in view mode, get the visible text, preserving line breaks
+                     if (responseArea.firstChild && responseArea.firstChild.nodeName === 'PRE') {
+                         resumeText = responseArea.firstChild.innerText;
+                     } else {
+                          resumeText = responseArea.innerText;
+                     }
+                 } else if (sourceElement === quill.root) {
+                      // If in edit mode (Quill editor is visible), get the plain text from Quill
+                      resumeText = quill.getText();
+                       // Remove trailing newline if Quill always adds one
+                       if (resumeText.length > 0 && resumeText.endsWith('\n')) {
+                          resumeText = resumeText.slice(0, -1);
+                      }
+                 }
             } else {
-                 console.error("Email source element not found.");
+                 console.error("Email source element not found or Quill not initialized.");
                  return;
             }
 
+
             const subject = "My Customized Resume";
             const body = resumeText;
+            // Create mailto link with encoded subject and body
             const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
+            // Open the user's email client
             window.location.href = mailtoLink;
 
+            // Provide visual feedback
             emailResumeButton.classList.add('emailed');
             emailResumeButton.textContent = '📬 Email Opened';
             setTimeout(() => {
@@ -1383,6 +1534,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 emailResumeButton.classList.remove('emailed');
             }, 2500);
         });
+    }
+
+    // Helper to safely get element by ID
+    function getElement(id) {
+        const element = document.getElementById(id);
+        if (!element) {
+            console.error(`Element with ID "${id}" not found.`);
+        }
+        return element;
     }
 
 });
