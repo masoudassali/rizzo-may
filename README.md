@@ -32,4 +32,4 @@ For feedback or connecting, please visit [linkedin.com/in/masassali](https://www
 
 ## Version
 
-v0.4
+v0.6
