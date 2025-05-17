@@ -64,14 +64,6 @@
   }
 
 
-  /* Style for each main section within the form (message, files, button) */
-  .form-section {
-      display: flex;
-      flex-direction: column; /* Stack elements within each section (label, input/textarea) */
-      gap: 8px; /* Space between label and input/textarea */
-  }
-
-
   /* --- Specific styles for the message section to accommodate dropdown suggestions --- */
   .form-section.message-section {
       /* Changed from row to column to stack textarea and dropdown */
@@ -714,10 +706,10 @@
 <body>
 
 
-<h2>Rizzo-may! <span style="font-size: smaller;"><i>(test page. use /rizzo-may/ for prod.)</i></span></h2>
+<h2>Rizzo-may! <span style="font-size: smaller;"><i>(beta)</i></span></h2>
 <p>Of course you may use AI to customize your resume to job applications. <b><i>(it's free.)</i></b><br><b>3 simple steps: </b></p>
 
-<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/c04f5180-4675-45b0-ae75-ce70eeb625d8" method="POST">
+<form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook/c04f5180-4675-45b0-ae75-ce70eeb625d8" method="POST">
   <div class="form-section message-section">
     <div class="message-textarea-container">
         <label for="userMessage">[Optional] Add a focus to your resume. (Choose from the suggestions below or add your own.)</label>
@@ -735,7 +727,8 @@
                 <li><input type="checkbox" id="prompt-6" data-prompt="Condense to one page"><label for="prompt-6">Condense to one page</label></li>
                  <li><input type="checkbox" id="prompt-2" data-prompt="Use [Industry] terms"><label for="prompt-2">Use [Industry] terms</label></li>
                 <li><input type="checkbox" id="prompt-3" data-prompt="Emphasize [Skill] experience"><label for="prompt-3">Emphasize [Skill] experience</label></li>
-            </ul>
+                <li><input type="checkbox" id="prompt-haiku" data-prompt="write as a haiku 🐰🥚"><label for="prompt-haiku">write as a haiku 🐰🥚</label></li>
+                </ul>
         </div>
     </div>
   </div>
@@ -930,6 +923,10 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault(); // Prevent default form submission
 
             console.log("Form submit triggered."); // Log when the submit handler runs
+            // Diagnostic log: Check value right before creating FormData
+            const userMessageTextarea = document.getElementById('userMessage');
+            console.log("Value of userMessage just before FormData:", userMessageTextarea ? userMessageTextarea.value : "Textarea not found"); // ADDED THIS LINE
+
 
             const form = this;
             const responseContainer = document.getElementById('responseContainer');
@@ -1226,10 +1223,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (responseArea.childNodes.length === 1 && firstChild && firstChild.nodeName === 'PRE') {
             contentToEdit = firstChild.innerText;
-            contentToEdit = contentToEdit.split('\n').map(line => `<p>${line || '<br>'}</p>`).join('');
+            contentToEdit = contentToEdit.split('\n').map(line => `<p>${line || '<br>'}</p>').join('');
         } else if (responseArea.style.whiteSpace === 'pre-wrap' && !contentToEdit.match(/<\s*p[^>]*>|<\s*br[^>]*>/i)) {
             contentToEdit = responseArea.innerText;
-            contentToEdit = contentToEdit.split('\n').map(line => `<p>${line || '<br>'}</p>`).join('');
+            contentToEdit = contentToEdit.split('\n').map(line => `<p>${line || '<br>'}</p>').join('');
         }
 
         quill.root.innerHTML = contentToEdit;
