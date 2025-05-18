@@ -259,31 +259,11 @@
         border: 1px solid #ddd; /* Add a light border */
         border-radius: 5px; /* Slightly rounded corners */
         background-color: #f9f9f9; /* Light background */
-        position: relative; /* Needed for absolute positioning of drag-drop-text */
-        transition: border-color 0.3s ease; /* Smooth transition */
     }
-
-     /* Styles for Drag and Drop Area */
-    .document-input-group.dragover {
-      border-color: #007bff; /* Highlight border on drag over */
-      border-style: dashed;
-    }
-
-    .drag-drop-text {
-        text-align: center;
-        color: #888;
-        font-size: 0.9em;
-        margin: 10px 0;
-        position: relative; /* Ensure it's positioned normally within the flow */
-        z-index: 5; /* Lower z-index than the file input */
-    }
-
 
     .document-input-group label {
         margin-bottom: 0; /* Gap handles spacing */
         text-align: center; /* Center the label */
-         position: relative; /* Ensure it's positioned normally within the flow */
-        z-index: 5; /* Lower z-index than the file input */
     }
 
     /* Adjust input styles to apply to text inputs as well */
@@ -297,22 +277,7 @@
       background-color: #f8f8f8;
       width: 100%; /* Make them fill the width */
       box-sizing: border-box; /* Include padding and border in width */
-       position: relative; /* Ensure it's positioned normally within the flow */
-        z-index: 5; /* Lower z-index than the file input */
     }
-
-    /* Hide default file input button but keep it functional */
-    .document-input-group input[type="file"] {
-      opacity: 0;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-      z-index: 10; /* Ensure it's above other content in the group */
-    }
-
 
     /* Style for disabled inputs */
     input[type="file"]:disabled,
@@ -770,22 +735,12 @@
   <div class="form-section">
     <p><b>Provide your Resume and the Job Description:</b> <i>(.txt, .pdf, .docx files < 1mb please. You can mix & match formats and input types.)</i></p>
 
-    <div class="document-inputs-container">
-      <div class="document-input-group" id="resumeDropArea">
-        <label for="resumeInput">Add Resume:</label>
-        <input type="file" name="resumeFile" id="resumeFile" class="file-input">
-        <p class="drag-drop-text">or drag and drop a file here</p>
-        <p style="text-align: center; margin: 5px 0; font-size: 0.9em; color: #555;">- OR -</p>
-        <input type="text" name="resumeUrl" id="resumeUrl" placeholder="Enter Resume URL">
-      </div>
+    <div class="document-inputs-container"> <div class="document-input-group"> <label for="resumeInput">Add Resume:</label> <input type="file" name="resumeFile" id="resumeFile"> <p style="text-align: center; margin: 5px 0; font-size: 0.9em; color: #555;">- OR -</p>
+        <input type="text" name="resumeUrl" id="resumeUrl" placeholder="Enter Resume URL"> </div>
 
-      <div class="document-input-group" id="jdDropArea">
-        <label for="jdInput">Add Job Description:</label>
-        <input type="file" name="jdFile" id="jdFile" class="file-input">
-         <p class="drag-drop-text">or drag and drop a file here</p>
-        <p style="text-align: center; margin: 5px 0; font-size: 0.9em; color: #555;">- OR -</p>
-        <input type="text" name="jdUrl" id="jdUrl" placeholder="Enter JD URL">
-      </div>
+      <div class="document-input-group"> <label for="jdInput">Add Job Description:</label> <input type="file" name="jdFile" id="jdFile"> <p style="text-align: center; margin: 5px 0; font-size: 0.9em; color: #555;">- OR -</p>
+        <input type="text" name="jdUrl" id="jdUrl" placeholder="Enter JD URL"> </div>
+
     </div>
      <p style="font-size: 0.9em; color: #666; margin-top: 5px;"><i>(For each document, provide either a file upload OR a URL.)</i></p>
   </div>
@@ -946,10 +901,23 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     if (resumeUrl && resumeFile && jdUrl && jdFile) {
-        // Existing event listeners are modified below to also clear the other input type
-        // updateResumeInputState and updateJdInputState are called by the new listeners
-        // updateResumeInputState(); // Initial state handled by new listeners below
-        // updateJdInputState(); // Initial state handled by new listeners below
+        resumeUrl.addEventListener('input', updateResumeInputState);
+        resumeFile.addEventListener('change', () => {
+            if (resumeFile.files.length > 0) {
+                resumeUrl.value = ''; // Clear URL if file is selected
+            }
+            updateResumeInputState();
+        });
+        jdUrl.addEventListener('input', updateJdInputState);
+        jdFile.addEventListener('change', () => {
+            if (jdFile.files.length > 0) {
+                jdUrl.value = ''; // Clear URL if file is selected
+            }
+            updateJdInputState();
+        });
+        // Set initial state on page load
+        updateResumeInputState();
+        updateJdInputState();
     }
 
 
@@ -1541,7 +1509,7 @@ document.addEventListener('DOMContentLoaded', function() {
                        // Remove trailing newline if Quill always adds one
                        if (resumeText.length > 0 && resumeText.endsWith('\n')) {
                           resumeText = resumeText.slice(0, -1);
-                       }
+                      }
                  }
             } else {
                  console.error("Email source element not found or Quill not initialized.");
@@ -1575,126 +1543,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return element;
     }
-
-    // --- Drag and Drop Functionality ---
-    const resumeDropArea = document.getElementById('resumeDropArea');
-    const jdDropArea = document.getElementById('jdDropArea');
-    const resumeFileInput = document.getElementById('resumeFile');
-    const jdFileInput = document.getElementById('jdFile');
-
-    // Prevent default drag behaviors
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        if (resumeDropArea) resumeDropArea.addEventListener(eventName, preventDefaults, false);
-        if (jdDropArea) jdDropArea.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    // Highlight drop area when dragging over
-    ['dragenter', 'dragover'].forEach(eventName => {
-        if (resumeDropArea) resumeDropArea.addEventListener(eventName, highlight.bind(null, resumeDropArea), false);
-        if (jdDropArea) jdDropArea.addEventListener(eventName, highlight.bind(null, jdDropArea), false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-        if (resumeDropArea) resumeDropArea.addEventListener(eventName, unhighlight.bind(null, resumeDropArea), false);
-        if (jdDropArea) jdDropArea.addEventListener(eventName, unhighlight.bind(null, jdDropArea), false);
-    });
-
-    function highlight(element) {
-        element.classList.add('dragover');
-    }
-
-    function unhighlight(element) {
-        element.classList.remove('dragover');
-    }
-
-    // Handle dropped files
-    if (resumeDropArea) {
-        resumeDropArea.addEventListener('drop', handleDrop.bind(null, resumeFileInput, resumeUrl), false);
-    }
-    if (jdDropArea) {
-        jdDropArea.addEventListener('drop', handleDrop.bind(null, jdFileInput, jdUrl), false);
-    }
-
-
-    function handleDrop(fileInput, urlInput, e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-
-        if (files.length > 0) {
-            // Assign the dropped file to the correct file input
-            fileInput.files = files;
-            // Clear the corresponding URL input as a file is provided
-            if(urlInput) urlInput.value = '';
-             // Trigger a change event on the file input so the existing logic picks it up
-            const event = new Event('change');
-            fileInput.dispatchEvent(event);
-
-             // You might want to display the file name to the user here
-             console.log(`Dropped file for ${fileInput.id}: ${files[0].name}`);
-        }
-        // The rest of your form submission logic will handle reading the file input
-    }
-
-    // Enhance the existing change listeners to also clear the other input type
-    if (resumeFile && resumeUrl) {
-        resumeFile.addEventListener('change', () => {
-            if (resumeFile.files.length > 0) {
-                resumeUrl.value = ''; // Clear URL if file is selected
-            }
-            updateResumeInputState(); // Keep existing state logic
-        });
-         resumeUrl.addEventListener('input', () => {
-             if (resumeUrl.value.trim() !== '') {
-                // Clear file input if URL is entered
-                 if (resumeFile && resumeFile.files) {
-                      try {
-                           const dataTransfer = new DataTransfer();
-                           resumeFile.files = dataTransfer.files; // Clear the file input
-                      } catch (e) {
-                           console.error("Could not clear file input using DataTransfer:", e);
-                           // Fallback for older browsers (may not work in all cases)
-                           resumeFile.value = '';
-                      }
-                 }
-             }
-             updateResumeInputState(); // Keep existing state logic
-         });
-    }
-
-    if (jdFile && jdUrl) {
-        jdFile.addEventListener('change', () => {
-            if (jdFile.files.length > 0) {
-                jdUrl.value = ''; // Clear URL if file is selected
-            }
-            updateJdInputState(); // Keep existing state logic
-        });
-         jdUrl.addEventListener('input', () => {
-             if (jdUrl.value.trim() !== '') {
-                 // Clear file input if URL is entered
-                  if (jdFile && jdFile.files) {
-                       try {
-                            const dataTransfer = new DataTransfer();
-                            jdFile.files = dataTransfer.files; // Clear the file input
-                       } catch (e) {
-                            console.error("Could not clear file input using DataTransfer:", e);
-                            // Fallback for older browsers (may not work in all cases)
-                            jdFile.value = '';
-                       }
-                  }
-             }
-             updateJdInputState(); // Keep existing state logic
-         });
-    }
-
-    // Call initial state updates after event listeners are added
-    updateResumeInputState();
-    updateJdInputState();
-
 
 });
 </script>
