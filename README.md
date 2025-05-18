@@ -1,4 +1,4 @@
-# rizzo-may! (beta)
+# Rizzo-may! (beta)
 
 A simple, free web tool to help you customize your resume for specific job applications.
 
