@@ -705,7 +705,7 @@
 <body>
 
 
-<h2>Rizzo-may! <span style="font-size: smaller;"><i>(beta)</i></span></h2>
+<h2>Rizzo-may! <span style="font-size: smaller;"><i>(test page. use /rizzo-may/ for prod.)</i></span></h2>
 <p>Of course you may use AI to customize your resume to job applications. <b><i>(it's free.)</i></b><br><b>3 simple steps: </b></p>
 
 <form id="uploadForm" enctype="multipart/form-data" action="https://steak.servequake.com/webhook-test/19776e0c-4a2e-447c-972e-e7d27b83e6b5" method="POST">
@@ -726,7 +726,7 @@
                 <li><input type="checkbox" id="prompt-6" data-prompt="Condense to one page"><label for="prompt-6">Condense to one page</label></li>
                  <li><input type="checkbox" id="prompt-2" data-prompt="Use [Industry] terms"><label for="prompt-2">Use [Industry] terms</label></li>
                 <li><input type="checkbox" id="prompt-3" data-prompt="Emphasize [Skill] experience"><label for="prompt-3">Emphasize [Skill] experience</label></li>
-                <li><input type="checkbox" id="prompt-haiku" data-prompt="write as a haiku 🐰🥚"><label for="prompt-haiku">write as a haiku 🐰🥚</label></li>
+                 <li><input type="checkbox" id="prompt-haiku" data-prompt="Write every line as a haiku to follow a 5-7-5 syllable structure"><label for="prompt-haiku">Write as a haiku 🐰🥚</label></li>
                 </ul>
         </div>
     </div>
@@ -1222,8 +1222,8 @@ document.addEventListener('DOMContentLoaded', function() {
                      responseArea.style.display = 'block'; // Ensure response area is visible
                 }
                  if(uploadStatusBar) {
-                    uploadStatusBar.innerHTML = "Error!";
-                    uploadStatusBar.style.backgroundColor = '#f44336'; // Red
+                     uploadStatusBar.innerHTML = "Error!";
+                     uploadStatusBar.style.backgroundColor = '#f44336'; // Red
                  }
 
                 // Hide action buttons on error
@@ -1315,7 +1315,6 @@ document.addEventListener('DOMContentLoaded', function() {
              // Assume it might be HTML (e.g., if AI outputted HTML directly or had error formatting)
              // Or if it's plain text without <pre>, convert newlines to <br> within a single <p>
              // A robust solution might parse HTML, but for simplicity, treat as plain text unless it's clearly structured HTML
-             // Let's check if it looks like a simple multi-line text that wasn't <pre> wrapped
              if (!responseAreaContent.match(/<\s*[a-zA-Z][^>]*>/i)) { // Check if it doesn't contain common HTML tags
                   contentToEdit = responseArea.innerText; // Get plain text value
                   contentToEdit = contentToEdit.split('\n').map(line => `<p>${escapeHTML(line) || '<br>'}</p>`).join('');
