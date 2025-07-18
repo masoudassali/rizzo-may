@@ -1,3 +1,4 @@
+html
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,7 +6,7 @@
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 <style>
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: -apple-system, BlinkMacMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     line-height: 1.6;
     margin: 20px;
     background-color: #f4f7f6; /* Light background */
@@ -388,6 +389,7 @@
   /* Style for the response action buttons */
   #copyCodeButton,
   #downloadResumeButton,
+  #downloadPdfButton, /* New button style */
   #editResponseButton,
   #emailResumeButton { /* Added emailResumeButton */
       background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
@@ -404,6 +406,7 @@
 
   #copyCodeButton:hover,
   #downloadResumeButton:hover,
+  #downloadPdfButton:hover, /* New button hover style */
   #editResponseButton:hover,
   #emailResumeButton:hover { /* Added emailResumeButton */
       background-color: rgba(255, 255, 255, 1); /* Less transparent on hover */
@@ -419,7 +422,8 @@
   }
 
    /* Optional: Style for when the text is downloaded */
-  #downloadResumeButton.downloaded {
+  #downloadResumeButton.downloaded,
+  #downloadPdfButton.downloaded { /* Apply to new PDF button as well */
       background-color: #d4edda; /* Light green */
       border-color: #c3e6cb; /* Green border */
       color: #155724; /* Dark green text */
@@ -663,6 +667,7 @@
 
        #copyCodeButton,
        #downloadResumeButton,
+       #downloadPdfButton, /* Apply to new PDF button as well */
        #editResponseButton,
        #emailResumeButton {
            position: static;
@@ -766,8 +771,10 @@
           <h4><i>(In case of error, please check you file format. I'll add OCR capabilities soon.)</i></h4>
         <div class="response-buttons">
             <button id="editResponseButton" title="Edit on the spot">Edit</button>
-            <button id="emailResumeButton" title="Send as Email">📧 Email</button> <button id="copyCodeButton" title="Copy to clipboard">📋 Copy</button>
-            <button id="downloadResumeButton" title="Download Resume">⬇️ Download</button>
+            <button id="emailResumeButton" title="Send as Email">📧 Email</button>
+            <button id="copyCodeButton" title="Copy to clipboard">📋 Copy</button>
+            <button id="downloadResumeButton" title="Download Resume">⬇️ Download Text</button>
+            <button id="downloadPdfButton" title="Download as PDF">⬇️ Download PDF</button>
         </div>
     </div>
     <div id="quillCustomToolbar" style="display: none;"></div>
@@ -778,6 +785,7 @@
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
 <script>
@@ -807,7 +815,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const editResponseButton = document.getElementById('editResponseButton');
     const copyCodeButton = document.getElementById('copyCodeButton');
     const downloadResumeButton = document.getElementById('downloadResumeButton');
-    const emailResumeButton = document.getElementById('emailResumeButton'); // New email button
+    const downloadPdfButton = document.getElementById('downloadPdfButton'); // New PDF button
+    const emailResumeButton = document.getElementById('emailResumeButton');
     const doneEditingButton = document.getElementById('doneEditingButton');
 
 
@@ -945,6 +954,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const doneEditingButton = document.getElementById('doneEditingButton'); // The Done Editing button
             const copyCodeButton = document.getElementById('copyCodeButton'); // The Copy button
             const downloadResumeButton = document.getElementById('downloadResumeButton'); // The Download button
+            const downloadPdfButton = document.getElementById('downloadPdfButton'); // New PDF button
             const emailResumeButton = document.getElementById('emailResumeButton'); // New email button
 
 
@@ -978,6 +988,7 @@ document.addEventListener('DOMContentLoaded', function() {
                          element !== doneEditingButton &&
                          element !== copyCodeButton &&
                          element !== downloadResumeButton &&
+                         element !== downloadPdfButton && // Include new PDF button
                          element !== emailResumeButton &&
                          element.id !== 'promptDropdownTrigger' && // Don't disable the trigger button
                          !element.closest('.prompt-suggestions-dropdown') // Don't disable anything inside the dropdown panel (checkboxes, Add Selected button)
@@ -996,6 +1007,7 @@ document.addEventListener('DOMContentLoaded', function() {
                      element !== doneEditingButton &&
                      element !== copyCodeButton &&
                      element !== downloadResumeButton &&
+                     element !== downloadPdfButton && // Include new PDF button
                      element !== emailResumeButton &&
                      element.id !== 'promptDropdownTrigger' && // Don't disable the trigger button
                      !element.closest('.prompt-suggestions-dropdown') // Don't disable anything inside the dropdown panel
@@ -1024,6 +1036,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if(editResponseButton) editResponseButton.style.display = 'none';
             if(copyCodeButton) copyCodeButton.style.display = 'none';
             if(downloadResumeButton) downloadResumeButton.style.display = 'none';
+            if(downloadPdfButton) downloadPdfButton.style.display = 'none'; // Hide new PDF button
             if(emailResumeButton) emailResumeButton.style.display = 'none';
 
 
@@ -1143,6 +1156,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if(editResponseButton) editResponseButton.style.display = displayStyle;
                         if(copyCodeButton) copyCodeButton.style.display = displayStyle;
                         if(downloadResumeButton) downloadResumeButton.style.display = displayStyle;
+                        if(downloadPdfButton) downloadPdfButton.style.display = displayStyle; // Show new PDF button
                         if(emailResumeButton) emailResumeButton.style.display = displayStyle;
 
 
@@ -1164,6 +1178,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if(editResponseButton) editResponseButton.style.display = 'none';
                         if(copyCodeButton) copyCodeButton.style.display = 'none';
                         if(downloadResumeButton) downloadResumeButton.style.display = 'none';
+                        if(downloadPdfButton) downloadPdfButton.style.display = 'none'; // Hide new PDF button
                         if(emailResumeButton) emailResumeButton.style.display = 'none';
                     }
                 } else {
@@ -1198,6 +1213,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if(editResponseButton) editResponseButton.style.display = 'none';
                     if(copyCodeButton) copyCodeButton.style.display = 'none';
                     if(downloadResumeButton) downloadResumeButton.style.display = 'none';
+                    if(downloadPdfButton) downloadPdfButton.style.display = 'none'; // Hide new PDF button
                     if(emailResumeButton) emailResumeButton.style.display = 'none';
                 }
                  // Hide upload status bar and text after request is complete (success or error)
@@ -1230,6 +1246,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if(editResponseButton) editResponseButton.style.display = 'none';
                 if(copyCodeButton) copyCodeButton.style.display = 'none';
                 if(downloadResumeButton) downloadResumeButton.style.display = 'none';
+                if(downloadPdfButton) downloadPdfButton.style.display = 'none'; // Hide new PDF button
                 if(emailResumeButton) emailResumeButton.style.display = 'none';
             };
 
@@ -1258,6 +1275,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if(editResponseButton) editResponseButton.style.display = 'none';
                 if(copyCodeButton) copyCodeButton.style.display = 'none';
                 if(downloadResumeButton) downloadResumeButton.style.display = 'none';
+                if(downloadPdfButton) downloadPdfButton.style.display = 'none'; // Hide new PDF button
                 if(emailResumeButton) emailResumeButton.style.display = 'none';
             };
             xhr.open(this.method, this.action);
@@ -1316,7 +1334,7 @@ document.addEventListener('DOMContentLoaded', function() {
              // Or if it's plain text without <pre>, convert newlines to <br> within a single <p>
              // A robust solution might parse HTML, but for simplicity, treat as plain text unless it's clearly structured HTML
              if (!responseAreaContent.match(/<\s*[a-zA-Z][^>]*>/i)) { // Check if it doesn't contain common HTML tags
-                  contentToEdit = responseArea.innerText; // Get plain text value
+                  contentToEdit = responseArea.innerText; // Gets visible text, preserving line breaks from rendered HTML structure
                   contentToEdit = contentToEdit.split('\n').map(line => `<p>${escapeHTML(line) || '<br>'}</p>`).join('');
              } else {
                   // If it looks like HTML, load it directly (be cautious of arbitrary HTML)
@@ -1336,6 +1354,7 @@ document.addEventListener('DOMContentLoaded', function() {
         editResponseButton.style.display = 'none';
         copyCodeButton.style.display = 'none';
         downloadResumeButton.style.display = 'none';
+        downloadPdfButton.style.display = 'none'; // Hide new PDF button
         emailResumeButton.style.display = 'none';
 
         // Show editor and done button
@@ -1370,6 +1389,7 @@ document.addEventListener('DOMContentLoaded', function() {
         editResponseButton.style.display = displayStyle;
         copyCodeButton.style.display = displayStyle;
         downloadResumeButton.style.display = displayStyle;
+        downloadPdfButton.style.display = displayStyle; // Show new PDF button
         emailResumeButton.style.display = displayStyle;
     };
 
@@ -1482,10 +1502,71 @@ document.addEventListener('DOMContentLoaded', function() {
             // Provide visual feedback
              downloadResumeButton.textContent = '✅ Downloaded!';
              setTimeout(() => {
-                 downloadResumeButton.textContent = '⬇️ Download';
+                 downloadResumeButton.textContent = '⬇️ Download Text';
              }, 2000);
         });
     }
+
+    // New PDF Download Button Logic
+    if (downloadPdfButton) {
+        downloadPdfButton.addEventListener('click', async function() {
+            const sourceElement = responseArea.style.display !== 'none' ? responseArea : (quill ? quill.root : null);
+
+            let resumeContent = '';
+
+            if (sourceElement) {
+                if (sourceElement === responseArea) {
+                    if (responseArea.firstChild && responseArea.firstChild.nodeName === 'PRE') {
+                        resumeContent = responseArea.firstChild.innerText;
+                    } else {
+                        resumeContent = responseArea.innerText;
+                    }
+                } else if (sourceElement === quill.root) {
+                    resumeContent = quill.getText();
+                    if (resumeContent.length > 0 && resumeContent.endsWith('\n')) {
+                        resumeContent = resumeContent.slice(0, -1);
+                    }
+                }
+            } else {
+                console.error("PDF download source element not found or Quill not initialized.");
+                return;
+            }
+
+            try {
+                // jspdf needs to be loaded globally or imported
+                if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
+                    console.error("jsPDF library not loaded.");
+                    downloadPdfButton.textContent = '❌ PDF Failed (Lib)';
+                    setTimeout(() => { downloadPdfButton.textContent = '⬇️ Download PDF'; }, 2000);
+                    return;
+                }
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Split text into lines to fit page
+                const lines = doc.splitTextToSize(resumeContent, doc.internal.pageSize.width - 20); // 10mm margin on each side
+
+                doc.text(lines, 10, 10); // Start text at 10,10 (mm)
+
+                doc.save('customized_resume.pdf');
+
+                console.log('PDF download initiated');
+                downloadPdfButton.textContent = '✅ Downloaded!';
+                setTimeout(() => {
+                    downloadPdfButton.textContent = '⬇️ Download PDF';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                downloadPdfButton.textContent = '❌ PDF Failed';
+                setTimeout(() => {
+                    downloadPdfButton.textContent = '⬇️ Download PDF';
+                }, 2000);
+            }
+        });
+    }
+
 
     if (emailResumeButton) {
         emailResumeButton.addEventListener('click', function() {
